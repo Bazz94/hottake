@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hottake/services/auth.dart';
-import 'package:hottake/shared/constants.dart';
+import 'shared/private.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:hottake/services/init.dart';
@@ -19,10 +19,10 @@ Future<void> main() async {
   if(kIsWeb){
     await Firebase.initializeApp(
         options: FirebaseOptions(
-            apiKey: Constants.apiKey,
-            appId: Constants.appId,
-            messagingSenderId: Constants.messagingSenderId,
-            projectId: Constants.projectId));
+            apiKey: Private.apiKey,
+            appId: Private.appId,
+            messagingSenderId: Private.messagingSenderId,
+            projectId: Private.projectId));
   } else {
     await Firebase.initializeApp();
   }

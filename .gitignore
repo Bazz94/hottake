@@ -23,4 +23,4 @@ doc/api/
 /generated_plugin_registrant.dart
 
 # custom
-/lib/shared/constants.dart
+lib/shared/private.dart

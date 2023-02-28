@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "hottake-project",
+    "hottake-project": "hottake-project"
+  },
+  "targets": {}
+}

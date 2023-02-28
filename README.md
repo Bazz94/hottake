@@ -1,2 +1,2 @@
 # hottake
-A chat app that lets you debate topics with anonymous people
+A Flutter project in development

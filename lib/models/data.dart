@@ -9,7 +9,7 @@ class Globals{
 }
 
 enum Owner{
-  receiver,sender
+  receiver, sender
 }
 
 class LocalUser {

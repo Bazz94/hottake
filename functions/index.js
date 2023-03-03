@@ -1,5 +1,4 @@
 const functions = require('firebase-functions');
-const firebase_tools = require('firebase-tools');
 const admin = require('firebase-admin');
 const Firestore = require('@google-cloud/firestore');
 const { database } = require("firebase-admin");
@@ -90,7 +89,6 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
     });
 
     //get opponent active value
-    functions.logger.log('ref: /presence/' + chatID + '/' + userID + '/active');
     const snap = await database.ref('/presence/' + chatID + '/' + userID + '/active').get();
     const v = snap.val();
     if (v == "true") {
@@ -102,23 +100,18 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
     //delete chat
     functions.logger.log('active: ', active);
     if (active == false) {
-      functions.logger.log('flag1');
-      const chatsCollection = admin.firestore().collection("chats");
-      const chatSnap = await chatsCollection.doc(chatID).get();
-      const dontDelete = chatSnap.data['dontDelete'];
-      if (dontDelete == "false") {
-        functions.logger.log('flag2');
-        const path = "/databases/{database}/documents/chats/"+chatID;
-        await firebase_tools.firestore
-          .delete(path, {
-            project: process.env.GCLOUD_PROJECT,
-            recursive: true,
-            force: true,
-            token: functions.config().fb.token,
-        });
+      const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
+      const chatSnap = await chatsDocRef.get();
+      const dontDelete = chatSnap.data().dontDelete;
+      if (dontDelete == 'false') {
+        const path = chatsDocRef.path;
+        functions.logger.log('path to delete: ', path);
+        admin.firestore().recursiveDelete(chatsDocRef);
       }
+      //delete chat from presence
+      database.ref('/presence/' + chatID).remove();
+      return true;
     }
-
   }
   return true;
 });

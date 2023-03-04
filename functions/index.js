@@ -44,13 +44,13 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
     }
 
     var data = {
-      dontDelete: "false",
+      save: "false",
       nay: nay,
       yay: yay,
       topic: topic,
       time: new Date()
     };
-
+    //create chat in chats
     await chatsCollection.add(data).then((documentSnapshot) =>
       chatID = documentSnapshot.id);
     await chatsCollection.doc(chatID).collection("messages").add({
@@ -102,8 +102,8 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
     if (active == false) {
       const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
       const chatSnap = await chatsDocRef.get();
-      const dontDelete = chatSnap.data().dontDelete;
-      if (dontDelete == 'false') {
+      const save = chatSnap.data().save;
+      if (save == 'false') {
         const path = chatsDocRef.path;
         functions.logger.log('path to delete: ', path);
         admin.firestore().recursiveDelete(chatsDocRef);

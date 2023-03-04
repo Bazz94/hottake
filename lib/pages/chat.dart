@@ -77,8 +77,14 @@ class _ChatState extends State<ChatScreen> {
 
     if (phase == Phase.debate) {
       if (Globals.opponentUser != null) {
-        final opponentActive = Provider.of<bool?>(context);
+        //
+        //final opponentActive = Provider.of<bool?>(context);
+        PresenceService.updateOpponentStatus();
+        bool? opponentActive = PresenceService.opponentOnline;
         if (opponentActive != null) {
+          print("//// 2.Opponent active: $opponentActive");
+          print("opponent id: ${Globals.opponentUser!.uid}");
+          print("my id: ${Globals.localUser!.uid}");
           if (opponentActive == false) {
             if (opponentOffline == false) {
               opponentOffline = true;
@@ -94,7 +100,6 @@ class _ChatState extends State<ChatScreen> {
               phase = Phase.post;
             }
           }
-          print("//// Opponent active: $opponentActive");
         }
       }
 

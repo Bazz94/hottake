@@ -129,7 +129,7 @@ class DatabaseService {
         nay = await idToLocalUser(data['nay']);
         Globals.opponentUser = nay;
       } else {
-        yay = await idToLocalUser(data['nay']);
+        yay = await idToLocalUser(data['yay']);
         Globals.opponentUser = yay;
         nay = Globals.localUser!;
       }

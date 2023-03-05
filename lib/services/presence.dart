@@ -32,7 +32,7 @@ class PresenceService {
     }
   }
 
-  /* Stream<bool?> get opponentStatus {
+  Stream<bool?> get opponentStatus {
     DatabaseReference childRef = presenceRef.child("${Globals.chatID}/${Globals.opponentUser!.uid}/active");
     return childRef.onValue.map(_snapToBool);
   }
@@ -44,14 +44,5 @@ class PresenceService {
       return value == "true" ? true : false;
     }
     return null;
-  } */
-
-  static void updateOpponentStatus() {
-      DatabaseReference childRef = presenceRef.child("${Globals.chatID}/${Globals.opponentUser!.uid}/active");
-      childRef.onValue.listen((DatabaseEvent event) {
-        final data = event.snapshot.value;
-        opponentOnline = data.toString() == "true" ? true : false;
-        print("//// 1.Opponent active: $data");
-    });
   }
 }

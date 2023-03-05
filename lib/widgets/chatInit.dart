@@ -20,10 +20,10 @@ class ChatInit extends StatelessWidget {
         create: (context) => DatabaseService().messages,
         initialData: null,
       ),
-      /* StreamProvider<bool?>(
+      StreamProvider<bool?>(
         create: (context) => PresenceService(uid: Globals.localUser!.uid).opponentStatus,
         initialData: null,
-      ), */
+      ),
       ], child: ChatScreen()
     );
   }

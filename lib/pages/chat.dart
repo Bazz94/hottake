@@ -51,6 +51,7 @@ class _ChatState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
 
+    //Searching
     if (phase == Phase.searching) {
       print("////chatID: ${Globals.chatID}");
       if (Globals.chatID != null) {
@@ -58,6 +59,7 @@ class _ChatState extends State<ChatScreen> {
         chatFuture.then((chat) {
           if (chat != null) {
             print("////chat data received: ${chat.chatID}");
+            presence.goOnline(Globals.chatID!);
             if (chat.yay != null && chat.nay != null) {
               print("opponent has been found");
               presence.goOnline(Globals.chatID!);
@@ -75,16 +77,13 @@ class _ChatState extends State<ChatScreen> {
       }
     }
 
+    //Debating
     if (phase == Phase.debate) {
       if (Globals.opponentUser != null) {
         //
-        //final opponentActive = Provider.of<bool?>(context);
-        PresenceService.updateOpponentStatus();
-        bool? opponentActive = PresenceService.opponentOnline;
+        final opponentActive = Provider.of<bool?>(context);
         if (opponentActive != null) {
           print("//// 2.Opponent active: $opponentActive");
-          print("opponent id: ${Globals.opponentUser!.uid}");
-          print("my id: ${Globals.localUser!.uid}");
           if (opponentActive == false) {
             if (opponentOffline == false) {
               opponentOffline = true;
@@ -102,7 +101,6 @@ class _ChatState extends State<ChatScreen> {
           }
         }
       }
-
       final chatList = Provider.of<List<ChatMessage>?>(context);
       if (chatList != null) {
         setState(() {
@@ -111,6 +109,7 @@ class _ChatState extends State<ChatScreen> {
       }
     }
 
+    //Post
     if (phase == Phase.post) {
       //ask user to review opponent
     }

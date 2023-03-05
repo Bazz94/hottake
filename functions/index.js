@@ -77,29 +77,36 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
   if (newValue == "false") {
     const database = admin.database();
     const chatID = context.params.chatID;
-    var active;
-    var userID;
+    var usersID = context.params.uid;
+    var opponentActive; //also used to see if there is an opponent or not
+    var opponentUserID;
 
     //get opponent chatID
     const snapChat = await database.ref('/presence/' + chatID).get();
-    snapChat.forEach((value) => {
-      if (value.key != context.params.uid) {
-        userID = value.key;
+    var numChildren = snapChat.numChildren();
+    functions.logger.log('num children: ', numChildren);
+    if (numChildren == 2) {
+      snapChat.forEach((value) => {
+        if (value.key != usersID) {
+          opponentUserID = value.key;
+        }
+      });
+
+      //get opponent active value
+      const snap = await database.ref('/presence/' + chatID + '/' + opponentUserID + '/active').get();
+      const v = snap.val();
+      if (v == "true") {
+        opponentActive = true;
+      } else {
+        opponentActive = false;
       }
-    });
-
-    //get opponent active value
-    const snap = await database.ref('/presence/' + chatID + '/' + userID + '/active').get();
-    const v = snap.val();
-    if (v == "true") {
-      active = true;
-    } else {
-      active = false;
-    }
-
+    } else { //numChildren is equal to 1, the user has started seaching but left 
+            // before finding a match
+      opponentActive = false;
+    } 
     //delete chat
-    functions.logger.log('active: ', active);
-    if (active == false) {
+    functions.logger.log('active: ', opponentActive);
+    if (opponentActive == false) {
       const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
       const chatSnap = await chatsDocRef.get();
       const save = chatSnap.data().save;

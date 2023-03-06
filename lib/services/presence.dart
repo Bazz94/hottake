@@ -40,7 +40,6 @@ class PresenceService {
   bool? _snapToBool(DatabaseEvent event){
     dynamic value = event.snapshot.value;
     if (value != null) {
-      print("//// 1.Opponent active: $value");
       return value == "true" ? true : false;
     }
     return null;

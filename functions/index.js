@@ -45,11 +45,13 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
     var data = {
       save: "false",
+      active: "true",
       nay: nay,
       yay: yay,
       topic: topic,
       time: new Date()
     };
+
     //create chat in chats
     await chatsCollection.add(data).then((documentSnapshot) =>
       chatID = documentSnapshot.id);
@@ -113,10 +115,10 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       if (save == 'false') {
         const path = chatsDocRef.path;
         functions.logger.log('path to delete: ', path);
-        admin.firestore().recursiveDelete(chatsDocRef);
+        await admin.firestore().recursiveDelete(chatsDocRef);
       }
       //delete chat from presence
-      database.ref('/presence/' + chatID).remove();
+      await database.ref('/presence/' + chatID).remove();
       return true;
     }
   }

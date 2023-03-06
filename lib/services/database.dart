@@ -73,7 +73,7 @@ class DatabaseService {
   static final CollectionReference _chatsCollection =
       FirebaseFirestore.instance.collection('chats');
 
-  sendMessage(String? chatID, String message, LocalUser owner) {
+  void sendMessage(String? chatID, String message, LocalUser owner) {
     Map<String, dynamic> data = {
       'content': message,
       'owner': owner.uid,
@@ -110,12 +110,9 @@ class DatabaseService {
     return list;
   }
 
-      // .collection("messages")
-      // .orderBy("time", "asc")
-
-
   //get Info from chat
   Stream<Future<Chat?>> get chats {
+    print("//// chat retrieved");
     return _chatsCollection.doc(Globals.chatID).snapshots().map(_snapToChat);
   }
 
@@ -156,5 +153,9 @@ class DatabaseService {
       return LocalUser(uid: id, username: username!);
     }
     return null;
+  }
+
+  void endChat() {
+    _chatsCollection.doc(Globals.chatID).update({"active": "false"});
   }
 }

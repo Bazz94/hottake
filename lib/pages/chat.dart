@@ -14,7 +14,9 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatState();
 }
 
-enum Phase { searching, debate, post, inactive }
+enum Phase { searching, debate, review, post }
+
+enum dropDownItems { report, leave }
 
 class _ChatState extends State<ChatScreen> {
   List<ChatMessage> messages = [];
@@ -27,6 +29,8 @@ class _ChatState extends State<ChatScreen> {
   PresenceService presence = PresenceService(uid: Globals.localUser!.uid);
   bool opponentOffline = false;
   bool submittedReport = false; //flag used to stop user from deleting chat
+  bool post_message_sent_once = false;
+  dropDownItems? dropDownItem;
 
   @override
   void initState() {
@@ -50,7 +54,6 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     //Searching
     if (phase == Phase.searching) {
       print("////chatID: ${Globals.chatID}");
@@ -82,8 +85,18 @@ class _ChatState extends State<ChatScreen> {
       if (Globals.opponentUser != null) {
         //
         final opponentActive = Provider.of<bool?>(context);
+        final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
+        chatFuture.then((chat) {
+          if (chat != null) {
+            if (chat.active == false) {
+              setState(() {
+                phase = Phase.review;
+              });
+            }
+          }
+        });
         if (opponentActive != null) {
-          print("//// 2.Opponent active: $opponentActive");
+          print("//// Opponent active: $opponentActive");
           if (opponentActive == false) {
             if (opponentOffline == false) {
               opponentOffline = true;
@@ -92,11 +105,13 @@ class _ChatState extends State<ChatScreen> {
                   "    ${Globals.opponentUser!.username} has left the chat    ",
                   LocalUser(uid: "admin"));
               messages.add(ChatMessage(
-                  content: "    ${Globals.opponentUser!.username} has left the chat    ",
-                  owner:  "admin",
-                  time: DateTime.now()
-              ));
-              phase = Phase.post;
+                  content:
+                      "    ${Globals.opponentUser!.username} has left the chat    ",
+                  owner: "admin",
+                  time: DateTime.now()));
+              setState(() {
+                phase = Phase.review;
+              });
             }
           }
         }
@@ -109,12 +124,25 @@ class _ChatState extends State<ChatScreen> {
       }
     }
 
-    //Post
-    if (phase == Phase.post) {
+    //Review
+    if (phase == Phase.review) {
       //ask user to review opponent
+      if (post_message_sent_once == false) {
+        setState(() {
+          post_message_sent_once = true;
+          messages.add(ChatMessage(
+              content: "    How was your interaction?    ",
+              owner: "admin",
+              time: DateTime.now()));
+        });
+      }
     }
 
-
+    //Post
+    if (phase == Phase.post) {
+      //print("//// post data: ${messages.length}");
+    }
+    print("//// post data: ${messages.length}");
     print('//// phase: $phase');
     return phase == Phase.searching
         ? const Searching()
@@ -127,15 +155,68 @@ class _ChatState extends State<ChatScreen> {
                     title: Text(
                         opponentUsername == null ? "none" : opponentUsername!),
                     actions: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
+                      PopupMenuButton<dropDownItems>(
+                        icon: const Icon(Icons.more_vert, color: Colors.white),
+                        color: Colors.deepPurple,
+                        padding: const EdgeInsets.all(1),
+                        initialValue: dropDownItem,
+                        onSelected: (dropDownItems item) {
+                          //dropDownItem = item;
+                          if (item == dropDownItems.leave) {
+                            setState(() {
+                              database.endChat();
+                              database.sendMessage(
+                                Globals.chatID,
+                                "${Globals.localUser!.username} has ended the chat",
+                                LocalUser(uid: "admin"),
+                              );
+                            });
+                          }
+                          if (item == dropDownItems.report) {
+                            setState(() {
+                              phase = Phase.post;
+                              print("//// reported pressed");
+                              messages.add(ChatMessage(
+                                  content:
+                                      "${Globals.localUser!.username} has ended the chat",
+                                  owner: "admin",
+                                  time: DateTime.now()));
+                              messages.add(ChatMessage(
+                                  content:
+                                      "    ${Globals.opponentUser!.username} has been reported    ",
+                                  owner: "admin",
+                                  time: DateTime.now()));
+                              database.endChat();
+                              submittedReport = true;
+                              database.sendMessage(
+                                Globals.chatID,
+                                "${Globals.localUser!.username} has ended the chat",
+                                LocalUser(uid: "admin"),
+                              );
+                            });
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<dropDownItems>>[
+                          PopupMenuItem<dropDownItems>(
+                            enabled: submittedReport == true ? false : true,
+                            value: dropDownItems.report,
+                            textStyle: const TextStyle(
+                              color: Color.fromARGB(255, 255, 104, 104),
+                              fontSize: 15,
+                            ),
+                            child: const Text('Report'),
                           ),
-                        ),
+                          PopupMenuItem<dropDownItems>(
+                            enabled: phase == Phase.debate ? true : false,
+                            value: dropDownItems.leave,
+                            textStyle: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                            child: const Text('End chat'),
+                          ),
+                        ],
                       ),
                     ],
                     leading: IconButton(
@@ -163,7 +244,7 @@ class _ChatState extends State<ChatScreen> {
                       ),
                       Align(
                           alignment: Alignment.bottomLeft,
-                          child: phase == Phase.debate ? bottomTextBar() : Container()),
+                          child: bottomInteractions(phase)),
                     ],
                   )),
             ),
@@ -215,6 +296,110 @@ class _ChatState extends State<ChatScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget bottomInteractions(Phase phase) {
+    if (phase == Phase.debate) {
+      return bottomTextBar();
+    }
+    if (phase == Phase.review) {
+      return reviewButtons();
+    }
+    if (phase == Phase.post) {
+      return nextButton();
+    }
+    return Container();
+  }
+
+  Widget nextButton() {
+    return Row(
+      children: [
+        //button Next
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(2, 2, 2, 2),
+              child: Card(
+                  color: Colors.deepPurpleAccent,
+                  child: InkWell(
+                    onTap: () {
+                      // Start Searching for new opponent
+                    },
+                    child: const Center(
+                      child: Text("Next",
+                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    ),
+                  )),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget reviewButtons() {
+    return Row(
+      children: [
+        //button Good
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(2, 2, 1, 2),
+              child: Card(
+                  color: Colors.green,
+                  child: InkWell(
+                    onTap: () {
+                      //
+                      setState(() {
+                        messages.add(ChatMessage(
+                            content: "    Good    ",
+                            owner: "admin",
+                            time: DateTime.now()));
+                        phase = Phase.post;
+                      });
+                    },
+                    child: const Center(
+                      child: Text("Good",
+                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    ),
+                  )),
+            ),
+          ),
+        ),
+        //button Bad
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(1, 2, 2, 2),
+              child: Card(
+                  color: Colors.red,
+                  child: InkWell(
+                    onTap: () {
+                      //
+                      setState(() {
+                        messages.add(ChatMessage(
+                            content: "    Bad    ",
+                            owner: "admin",
+                            time: DateTime.now()));
+                        phase = Phase.post;
+                      });
+                    },
+                    child: const Center(
+                      child: Text("Bad",
+                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    ),
+                  )),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

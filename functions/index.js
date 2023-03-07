@@ -44,12 +44,14 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
     }
 
     var data = {
-      save: false,
-      active: true,
-      nay: nay,
-      yay: yay,
       topic: topic,
-      time: new Date()
+      yay: yay,
+      nay: nay,
+      active: true,
+      save: false,
+      nayReview: "",
+      yayReview: "",
+      time: new Date(),
     };
 
     //create chat in chats

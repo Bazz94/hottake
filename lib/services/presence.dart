@@ -14,10 +14,10 @@ class PresenceService {
       print('////Go online');
       isOnline = true;
       await presenceRef.child("$chatID/$uid").set({
-        'active': "true"
+        'active': true,
       });
       await presenceRef.child("$chatID/$uid").onDisconnect().set({
-        'active': "false"
+        'active': false
       });
     }
   }
@@ -25,7 +25,7 @@ class PresenceService {
   goOffline(String? chatID) async {
     if (isOnline == true) {
       await presenceRef.child("$chatID/$uid").set({
-        'active': "false"
+        'active': false
       });
       isOnline = false;
       print("////Go offline");
@@ -40,7 +40,7 @@ class PresenceService {
   bool? _snapToBool(DatabaseEvent event){
     dynamic value = event.snapshot.value;
     if (value != null) {
-      return value == "true" ? true : false;
+      return value;
     }
     return null;
   }

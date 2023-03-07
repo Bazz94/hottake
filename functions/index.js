@@ -44,8 +44,8 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
     }
 
     var data = {
-      save: "false",
-      active: "true",
+      save: false,
+      active: true,
       nay: nay,
       yay: yay,
       topic: topic,
@@ -76,7 +76,7 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
 exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   const newValue = change.after.val();
-  if (newValue == "false") {
+  if (newValue == false) {
     const database = admin.database();
     const chatID = context.params.chatID;
     var usersID = context.params.uid;
@@ -96,8 +96,8 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
 
       //get opponent active value
       const snap = await database.ref('/presence/' + chatID + '/' + opponentUserID + '/active').get();
-      const v = snap.val();
-      if (v == "true") {
+      const value = snap.val();
+      if (value == true) {
         opponentActive = true;
       } else {
         opponentActive = false;
@@ -112,7 +112,7 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
       const chatSnap = await chatsDocRef.get();
       const save = chatSnap.data().save;
-      if (save == 'false') {
+      if (save == false) {
         const path = chatsDocRef.path;
         functions.logger.log('path to delete: ', path);
         await admin.firestore().recursiveDelete(chatsDocRef);

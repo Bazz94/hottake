@@ -21,14 +21,14 @@ class AuthService{
   }
 
   //Change FirebaseUser to a LocalUser
-  LocalUser? getLocalUserFromFirebaseUser(User? user,{String? username,int? toxicity,int? impact}){
+  LocalUser? getLocalUserFromFirebaseUser(User? user,{String? username,int? reputation}){
     if (user != null) {
       return LocalUser(
         uid: user.uid,
         username: username,
         email: user.email.toString(),
-        reputation: toxicity,
-        impact:impact,
+        reputation: reputation,
+      
     );
     } else {
       return null;

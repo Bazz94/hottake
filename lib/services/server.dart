@@ -12,7 +12,6 @@ class ServerService{
 
     Map dataToSend = {
       'reputation': Globals.localUser!.reputation,
-      'impact': Globals.localUser!.impact,
       'topic' : Globals.topic!.title,
       'stance': Globals.stance,
     };

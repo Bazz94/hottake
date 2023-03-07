@@ -40,7 +40,6 @@ class _HomeState extends State<Home> {
         Globals.localUser = LocalUser(uid: Globals.localUser!.uid,
           username: data['username'],
           reputation: data['reputation'],
-          impact: data['impact']
         );
         setState(() => titleUsername = Text(data['username'],style: const TextStyle(color: Colors.white,fontSize: 32),));
       }

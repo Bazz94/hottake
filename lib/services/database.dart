@@ -2,7 +2,6 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:hottake/models/data.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hottake/services/auth.dart';
-import 'package:hottake/services/presence.dart';
 
 class DatabaseService {
   late String? uid = AuthService().getUid;
@@ -14,11 +13,11 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
 
   //updates to firestore and will create if there is no doc
-  Future updateUserData(String username, int reputation, int impact) async {
+  Future updateUserData(String username, int reputation, int reports) async {
     return await _usersCollection.doc(uid).set({
       'username': username,
       'reputation': reputation,
-      'impact': impact,
+      'reports': reports,
     });
   }
 
@@ -123,14 +122,14 @@ class DatabaseService {
       bool active;
       if (Globals.stance == 'yay') {
         yay = Globals.localUser!;
-        nay = await idToLocalUser(data['nay']);
+        nay = await uidToLocalUser(data['nay']);
         Globals.opponentUser = nay;
       } else {
-        yay = await idToLocalUser(data['yay']);
+        yay = await uidToLocalUser(data['yay']);
         Globals.opponentUser = yay;
         nay = Globals.localUser!;
       }
-      active = data['active'] == "true" ? true : false;
+      active = data['active'];
       return Chat(
         chatID: Globals.chatID!,
         topic: Globals.topic!,
@@ -142,20 +141,22 @@ class DatabaseService {
     return null;
   }
 
-  Future<LocalUser?> idToLocalUser(String? id) async {
+  Future<LocalUser?> uidToLocalUser(String? id) async {
     String? username;
+    int? reputation;
     if (id != null && id != "null") {
       await _usersCollection.doc(id).get().then((doc) {
         print("////opponent: ${doc.data()}");
         final data = doc.data() as Map<String, dynamic>;
         username = data['username'];
+        reputation = data['reputation'];
       });
-      return LocalUser(uid: id, username: username!);
+      return LocalUser(uid: id, username: username!, reputation: reputation!);
     }
     return null;
   }
 
   void endChat() {
-    _chatsCollection.doc(Globals.chatID).update({"active": "false"});
+    _chatsCollection.doc(Globals.chatID).update({"active": false});
   }
 }

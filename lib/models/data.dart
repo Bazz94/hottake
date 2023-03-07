@@ -16,14 +16,12 @@ class LocalUser {
   final String uid;
   String? username;
   final String? email;
-  int? reputation;                 //Value out of 10
-  int? impact;                   //amount of minds changed
+  int? reputation;                 //Value out of 10                 //amount of minds changed
   LocalUser({
       required this.uid,
       this.username,
       this.email,
       this.reputation,
-      this.impact,
   });
 }
 

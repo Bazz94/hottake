@@ -49,6 +49,7 @@ class _ChatState extends State<ChatScreen> {
     Globals.stance = null;
     Globals.topic = null;
     Globals.opponentUser = null;
+    messages.clear();
     super.dispose();
   }
 
@@ -155,68 +156,25 @@ class _ChatState extends State<ChatScreen> {
                     title: Text(
                         opponentUsername == null ? "none" : opponentUsername!),
                     actions: [
-                      PopupMenuButton<dropDownItems>(
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
-                        color: Colors.deepPurple,
-                        padding: const EdgeInsets.all(1),
-                        initialValue: dropDownItem,
-                        onSelected: (dropDownItems item) {
-                          //dropDownItem = item;
-                          if (item == dropDownItems.leave) {
-                            setState(() {
-                              database.endChat();
-                              database.sendMessage(
-                                Globals.chatID,
-                                "${Globals.localUser!.username} has ended the chat",
-                                LocalUser(uid: "admin"),
-                              );
-                            });
-                          }
-                          if (item == dropDownItems.report) {
-                            setState(() {
-                              phase = Phase.post;
-                              print("//// reported pressed");
-                              messages.add(ChatMessage(
-                                  content:
-                                      "${Globals.localUser!.username} has ended the chat",
-                                  owner: "admin",
-                                  time: DateTime.now()));
-                              messages.add(ChatMessage(
-                                  content:
-                                      "    ${Globals.opponentUser!.username} has been reported    ",
-                                  owner: "admin",
-                                  time: DateTime.now()));
-                              database.endChat();
-                              submittedReport = true;
-                              database.sendMessage(
-                                Globals.chatID,
-                                "${Globals.localUser!.username} has ended the chat",
-                                LocalUser(uid: "admin"),
-                              );
-                            });
-                          }
+                      TextButton(
+                        onPressed: () {
+                          //End chat
+                          setState(() {
+                            database.endChat();
+                            database.sendMessage(
+                              Globals.chatID,
+                              "${Globals.localUser!.username} has ended the chat",
+                              LocalUser(uid: "admin"),
+                            );
+                          });
                         },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<dropDownItems>>[
-                          PopupMenuItem<dropDownItems>(
-                            enabled: submittedReport == true ? false : true,
-                            value: dropDownItems.report,
-                            textStyle: const TextStyle(
-                              color: Color.fromARGB(255, 255, 104, 104),
-                              fontSize: 15,
-                            ),
-                            child: const Text('Report'),
+                        child: const Text(
+                          'End',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
                           ),
-                          PopupMenuItem<dropDownItems>(
-                            enabled: phase == Phase.debate ? true : false,
-                            value: dropDownItems.leave,
-                            textStyle: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                            child: const Text('End chat'),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                     leading: IconButton(
@@ -327,6 +285,7 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () {
                       // Start Searching for new opponent
+
                     },
                     child: const Center(
                       child: Text("Next",
@@ -355,6 +314,7 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () {
                       //
+                      database.sendReview("good");
                       setState(() {
                         messages.add(ChatMessage(
                             content: "    Good    ",
@@ -383,6 +343,7 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () {
                       //
+                      database.sendReview("bad");
                       setState(() {
                         messages.add(ChatMessage(
                             content: "    Bad    ",

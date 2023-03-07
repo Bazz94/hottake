@@ -159,4 +159,12 @@ class DatabaseService {
   void endChat() {
     _chatsCollection.doc(Globals.chatID).update({"active": false});
   }
+
+  void sendReview(String? review) {
+    if (Globals.stance == "nay") {
+      _chatsCollection.doc(Globals.chatID).update({"nayReview": review});
+    } else {
+      _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
+    }
+  } 
 }

@@ -70,6 +70,8 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             color: Colors.deepPurple,
           ),
+          primaryColor: Colors.deepPurple,
+          primaryColorLight: Colors.deepPurpleAccent,
           scaffoldBackgroundColor: Colors.grey[850],
           fontFamily: 'LeagueSpartan',
         ),

@@ -29,7 +29,7 @@ class _ChatState extends State<ChatScreen> {
   PresenceService presence = PresenceService(uid: Globals.localUser!.uid);
   bool opponentOffline = false;
   bool submittedReport = false; //flag used to stop user from deleting chat
-  bool post_message_sent_once = false;
+  bool postMessageSentOnce = false;
   dropDownItems? dropDownItem;
 
   @override
@@ -128,9 +128,9 @@ class _ChatState extends State<ChatScreen> {
     //Review
     if (phase == Phase.review) {
       //ask user to review opponent
-      if (post_message_sent_once == false) {
+      if (postMessageSentOnce == false) {
         setState(() {
-          post_message_sent_once = true;
+          postMessageSentOnce = true;
           messages.add(ChatMessage(
               content: "    How was your interaction?    ",
               owner: "admin",
@@ -153,10 +153,30 @@ class _ChatState extends State<ChatScreen> {
               child: Scaffold(
                   appBar: AppBar(
                     centerTitle: true,
-                    title: Text(
-                        opponentUsername == null ? "none" : opponentUsername!),
-                    actions: [
-                      TextButton(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                            opponentUsername == null ? "none" : opponentUsername!),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: getReputationColour(Globals.opponentUser!.reputation!),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    actions: [ 
+                      phase != Phase.debate ? Container() : 
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                              ),
                         onPressed: () {
                           //End chat
                           setState(() {
@@ -257,6 +277,24 @@ class _ChatState extends State<ChatScreen> {
     );
   }
 
+//goes from 0 (red) to 100 (green)
+  Color getReputationColour(int rep) {
+    const a = 255;
+    var r = 255; //init
+    var g = 255; //init
+    const b = 0;
+    
+    if (rep < 50) {
+      g = (rep * 255/50).round();
+    } else {
+      rep = rep - 50;
+      rep = rep * -1 + 50;
+      r = (rep * 255 / 50).round();
+    }
+
+    return Color.fromARGB(a, r, g, b); 
+  }
+
   Widget bottomInteractions(Phase phase) {
     if (phase == Phase.debate) {
       return bottomTextBar();
@@ -339,7 +377,7 @@ class _ChatState extends State<ChatScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(1, 2, 2, 2),
               child: Card(
-                  color: Colors.red,
+                  color: Colors.redAccent,
                   child: InkWell(
                     onTap: () {
                       //

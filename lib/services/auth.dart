@@ -47,7 +47,7 @@ class AuthService{
       UserCredential? result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       _user = result.user;
       //create a new doc in firestore users
-      await DatabaseService(uid: _user!.uid).updateUserData(username, 50, 0); //default values for a new register
+      await DatabaseService(uid: _user!.uid).updateUserData(username, 50); //default values for a new register
       return _user;
     } catch(e) {
         print(e.toString());
@@ -86,7 +86,7 @@ class AuthService{
         _user = userCredential.user;
         if (userCredential.additionalUserInfo!.isNewUser) {
           //Create new user in database
-          await DatabaseService(uid: _user!.uid).updateUserData('temp', 50, 0);
+          await DatabaseService(uid: _user!.uid).updateUserData('temp', 50);
           return _user;
         } else {
           return _user;

@@ -75,14 +75,14 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 });
 
 
-
+//fuction fires when a user active value has changed
 exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   const newValue = change.after.val();
-  if (newValue == false) {
+  if (newValue == false) {//user has gone offline
     const database = admin.database();
     const chatID = context.params.chatID;
     var usersID = context.params.uid;
-    var opponentActive; //also used to see if there is an opponent or not
+    var opponentActive; //set to false if there is no opponent
     var opponentUserID;
 
     //get opponent chatID
@@ -111,10 +111,14 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
     //delete chat
     functions.logger.log('active: ', opponentActive);
     if (opponentActive == false) {
+      //updating user ratings 
       const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
       const chatSnap = await chatsDocRef.get();
-      const save = chatSnap.data().save;
-      if (save == false) {
+      const chat = chatSnap.data();
+      await updateReputation(chat.nay, chat.yayReview);
+      await updateReputation(chat.yay, chat.nayReview);
+      //delete chat from firestore
+      if (chat.save == false) {
         const path = chatsDocRef.path;
         functions.logger.log('path to delete: ', path);
         await admin.firestore().recursiveDelete(chatsDocRef);
@@ -126,3 +130,25 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
   }
   return true;
 });
+
+
+async function updateReputation(uid, review) {
+  if (review != "") {//no review was given so no update occures
+    userRef = admin.firestore().collection("users").doc(uid);
+    const userSnap = await userRef.get();
+    var reputation = userSnap.data().reputation;
+    if (review == "good") {
+      reputation = reputation + 5;
+      if (reputation > 100) {//max is 100
+        reputation = 100;
+      }
+    }
+    if (review == "bad") {
+      reputation = reputation - 5;
+      if (reputation < 0) {//min is 0
+        reputation = 0;
+      }
+    }
+    await userRef.update({ "reputation": reputation });
+  }
+}

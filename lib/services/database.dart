@@ -13,11 +13,10 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
 
   //updates to firestore and will create if there is no doc
-  Future updateUserData(String username, int reputation, int reports) async {
+  Future updateUserData(String username, int reputation) async {
     return await _usersCollection.doc(uid).set({
       'username': username,
       'reputation': reputation,
-      'reports': reports,
     });
   }
 

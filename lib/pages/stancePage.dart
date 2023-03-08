@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hottake/models/data.dart';
-import 'package:provider/provider.dart';
-import 'package:hottake/services/database.dart';
-import "package:cloud_firestore/cloud_firestore.dart";
-import 'package:hottake/models/data.dart';
 
 
 class StancePage extends StatefulWidget {
@@ -66,7 +62,7 @@ class _StancePageState extends State<StancePage> {
                     forFontSize -= 0.3;
                     if (draggedFarEnough) {
                       againstFontSize = 100;
-                      stanceColor = Colors.red[300];
+                      stanceColor = Colors.redAccent;
                       Globals.stance = 'nay';
                       Navigator.pushNamed(context, '/stancePage/chat');
                     }

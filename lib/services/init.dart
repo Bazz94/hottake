@@ -4,7 +4,6 @@ import 'package:hottake/models/data.dart';
 import 'package:provider/provider.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/login.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hottake/services/database.dart';
 
 class Init extends StatefulWidget {
@@ -23,18 +22,21 @@ class _Init extends State<Init> {
     String? uid;
     if (user != null) {
       uid = user.uid;
+      bool changed = false;
+      if (user != Globals.localUser) {
+        changed = true;
+      }
       print('//// current uid: $uid');
       Globals.localUser = user;
+      DatabaseService database = DatabaseService(uid: uid);
+      database.getReputation.then((reputation) {
+        if (reputation != null && changed == true) {
+          Globals.localUser!.reputation = reputation;
+          print("//// reputation: $reputation");
+        }
+      });
     }
 
-    return MultiProvider(
-        providers: [
-          StreamProvider<DocumentSnapshot?>.value(
-            value: DatabaseService(uid: uid).users,
-            initialData: null,
-          ),
-        ],
-        child:  user == null ? Login() : Home(),
-    );
+    return user == null ? Login() : Home();
   }
 }

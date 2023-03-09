@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => Home(),
           '/settings': (context) => SettingsScreen(),
           '/stance': (context) => StancePage(),
-          '/stancePage/chat': (context) => ChatInit(),
+          '/stance/chat': (context) => ChatInit(),
         },
       ),
     );

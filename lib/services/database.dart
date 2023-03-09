@@ -5,7 +5,6 @@ import 'package:hottake/services/auth.dart';
 
 class DatabaseService {
   late String? uid = AuthService().getUid;
-  static int key = 1;
   DatabaseService({this.uid});
 
   //Get user collection
@@ -13,18 +12,18 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('users');
 
   //updates to firestore and will create if there is no doc
-  Future updateUserData(String username, int reputation) async {
+  Future updateUserData(int reputation) async {
     return await _usersCollection.doc(uid).set({
-      'username': username,
       'reputation': reputation,
     });
   }
 
-  //Get users stream
-  Stream<DocumentSnapshot?> get users {
-    return _usersCollection.doc(uid).snapshots();
+  
+  Future<int?> get getReputation async {
+    DocumentSnapshot doc = await _usersCollection.doc(uid).get();
+      final data = doc.data() as Map<String, dynamic>;
+      return data['reputation'];
   }
-
 
   //Get topics collection
   static final CollectionReference _topicsCollection =

@@ -10,10 +10,9 @@ class AuthService{
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
   static User? _user = _auth.currentUser;
 
-
   String? get getUid {
     if (_user != null) {
-      String? uid = _user!.uid.toString();
+      String? uid = _user!.uid;
       return uid;
     } else {
       return null;
@@ -21,14 +20,12 @@ class AuthService{
   }
 
   //Change FirebaseUser to a LocalUser
-  LocalUser? getLocalUserFromFirebaseUser(User? user,{String? username,int? reputation}){
+  LocalUser? getLocalUserFromFirebaseUser(User? user){
     if (user != null) {
       return LocalUser(
         uid: user.uid,
-        username: username,
-        email: user.email.toString(),
-        reputation: reputation,
-      
+        username: user.displayName,
+        email: user.email,
     );
     } else {
       return null;
@@ -46,8 +43,10 @@ class AuthService{
     try {
       UserCredential? result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       _user = result.user;
+      await _user!.updateDisplayName(username);
+      
       //create a new doc in firestore users
-      await DatabaseService(uid: _user!.uid).updateUserData(username, 50); //default values for a new register
+      await DatabaseService(uid: _user!.uid).updateUserData(50); //default values
       return _user;
     } catch(e) {
         print(e.toString());
@@ -86,13 +85,13 @@ class AuthService{
         _user = userCredential.user;
         if (userCredential.additionalUserInfo!.isNewUser) {
           //Create new user in database
-          await DatabaseService(uid: _user!.uid).updateUserData('temp', 50);
+          await DatabaseService(uid: _user!.uid).updateUserData(50);
           return _user;
         } else {
           return _user;
         }
       } catch (e) {
-        print(e.toString());
+        print("//// Error googleSignIn: ${e.toString()}");
         return null;
       }
     } else {

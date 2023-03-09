@@ -75,8 +75,7 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
 exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   //function fires when a users active value has changed
-  const newValue = change.after.val();
-  if (newValue == false) {//user has gone offline
+  if (change.after.val() == false) {//user has gone offline
     const database = admin.database();
     const chatID = context.params.chatID;
     const usersID = context.params.uid;
@@ -86,7 +85,6 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
     //get opponent chatID
     const snapChat = await database.ref('/presence/' + chatID).get();
     const numChildren = snapChat.numChildren();
-    functions.logger.log('num children: ', numChildren);
     if (numChildren == 2) {
       snapChat.forEach((value) => {
         if (value.key != usersID) {
@@ -107,7 +105,6 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       opponentActive = false;
     } 
     //delete chat
-    functions.logger.log('active: ', opponentActive);
     if (opponentActive == false) {
       //updating user ratings 
       const chatsDocRef = admin.firestore().collection("chats").doc(chatID);
@@ -117,15 +114,13 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       await updateReputation(chat.yay, chat.nayReview);
       //delete chat from firestore
       if (chat.save == false) {
-        const path = chatsDocRef.path;
-        functions.logger.log('path to delete: ', path);
         await admin.firestore().recursiveDelete(chatsDocRef);
       }
       //delete chat from realtime  database
       await database.ref('/presence/' + chatID).remove().then(() => {
-        functions.logger.log('//// delete successful');
+        functions.logger.log('//// ',chatsDocRef.path,' delete successful');
       }).catch((error) => {
-        functions.logger.log('//// delete unsuccessful: ', error);
+        functions.logger.log('//// ',chatsDocRef.path,' delete unsuccessful: ', error);
       });
     }
   }

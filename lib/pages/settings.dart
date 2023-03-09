@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
 
+import '../models/data.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -17,12 +19,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isLoading = false;
 
   late TextEditingController _controllerUsername;
+  late TextEditingController _controllerEmail;
   bool usernameEditable = false;
 
   @override
   void initState() {
     super.initState();
-    _controllerUsername = TextEditingController(text: 'Cakemix7');
+    _controllerUsername = Globals.localUser!.username == null 
+      ? TextEditingController(text: 'placeholder')
+      : TextEditingController(text: Globals.localUser!.username);
+    _controllerEmail = Globals.localUser!.email == null
+        ? TextEditingController(text: 'placeholder')
+        : TextEditingController(text: Globals.localUser!.email);
   }
 
   void _editUsername() {
@@ -33,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true ? Loading() : Scaffold(
+    return isLoading == true ? const Loading() : Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -48,49 +56,113 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Container(
                   height: 10,
                 ),
-                Row(
-                  //Row 1
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          enabled: usernameEditable,
-                          controller: _controllerUsername,
-                          style: const TextStyle(color: Colors.white),
-                          cursorColor: Colors.deepPurpleAccent,
-                          decoration: const InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.deepPurple),
+                //Username
+                Expanded(
+                  flex: 1,
+                  child: Row(
+                    //Row 1
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            enabled: usernameEditable,
+                            controller: _controllerUsername,
+                            style: const TextStyle(color: Colors.white),
+                            cursorColor: Colors.deepPurpleAccent,
+                            decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.deepPurple),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.deepPurpleAccent),
+                              ),
+                              labelText: 'Username',
+                              labelStyle:
+                                  TextStyle(color: Colors.deepPurpleAccent),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.deepPurpleAccent),
-                            ),
-                            labelText: 'Username',
-                            labelStyle:
-                                TextStyle(color: Colors.deepPurpleAccent),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: IconButton(
-                          icon: usernameEditable
-                              ? const Icon(Icons.check_outlined)
-                              : const Icon(Icons.create),
-                          color: Colors.white,
-                          onPressed: _editUsername,
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: IconButton(
+                            icon: usernameEditable
+                                ? const Icon(Icons.check_outlined)
+                                : const Icon(Icons.create),
+                            color: Colors.white,
+                            onPressed: _editUsername,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                // Email
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      enabled: false,
+                      controller: _controllerEmail,
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.deepPurpleAccent,
+                      decoration: const InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.deepPurple),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.deepPurpleAccent),
+                        ),
+                        labelText: 'Email',
+                        labelStyle:
+                            TextStyle(color: Colors.deepPurpleAccent),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      color: Colors.grey[850],
+                      surfaceTintColor: Colors.deepPurpleAccent,
+                      child: Row(
+                        children: [
+                          const Text(
+                            "Reputation: ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      color: Globals.getReputationColour(
+                                          Globals.localUser!.reputation!),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                //log out button
                 Container(
                   height: 50,
                 ),
@@ -117,6 +189,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
+                Expanded(
+                  flex: 5,
+                  child: Container())
               ],
             )),
       ),

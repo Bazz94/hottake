@@ -54,7 +54,7 @@ class _StancePageState extends State<StancePage> {
                       forFontSize = 100;
                       stanceColor = Colors.blue[300];
                       Globals.stance = 'yay';
-                      Navigator.pushNamed(context, '/stancePage/chat');
+                      Navigator.pushNamed(context, '/stance/chat');
                     }
                   }
                   if (directionDown) {
@@ -64,7 +64,7 @@ class _StancePageState extends State<StancePage> {
                       againstFontSize = 100;
                       stanceColor = Colors.redAccent;
                       Globals.stance = 'nay';
-                      Navigator.pushNamed(context, '/stancePage/chat');
+                      Navigator.pushNamed(context, '/stance/chat');
                     }
                   }
                 });

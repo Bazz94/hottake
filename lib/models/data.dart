@@ -6,6 +6,24 @@ class Globals{
   static Topic? topic;
   static String? stance;
   static String? chatID;
+
+  static Color getReputationColour(int rep) {
+    //goes from 0 (red) to 100 (green)
+    const a = 255;
+    var r = 255; //init
+    var g = 255; //init
+    const b = 0;
+
+    if (rep < 50) {
+      g = (rep * 255 / 50).round();
+    } else {
+      rep = rep - 50;
+      rep = rep * -1 + 50;
+      r = (rep * 255 / 50).round();
+    }
+
+    return Color.fromARGB(a, r, g, b);
+  }
 }
 
 enum Owner{
@@ -16,7 +34,7 @@ class LocalUser {
   final String uid;
   String? username;
   final String? email;
-  int? reputation;                 //Value out of 10                 //amount of minds changed
+  int? reputation;             
   LocalUser({
       required this.uid,
       this.username,

@@ -17,7 +17,8 @@ class PresenceService {
         'active': true,
       });
       await presenceRef.child("$chatID/$uid").onDisconnect().set({
-        'active': false
+        'active': false,
+        'onDisconnect': true
       });
     }
   }
@@ -27,6 +28,7 @@ class PresenceService {
       await presenceRef.child("$chatID/$uid").set({
         'active': false
       });
+      await presenceRef.child("$chatID/$uid").onDisconnect().cancel();
       isOnline = false;
       print("////Go offline");
     }

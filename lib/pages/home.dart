@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/pages/loading.dart';
-import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/models/data.dart';
-
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,10 +11,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
-  Text titleUsername = const Text('Hottake');
+  Text title = const Text('Hottake');
   late Future<List<Widget>> _loaded;
   TextStyle myStyle = const TextStyle(fontSize: 24, color: Colors.white);
+  DatabaseService database = DatabaseService(uid: Globals.localUser!.uid);
 
   @override
   void initState() {
@@ -33,58 +30,46 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    final doc = Provider.of<DocumentSnapshot?>(context);
-    if (doc != null) {
-      if (doc.data() != null){
-        final data = doc.data() as Map<String, dynamic>;
-        Globals.localUser = LocalUser(uid: Globals.localUser!.uid,
-          username: data['username'],
-          reputation: data['reputation'],
-        );
-        setState(() => titleUsername = Text(data['username'],style: const TextStyle(color: Colors.white,fontSize: 32),));
-      }
-    }
-
     return WillPopScope(
-      onWillPop: _onWillPop,
-      child: FutureBuilder<List<Widget>>(
-          future: _loaded,
-          builder: (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
-            List<Widget> children = <Widget>[];
-            if (listTopics.hasData) {
-              children = listTopics.data!;
-              return Scaffold(
-                  appBar: AppBar(
-                    // Here we take the value from the MyHomePage object that was created by
-                    // the App.build method, and use it to set our appbar title.
-                    centerTitle: true,
-                    title: titleUsername,
-                    leading: IconButton(
-                      icon: const Icon(Icons.settings),
-                      tooltip: 'Navigation menu',
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/settings');
-                      },
+        onWillPop: _onWillPop,
+        child: FutureBuilder<List<Widget>>(
+            future: _loaded,
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
+              List<Widget> children = <Widget>[];
+              if (listTopics.hasData) {
+                children = listTopics.data!;
+                return Scaffold(
+                    appBar: AppBar(
+                      // Here we take the value from the MyHomePage object that was created by
+                      // the App.build method, and use it to set our appbar title.
+                      centerTitle: true,
+                      title: title,
+                      //leading:
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          tooltip: 'Navigation menu',
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/settings');
+                          },
+                        ),
+                      ],
                     ),
-                  ),
-                  body: SingleChildScrollView(
-                    child: Center(
-                      child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: children,
-                          )
+                    body: SingleChildScrollView(
+                      child: Center(
+                        child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: children,
+                            )),
                       ),
-                    ),
-                  )
-              );
-            } else {
-              return const Loading();
-            }
-          }
-      )
-    );
+                    ));
+              } else {
+                return const Loading();
+              }
+            }));
   }
 
   Future<List<Widget>> _load() async {
@@ -120,7 +105,7 @@ class _HomeState extends State<Home> {
             child: InkWell(
               onTap: () {
                 Globals.topic = t;
-                Navigator.pushNamed(context, '/stancePage');
+                Navigator.pushNamed(context, '/stance');
               },
               child: Row(
                 children: [
@@ -169,4 +154,3 @@ class _HomeState extends State<Home> {
     return Future.value(true);
   }
 }
-

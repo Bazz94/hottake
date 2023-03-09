@@ -191,24 +191,6 @@ class _ChatState extends State<ChatScreen> {
 
   //// Utility functions
 
-  Color getReputationColour(int rep) {
-    //goes from 0 (red) to 100 (green)
-    const a = 255;
-    var r = 255; //init
-    var g = 255; //init
-    const b = 0;
-
-    if (rep < 50) {
-      g = (rep * 255 / 50).round();
-    } else {
-      rep = rep - 50;
-      rep = rep * -1 + 50;
-      r = (rep * 255 / 50).round();
-    }
-
-    return Color.fromARGB(a, r, g, b);
-  }
-
   Widget bottomInteractions(Phase phase) {
     if (phase == Phase.debate) {
       return bottomTextBar();
@@ -261,7 +243,7 @@ class _ChatState extends State<ChatScreen> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: getReputationColour(Globals.opponentUser!.reputation!),
+              color: Globals.getReputationColour(Globals.opponentUser!.reputation!),
               shape: BoxShape.circle,
             ),
           ),

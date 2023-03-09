@@ -206,7 +206,7 @@ class _SignupState extends State<Signup> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.deepPurple,
+                      backgroundColor: Colors.deepPurple,
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () async {

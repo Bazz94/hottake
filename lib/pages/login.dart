@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hottake/services/auth.dart';
@@ -152,7 +151,7 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.deepPurple,
+                      backgroundColor: Colors.deepPurple,
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () async {
@@ -174,7 +173,7 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
+                      backgroundColor: Colors.white,
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () {
@@ -193,7 +192,7 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(8.0),
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      primary: Colors.deepPurple,
+                      backgroundColor: Colors.deepPurple,
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () async {

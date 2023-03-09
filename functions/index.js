@@ -1,11 +1,8 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const Firestore = require('@google-cloud/firestore');
-const { database } = require("firebase-admin");
+
 admin.initializeApp();
-const firestore = new Firestore({
-  projectId: process.env.GOOGLE_CLOUD_PROJECT,
-});
+
 
 // looks for opponent, found -> join chat, else => create chat
 exports.requestChat = functions.https.onCall(async (data, context) => {

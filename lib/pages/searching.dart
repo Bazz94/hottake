@@ -2,12 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/pages/home.dart';
-import 'package:provider/provider.dart';
-
-import '../models/data.dart';
-import '../services/database.dart';
-import '../services/server.dart';
-
 
 class Searching extends StatefulWidget {
   const Searching({Key? key}) : super(key: key);
@@ -44,9 +38,9 @@ class _SearchingState extends State<Searching> {
         difference = difference/60;
         mins = difference.floor();
         if (secs > 9) {
-          timeCounter = mins.toString()+":"+secs.toString();
+          timeCounter = "$mins:$secs";
         } else {
-          timeCounter = mins.toString()+":0"+secs.toString();
+          timeCounter = "$mins:0$secs";
         }
       });
     });

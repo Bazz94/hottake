@@ -16,7 +16,7 @@ class ChatScreen extends StatefulWidget {
 
 enum Phase { searching, debate, review, post }
 
-enum dropDownItems { report, leave }
+enum DropDownItems { report, leave }
 
 class _ChatState extends State<ChatScreen> {
   List<ChatMessage> messages = [];
@@ -30,7 +30,7 @@ class _ChatState extends State<ChatScreen> {
   bool opponentOffline = false;
   bool submittedReport = false; //flag used to stop user from deleting chat
   bool postMessageSentOnce = false;
-  dropDownItems? dropDownItem;
+  DropDownItems? dropDownItem;
 
   @override
   void initState() {
@@ -58,6 +58,7 @@ class _ChatState extends State<ChatScreen> {
     //Searching
     if (phase == Phase.searching) {
       print("////chatID: ${Globals.chatID}");
+
       if (Globals.chatID != null) {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
         chatFuture.then((chat) {
@@ -84,9 +85,9 @@ class _ChatState extends State<ChatScreen> {
     //Debating
     if (phase == Phase.debate) {
       if (Globals.opponentUser != null) {
-        //
         final opponentActive = Provider.of<bool?>(context);
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
+
         chatFuture.then((chat) {
           if (chat != null) {
             if (chat.active == false) {
@@ -96,6 +97,7 @@ class _ChatState extends State<ChatScreen> {
             }
           }
         });
+
         if (opponentActive != null) {
           print("//// Opponent active: $opponentActive");
           if (opponentActive == false) {
@@ -117,6 +119,7 @@ class _ChatState extends State<ChatScreen> {
           }
         }
       }
+
       final chatList = Provider.of<List<ChatMessage>?>(context);
       if (chatList != null) {
         setState(() {
@@ -140,11 +143,8 @@ class _ChatState extends State<ChatScreen> {
     }
 
     //Post
-    if (phase == Phase.post) {
-      //print("//// post data: ${messages.length}");
-    }
-    print("//// post data: ${messages.length}");
-    print('//// phase: $phase');
+    if (phase == Phase.post) {}
+
     return phase == Phase.searching
         ? const Searching()
         : WillPopScope(
@@ -153,49 +153,9 @@ class _ChatState extends State<ChatScreen> {
               child: Scaffold(
                   appBar: AppBar(
                     centerTitle: true,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                            opponentUsername == null ? "none" : opponentUsername!),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: getReputationColour(Globals.opponentUser!.reputation!),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    actions: [ 
-                      phase != Phase.debate ? Container() : 
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.redAccent,
-                              ),
-                        onPressed: () {
-                          //End chat
-                          setState(() {
-                            database.endChat();
-                            database.sendMessage(
-                              Globals.chatID,
-                              "${Globals.localUser!.username} has ended the chat",
-                              LocalUser(uid: "admin"),
-                            );
-                          });
-                        },
-                        child: const Text(
-                          'End',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                    title: titleWidget(),
+                    actions: [
+                      phase != Phase.debate ? Container() : endButton(),
                     ],
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
@@ -227,7 +187,87 @@ class _ChatState extends State<ChatScreen> {
                   )),
             ),
           );
-    //);
+  }
+
+  //// Utility functions
+
+  Color getReputationColour(int rep) {
+    //goes from 0 (red) to 100 (green)
+    const a = 255;
+    var r = 255; //init
+    var g = 255; //init
+    const b = 0;
+
+    if (rep < 50) {
+      g = (rep * 255 / 50).round();
+    } else {
+      rep = rep - 50;
+      rep = rep * -1 + 50;
+      r = (rep * 255 / 50).round();
+    }
+
+    return Color.fromARGB(a, r, g, b);
+  }
+
+  Widget bottomInteractions(Phase phase) {
+    if (phase == Phase.debate) {
+      return bottomTextBar();
+    }
+    if (phase == Phase.review) {
+      return reviewButtons();
+    }
+    if (phase == Phase.post) {
+      return nextButton();
+    }
+    return Container();
+  }
+
+  //// Widgets
+
+  Widget endButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.redAccent,
+      ),
+      onPressed: () {
+        //End chat
+        setState(() {
+          database.endChat();
+          database.sendMessage(
+            Globals.chatID,
+            "${Globals.localUser!.username} has ended the chat",
+            LocalUser(uid: "admin"),
+          );
+        });
+      },
+      child: const Text(
+        'End',
+        style: TextStyle(
+          fontSize: 18,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  Widget titleWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(opponentUsername == null ? "none" : opponentUsername!),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: getReputationColour(Globals.opponentUser!.reputation!),
+              shape: BoxShape.circle,
+            ),
+          ),
+        )
+      ],
+    );
   }
 
   Widget feedWidget() {
@@ -277,37 +317,6 @@ class _ChatState extends State<ChatScreen> {
     );
   }
 
-//goes from 0 (red) to 100 (green)
-  Color getReputationColour(int rep) {
-    const a = 255;
-    var r = 255; //init
-    var g = 255; //init
-    const b = 0;
-    
-    if (rep < 50) {
-      g = (rep * 255/50).round();
-    } else {
-      rep = rep - 50;
-      rep = rep * -1 + 50;
-      r = (rep * 255 / 50).round();
-    }
-
-    return Color.fromARGB(a, r, g, b); 
-  }
-
-  Widget bottomInteractions(Phase phase) {
-    if (phase == Phase.debate) {
-      return bottomTextBar();
-    }
-    if (phase == Phase.review) {
-      return reviewButtons();
-    }
-    if (phase == Phase.post) {
-      return nextButton();
-    }
-    return Container();
-  }
-
   Widget nextButton() {
     return Row(
       children: [
@@ -323,7 +332,6 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () {
                       // Start Searching for new opponent
-
                     },
                     child: const Center(
                       child: Text("Next",

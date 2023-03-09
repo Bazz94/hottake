@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
 
-import '../services/init.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -99,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      primary: Colors.deepPurple,
+                      foregroundColor: Colors.deepPurple,
                       minimumSize: const Size.fromHeight(50),
                     ),
                     onPressed: () async {

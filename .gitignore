@@ -25,3 +25,4 @@ doc/api/
 # custom
 lib/shared/private.dart
 android/app/google-services.json
+.vscode

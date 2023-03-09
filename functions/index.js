@@ -12,26 +12,26 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
   // init
   const uid = context.auth.uid;
-  var found = false;
-  var stance = data.stance;
-  var topic = data.topic;
-  var chatsCollection = admin.firestore().collection("chats");
-  var yay;
-  var nay;
-  var chatID = "null";
-  var database = admin.database();
-  var chatsSnap = await chatsCollection.where(stance, "==", "null").orderBy("time").limit(100).get();
+  const stance = data.stance;
+  const topic = data.topic;
+  const chatsCollection = admin.firestore().collection("chats");
+  const chatsSnap = await chatsCollection.where(stance, "==", "null").orderBy("time").limit(100).get();
+  let yay;
+  let nay;
+  let chatID = "null";
+  let found = false;
+
   // has opponent been found
   if (!chatsSnap.empty) {
     // join Chat, return opponent
     found = true;
-    var chat = chatsSnap.docs.at(0);
+    const chat = chatsSnap.docs.at(0);
     chatID = chat.id;
     // update chat with user
     if (stance == "yay") {
-      chatsCollection.doc(chatID).update({ yay: uid });
+      await chatsCollection.doc(chatID).update({ yay: uid });
     } else {
-      chatsCollection.doc(chatID).update({ nay: uid });
+      await chatsCollection.doc(chatID).update({ nay: uid });
     }
   } else { //Opponent not found
     // create Chat
@@ -43,7 +43,7 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
       nay = uid;
     }
 
-    var data = {
+    const data = {
       topic: topic,
       yay: yay,
       nay: nay,
@@ -66,7 +66,7 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
   functions.logger.log("//// chatID: ", chatID);
 
-  response = {
+  const response = {
     found: found,
     chat: chatID,
   }
@@ -75,19 +75,20 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 });
 
 
-//fuction fires when a user active value has changed
+
 exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
+  //function fires when a users active value has changed
   const newValue = change.after.val();
   if (newValue == false) {//user has gone offline
     const database = admin.database();
     const chatID = context.params.chatID;
-    var usersID = context.params.uid;
-    var opponentActive; //set to false if there is no opponent
-    var opponentUserID;
+    const usersID = context.params.uid;
+    let opponentActive; //set to false if there is no opponent
+    let opponentUserID;
 
     //get opponent chatID
     const snapChat = await database.ref('/presence/' + chatID).get();
-    var numChildren = snapChat.numChildren();
+    const numChildren = snapChat.numChildren();
     functions.logger.log('num children: ', numChildren);
     if (numChildren == 2) {
       snapChat.forEach((value) => {
@@ -104,7 +105,7 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       } else {
         opponentActive = false;
       }
-    } else { //numChildren is equal to 1, the user has started seaching but left 
+    } else { //numChildren is equal to 1, the user has started searching but left 
             // before finding a match
       opponentActive = false;
     } 
@@ -123,9 +124,12 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
         functions.logger.log('path to delete: ', path);
         await admin.firestore().recursiveDelete(chatsDocRef);
       }
-      //delete chat from presence
-      await database.ref('/presence/' + chatID).remove();
-      return true;
+      //delete chat from realtime  database
+      await database.ref('/presence/' + chatID).remove().then(() => {
+        functions.logger.log('//// delete successful');
+      }).catch((error) => {
+        functions.logger.log('//// delete unsuccessful: ', error);
+      });
     }
   }
   return true;
@@ -133,10 +137,10 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
 
 
 async function updateReputation(uid, review) {
-  if (review != "") {//no review was given so no update occures
-    userRef = admin.firestore().collection("users").doc(uid);
+  if (review != "") {//no review was given so no update occurs
+    const userRef = admin.firestore().collection("users").doc(uid);
     const userSnap = await userRef.get();
-    var reputation = userSnap.data().reputation;
+    let reputation = userSnap.data().reputation;
     if (review == "good") {
       reputation = reputation + 5;
       if (reputation > 100) {//max is 100

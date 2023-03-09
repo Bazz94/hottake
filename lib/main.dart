@@ -10,7 +10,7 @@ import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/signup.dart';
 import 'package:hottake/pages/settings.dart';
 import 'package:hottake/widgets/chatInit.dart';
-import 'package:hottake/pages/stancePage.dart';
+import 'package:hottake/pages/stance.dart';
 import 'package:hottake/models/data.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
           '/signup': (context) => Signup(),
           '/home': (context) => Home(),
           '/settings': (context) => SettingsScreen(),
-          '/stancePage': (context) => StancePage(),
+          '/stance': (context) => StancePage(),
           '/stancePage/chat': (context) => ChatInit(),
         },
       ),

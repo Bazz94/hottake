@@ -31,9 +31,11 @@ class _ChatState extends State<ChatScreen> {
   bool submittedReport = false; //flag used to stop user from deleting chat
   bool postMessageSentOnce = false;
   DropDownItems? dropDownItem;
+  bool chatSearchOnce = false;
 
   @override
   void initState() {
+    print("//// init called");
     server.requestChat.then((value) {
       setState(() {});
     });
@@ -46,17 +48,22 @@ class _ChatState extends State<ChatScreen> {
     chatController.dispose();
     presence.goOffline(Globals.chatID);
     Globals.chatID = null;
-    Globals.stance = null;
-    Globals.topic = null;
     Globals.opponentUser = null;
     messages.clear();
+    print("//// dispose chat screen");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     //Searching
+
     if (phase == Phase.searching) {
+      if (chatSearchOnce == false) {
+         chatSearchOnce = true;
+         
+      }
+      
       print("////chatID: ${Globals.chatID}");
 
       if (Globals.chatID != null) {
@@ -313,7 +320,18 @@ class _ChatState extends State<ChatScreen> {
                   color: Colors.deepPurpleAccent,
                   child: InkWell(
                     onTap: () {
-                      // Start Searching for new opponent
+                      // // Start Searching for new opponent
+                      // presence.goOffline(Globals.chatID);
+                      // Globals.chatID = null;
+                      // Globals.opponentUser = null;
+                      // messages.clear();
+                      // chatController.clear();
+                      // chatSearchOnce = false;
+                      // setState(() {
+                      //   phase = Phase.searching;
+                      // });
+                      
+                      Navigator.pushNamed(context, '/stance/chat');
                     },
                     child: const Center(
                       child: Text("Next",

@@ -19,6 +19,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    print("//// Home init");
+    Globals.stance = null;
+    Globals.topic = null;
     _loaded = _load();
   }
 

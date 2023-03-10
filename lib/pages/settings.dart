@@ -20,21 +20,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   late TextEditingController _controllerUsername;
   late TextEditingController _controllerEmail;
-  bool usernameEditable = false;
+  late bool usernameEditable;
 
   @override
   void initState() {
     super.initState();
+    usernameEditable = false;
     _controllerUsername = Globals.localUser!.username == null 
       ? TextEditingController(text: 'placeholder')
       : TextEditingController(text: Globals.localUser!.username);
     _controllerEmail = Globals.localUser!.email == null
         ? TextEditingController(text: 'placeholder')
         : TextEditingController(text: Globals.localUser!.email);
+        print("//// Username: ${Globals.localUser!.username}");
   }
 
   void _editUsername() {
     setState(() {
+      print("//// flag 1 $usernameEditable");
+      print("//// flag 2: ${_controllerUsername.text}");
+      print("//// flag 3: ${Globals.localUser!.username}");
+      if(usernameEditable == true 
+       && Globals.localUser!.username != _controllerUsername.text) {
+        _auth.updateUsername(_controllerUsername.text);
+        print("//// Username changed");
+      }
       usernameEditable = !usernameEditable;
     });
   }
@@ -48,6 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
         title: const Text("Settings"),
       ),
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -111,4 +111,8 @@ class AuthService{
       print(e.toString());
     }
   }
+
+  Future updateUsername(String displayName) async {
+    return await _user!.updateDisplayName(displayName);
+  }
 }

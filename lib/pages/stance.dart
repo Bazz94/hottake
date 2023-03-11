@@ -18,12 +18,13 @@ class _StancePageState extends State<StancePage> {
 
   @override
   void dispose() {
-    super.dispose();
     print("//// dispose stance page");
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
           appBar: AppBar(
             centerTitle: true,

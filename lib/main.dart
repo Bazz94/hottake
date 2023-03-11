@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/auth.dart';
 import 'shared/private.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
           '/settings': (context) => SettingsScreen(),
           '/stance': (context) => StancePage(),
           '/stance/chat': (context) => ChatInit(),
+          '/loading':(context) => Loading(),
         },
       ),
     );

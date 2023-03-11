@@ -31,6 +31,8 @@ class _SearchingState extends State<Searching> {
 
   @override
   Widget build(BuildContext context) {
+
+
     timer = Timer(const Duration(seconds: 1),() async {
       setState(() {
         double difference = startTime.difference(DateTime.now()).inSeconds.abs().toDouble();
@@ -44,6 +46,8 @@ class _SearchingState extends State<Searching> {
         }
       });
     });
+
+
     return WillPopScope(
       onWillPop: () async {
         timer.cancel();

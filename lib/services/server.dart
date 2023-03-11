@@ -19,6 +19,7 @@ class ServerService{
       final result = await FirebaseFunctions.instance
           .httpsCallable('requestChat',options: HttpsCallableOptions(timeout: const Duration(seconds: 10)))
           .call(dataToSend);
+      
       Map? data = jsonToMap(json.encode(result.data));
       print('//// received from server: $data');
       if (data != null) {
@@ -27,7 +28,8 @@ class ServerService{
       }
     } on FirebaseFunctionsException catch (error) {
       String theError = error.toString();
-      print('//// error receiving data from server: ${theError.toString()}');
+      print('//// error receiving data from server: ');
+      print(theError.toString());
     }
     return null;
   }

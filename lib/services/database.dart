@@ -18,11 +18,10 @@ class DatabaseService {
     });
   }
 
-  
   Future<int?> get getReputation async {
     DocumentSnapshot doc = await _usersCollection.doc(uid).get();
-      final data = doc.data() as Map<String, dynamic>;
-      return data['reputation'];
+    final data = doc.data() as Map<String, dynamic>;
+    return data['reputation'];
   }
 
   //Get topics collection
@@ -65,7 +64,6 @@ class DatabaseService {
     return null;
   }
 
-
   //Get chats collection
   static final CollectionReference _chatsCollection =
       FirebaseFirestore.instance.collection('chats');
@@ -90,7 +88,8 @@ class DatabaseService {
         .collection("messages")
         .orderBy("time")
         .limit(100)
-        .snapshots().map(_snapToMessages);
+        .snapshots()
+        .map(_snapToMessages);
   }
 
   List<ChatMessage> _snapToMessages(QuerySnapshot snap) {
@@ -115,26 +114,33 @@ class DatabaseService {
 
   Future<Chat?> _snapToChat(DocumentSnapshot? doc) async {
     if (doc != null) {
-      final data = doc.data() as Map<String, dynamic>;
-      LocalUser? nay, yay;
-      bool active;
-      if (Globals.stance == 'yay') {
-        yay = Globals.localUser!;
-        nay = await uidToLocalUser(data['nay']);
-        Globals.opponentUser = nay;
-      } else {
-        yay = await uidToLocalUser(data['yay']);
-        Globals.opponentUser = yay;
-        nay = Globals.localUser!;
+      final data = doc.data();
+      if (data != null) {
+        final dataMap = data as Map<String, dynamic>;
+        LocalUser? nay, yay;
+        bool active;
+        if (Globals.stance == 'yay') {
+          yay = Globals.localUser!;
+          nay = await uidToLocalUser(dataMap['nay']);
+          Globals.opponentUser = nay;
+        } else {
+          yay = await uidToLocalUser(dataMap['yay']);
+          Globals.opponentUser = yay;
+          nay = Globals.localUser!;
+        }
+        active = dataMap['active'];
+        print("////1 chatid: ${Globals.chatID}");
+        print("////1 topic: ${Globals.topic}");
+        if (Globals.chatID != null && Globals.topic != null) {
+          return Chat(
+            chatID: Globals.chatID!,
+            topic: Globals.topic!,
+            active: active,
+            yay: yay,
+            nay: nay,
+          );
+        }
       }
-      active = data['active'];
-      return Chat(
-        chatID: Globals.chatID!,
-        topic: Globals.topic!,
-        active: active,
-        yay: yay,
-        nay: nay,
-      );
     }
     return null;
   }
@@ -164,5 +170,5 @@ class DatabaseService {
     } else {
       _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
     }
-  } 
+  }
 }

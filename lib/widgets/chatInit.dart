@@ -3,14 +3,17 @@ import 'package:hottake/pages/chat.dart';
 import 'package:hottake/services/presence.dart';
 import 'package:provider/provider.dart';
 
+
 import '../models/data.dart';
 import '../services/database.dart';
 
 class ChatInit extends StatelessWidget {
   const ChatInit({Key? key}) : super(key: key);
 
+  
   @override
   Widget build(BuildContext context) {
+
     return MultiProvider(providers: [
         StreamProvider<Future<Chat?>>(
           create: (context) => DatabaseService().chats,

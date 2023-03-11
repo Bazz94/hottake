@@ -34,7 +34,7 @@ class LocalUser {
   final String uid;
   String? username;
   final String? email;
-  int? reputation;             
+  int? reputation;           
   LocalUser({
       required this.uid,
       this.username,

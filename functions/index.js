@@ -12,7 +12,10 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
   const stance = data.stance;
   const topic = data.topic;
   const chatsCollection = admin.firestore().collection("chats");
-  const chatsSnap = await chatsCollection.where(stance, "==", "null").orderBy("time").limit(100).get();
+  const chatsSnap = await chatsCollection
+      .where(stance, "==", "null")
+      .orderBy("time")
+      .limit(100).get();
   let yay;
   let nay;
   let chatID = "null";
@@ -73,7 +76,7 @@ exports.requestChat = functions.https.onCall(async (data, context) => {
 
 
 
-exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
+exports.deleteChat = functions.runWith({ timeoutSeconds: 540, memory: '2GB' }).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   //function fires when a users active value has changed
   if (change.after.val() == false) {//user has gone offline
     const database = admin.database();
@@ -101,9 +104,9 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
         opponentActive = false;
       }
     } else { //numChildren is equal to 1, the user has started searching but left 
-            // before finding a match
+      // before finding a match
       opponentActive = false;
-    } 
+    }
     //delete chat
     if (opponentActive == false) {
       //updating user ratings 
@@ -118,9 +121,9 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       }
       //delete chat from realtime  database
       await database.ref('/presence/' + chatID).remove().then(() => {
-        functions.logger.log('//// ',chatsDocRef.path,' delete successful');
+        functions.logger.log('//// ', chatsDocRef.path, ' delete successful');
       }).catch((error) => {
-        functions.logger.log('//// ',chatsDocRef.path,' delete unsuccessful: ', error);
+        functions.logger.log('//// ', chatsDocRef.path, ' delete unsuccessful: ', error);
       });
     }
   }

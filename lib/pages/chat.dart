@@ -21,7 +21,7 @@ enum DropDownItems { report, leave }
 class _ChatState extends State<ChatScreen> {
   List<ChatMessage> messages = [];
   Phase phase = Phase.searching;
-  late String? opponentUsername = "waiting..."; //default value
+  String? opponentUsername = "waiting..."; //default value
   final chatController = TextEditingController();
   final scrollController = ScrollController();
   DatabaseService database = DatabaseService(uid: Globals.localUser!.uid);
@@ -35,23 +35,21 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("//// init called");
-    server.requestChat.then((value) {
-      setState(() {});
-    });
+    print("//// chat called");
     super.initState();
   }
 
   @override
   void dispose() async {
     // Clean up the controller when the widget is disposed.
-    chatController.dispose();
     presence.goOffline(Globals.chatID);
+    chatController.dispose();
     Globals.chatID = null;
     Globals.opponentUser = null;
     messages.clear();
     print("//// dispose chat screen");
     super.dispose();
+    
   }
 
   @override
@@ -61,10 +59,17 @@ class _ChatState extends State<ChatScreen> {
     if (phase == Phase.searching) {
       if (chatSearchOnce == false) {
          chatSearchOnce = true;
-         
+         server.requestChat.then((value) {
+          setState(() {
+            if (value == null) {
+              print("//// error getting chat");
+              Navigator.popAndPushNamed(context, '/home');
+            }
+            });
+        });
       }
       
-      print("////chatID: ${Globals.chatID}");
+      print("//// chatID: ${Globals.chatID}");
 
       if (Globals.chatID != null) {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
@@ -250,7 +255,9 @@ class _ChatState extends State<ChatScreen> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: Globals.getReputationColour(Globals.opponentUser!.reputation!),
+              color: Globals.opponentUser != null 
+                ? Globals.getReputationColour(Globals.opponentUser!.reputation!)
+                : Colors.white,
               shape: BoxShape.circle,
             ),
           ),
@@ -319,19 +326,11 @@ class _ChatState extends State<ChatScreen> {
               child: Card(
                   color: Colors.deepPurpleAccent,
                   child: InkWell(
-                    onTap: () {
-                      // // Start Searching for new opponent
-                      // presence.goOffline(Globals.chatID);
-                      // Globals.chatID = null;
-                      // Globals.opponentUser = null;
-                      // messages.clear();
-                      // chatController.clear();
-                      // chatSearchOnce = false;
-                      // setState(() {
-                      //   phase = Phase.searching;
-                      // });
-                      
-                      Navigator.pushNamed(context, '/stance/chat');
+                    onTap: () async {
+                      //Start Searching for new opponent
+                      print("//// Next Pressed!");
+                      await presence.goOffline(Globals.chatID); 
+                      Navigator.popAndPushNamed(context, '/loading');
                     },
                     child: const Center(
                       child: Text("Next",

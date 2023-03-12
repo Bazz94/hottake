@@ -35,21 +35,20 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("//// chat called");
+    print("//// chat init");
     super.initState();
   }
 
   @override
   void dispose() async {
     // Clean up the controller when the widget is disposed.
-    presence.goOffline(Globals.chatID);
+    presence.goOffline();
     chatController.dispose();
     Globals.chatID = null;
     Globals.opponentUser = null;
     messages.clear();
     print("//// dispose chat screen");
     super.dispose();
-    
   }
 
   @override
@@ -59,13 +58,16 @@ class _ChatState extends State<ChatScreen> {
     if (phase == Phase.searching) {
       if (chatSearchOnce == false) {
          chatSearchOnce = true;
-         server.requestChat.then((value) {
-          setState(() {
-            if (value == null) {
+         server.requestChat.then((chatID) {
+            if (chatID == null) {
               print("//// error getting chat");
               Navigator.popAndPushNamed(context, '/home');
+            } else {
+              presence.goOnline(chatID);
             }
-            });
+            if (mounted) {
+              setState(() {});
+            }
         });
       }
       
@@ -75,19 +77,20 @@ class _ChatState extends State<ChatScreen> {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
         chatFuture.then((chat) {
           if (chat != null) {
-            print("////chat data received: ${chat.chatID}");
-            presence.goOnline(Globals.chatID!);
+            print("//// chat data received: ${chat.chatID}");
+            
             if (chat.yay != null && chat.nay != null) {
-              print("opponent has been found");
-              presence.goOnline(Globals.chatID!);
+              print("//// opponent has been found");
               if (Globals.localUser!.uid == chat.yay!.uid) {
                 opponentUsername = chat.nay?.username!;
               } else {
                 opponentUsername = chat.yay?.username!;
               }
-              setState(() {
-                phase = Phase.debate;
-              });
+              if (mounted) {
+                setState(() {
+                  phase = Phase.debate;
+                });
+              }
             }
           }
         });
@@ -103,9 +106,11 @@ class _ChatState extends State<ChatScreen> {
         chatFuture.then((chat) {
           if (chat != null) {
             if (chat.active == false) {
+              if (mounted) {
               setState(() {
                 phase = Phase.review;
               });
+              }
             }
           }
         });
@@ -144,8 +149,8 @@ class _ChatState extends State<ChatScreen> {
     if (phase == Phase.review) {
       //ask user to review opponent
       if (postMessageSentOnce == false) {
+        postMessageSentOnce = true;
         setState(() {
-          postMessageSentOnce = true;
           messages.add(ChatMessage(
               content: "    How was your interaction?    ",
               owner: "admin",
@@ -154,8 +159,7 @@ class _ChatState extends State<ChatScreen> {
       }
     }
 
-    //Post
-    if (phase == Phase.post) {}
+    print("//// Phase: $phase");
 
     return phase == Phase.searching
         ? const Searching()
@@ -225,13 +229,13 @@ class _ChatState extends State<ChatScreen> {
       ),
       onPressed: () {
         //End chat
-        setState(() {
           database.endChat();
           database.sendMessage(
             Globals.chatID,
             "${Globals.localUser!.username} has ended the chat",
             LocalUser(uid: "admin"),
           );
+        setState(() {
         });
       },
       child: const Text(
@@ -328,9 +332,10 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () async {
                       //Start Searching for new opponent
-                      print("//// Next Pressed!");
-                      await presence.goOffline(Globals.chatID); 
-                      Navigator.popAndPushNamed(context, '/loading');
+                      print("//// Next Pressed!"); 
+                      Globals.chatID = null;
+                      Globals.opponentUser = null;
+                      await Navigator.popAndPushNamed(context, '/loading');
                     },
                     child: const Center(
                       child: Text("Next",
@@ -445,11 +450,11 @@ class _ChatState extends State<ChatScreen> {
                     height: 43,
                     child: FloatingActionButton(
                       onPressed: () {
-                        setState(() {
                           database.sendMessage(Globals.chatID,
                               chatController.text, Globals.localUser!);
                           chatController.clear();
                           scrollController.jumpTo(messages.length - 1);
+                        setState(() {
                         });
                       },
                       backgroundColor: Colors.deepPurple,

@@ -150,7 +150,7 @@ class DatabaseService {
     int? reputation;
     if (id != null && id != "null") {
       await _usersCollection.doc(id).get().then((doc) {
-        print("////opponent: ${doc.data()}");
+        print("//// opponent: ${doc.data()}");
         final data = doc.data() as Map<String, dynamic>;
         username = data['username'];
         reputation = data['reputation'];

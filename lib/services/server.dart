@@ -24,6 +24,7 @@ class ServerService{
       print('//// received from server: $data');
       if (data != null) {
         Globals.chatID = data["chat"];
+        
         return Globals.chatID;
       }
     } on FirebaseFunctionsException catch (error) {

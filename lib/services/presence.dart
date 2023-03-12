@@ -5,13 +5,16 @@ class PresenceService {
   String uid;
   static bool isOnline = false;
   static bool? opponentOnline;
+  static bool queueOffline = false;
+  static String? localChatID;
   PresenceService({required this.uid});
 
   static final presenceRef = FirebaseDatabase.instance.ref("presence/");
 
   goOnline(String chatID) async {
     if (isOnline != true) {
-      print('////Go online');
+      localChatID = chatID;
+      print('//// Go online');
       isOnline = true;
       await presenceRef.child("$chatID/$uid").set({
         'active': true,
@@ -20,17 +23,24 @@ class PresenceService {
         'active': false,
         'onDisconnect': true
       });
+      if (queueOffline == true) {
+        goOffline();
+        queueOffline = false;
+      }
     }
   }
 
-  goOffline(String? chatID) async {
+  goOffline() async {
     if (isOnline == true) {
-      await presenceRef.child("$chatID/$uid").set({
+      await presenceRef.child("$localChatID/$uid").set({
         'active': false
       });
-      await presenceRef.child("$chatID/$uid").onDisconnect().cancel();
+      await presenceRef.child("$localChatID/$uid").onDisconnect().cancel();
       isOnline = false;
-      print("////Go offline");
+      print("//// Go offline");
+    } else {
+      print("//// goOffline called but already offline");
+      queueOffline = true;
     }
   }
 

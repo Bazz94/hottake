@@ -113,6 +113,7 @@ class AuthService{
   }
 
   Future updateUsername(String displayName) async {
+    Globals.localUser!.username = displayName;
     return await _user!.updateDisplayName(displayName);
   }
 }

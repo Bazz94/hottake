@@ -34,11 +34,11 @@ class _SearchingState extends State<Searching> {
 
 
     timer = Timer(const Duration(seconds: 1),() async {
-      setState(() {
         double difference = startTime.difference(DateTime.now()).inSeconds.abs().toDouble();
         secs = difference.remainder(60).toInt();
         difference = difference/60;
         mins = difference.floor();
+      setState(() {
         if (secs > 9) {
           timeCounter = "$mins:$secs";
         } else {

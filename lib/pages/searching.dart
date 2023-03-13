@@ -12,8 +12,8 @@ class Searching extends StatefulWidget {
 
 class _SearchingState extends State<Searching> {
   late DateTime startTime;
-  String timeCounter = '0:00';
-  int secs = 0;
+  String timeCounter = '';
+  int secs = 1;
   int mins = 0;
   late Timer timer;
 
@@ -39,10 +39,14 @@ class _SearchingState extends State<Searching> {
         difference = difference/60;
         mins = difference.floor();
       setState(() {
-        if (secs > 9) {
-          timeCounter = "$mins:$secs";
+        if (mins != 0) {
+          if (secs > 9) {
+            timeCounter = "$mins:$secs";
+          } else {
+            timeCounter = "$mins:0$secs";
+          } 
         } else {
-          timeCounter = "$mins:0$secs";
+          timeCounter = "$secs";
         }
       });
     });
@@ -71,7 +75,8 @@ class _SearchingState extends State<Searching> {
                     flex: 1,
                     child: Text(
                       timeCounter,
-                      style: const TextStyle(color: Colors.white,fontSize: 18),
+                      style: const TextStyle(color: Colors.white,fontSize: 18,
+                          letterSpacing: 0.5),
                     ),
                   ),
                   const Flexible(flex: 1, child: SizedBox(height: 50,),),  //Spacing
@@ -87,7 +92,8 @@ class _SearchingState extends State<Searching> {
                     flex: 1,
                     child: Text(
                       'Searching...',
-                      style: TextStyle(color: Colors.white,fontSize: 20),
+                      style: TextStyle(color: Colors.white,fontSize: 20,
+                          letterSpacing: 0.5),
                     ),
                   ),
                   const Flexible(flex: 3, child: SizedBox(),),  //Spacing

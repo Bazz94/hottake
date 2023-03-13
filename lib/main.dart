@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthService auth = AuthService();
     String? uid = auth.getUid;
+    
     print('//// initial uid: $uid');
 
     return MultiProvider(
@@ -71,8 +72,8 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
             color: Colors.deepPurple,
           ),
-          primaryColor: Colors.deepPurple,
-          primaryColorLight: Colors.deepPurpleAccent,
+          //primaryColor: Colors.deepPurple,
+          //primaryColorLight: Colors.deepPurpleAccent,
           scaffoldBackgroundColor: Colors.grey[850],
           fontFamily: 'LeagueSpartan',
         ),

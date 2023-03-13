@@ -68,6 +68,9 @@ class _ChatState extends State<ChatScreen> {
             if (mounted) {
               setState(() {});
             }
+        }).onError((error, stackTrace) {
+          print("//// error requesting chat");
+          Navigator.pop(context);
         });
       }
       
@@ -243,6 +246,7 @@ class _ChatState extends State<ChatScreen> {
         style: TextStyle(
           fontSize: 18,
           color: Colors.white,
+          letterSpacing: 0.5
         ),
       ),
     );
@@ -297,6 +301,7 @@ class _ChatState extends State<ChatScreen> {
                         fontSize: 15,
                         color:
                             MessageStyle.getTextColor(messages[index].owner)),
+                            
                   ),
                   const SizedBox(
                     height: 6,
@@ -339,7 +344,8 @@ class _ChatState extends State<ChatScreen> {
                     },
                     child: const Center(
                       child: Text("Next",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                          style: TextStyle(fontSize: 24, color: Colors.white,
+                              letterSpacing: 0.5)),
                     ),
                   )),
             ),
@@ -375,7 +381,8 @@ class _ChatState extends State<ChatScreen> {
                     },
                     child: const Center(
                       child: Text("Good",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                          style: TextStyle(fontSize: 24, color: Colors.white,
+                              letterSpacing: 0.5)),
                     ),
                   )),
             ),
@@ -404,7 +411,8 @@ class _ChatState extends State<ChatScreen> {
                     },
                     child: const Center(
                       child: Text("Bad",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                          style: TextStyle(fontSize: 24, color: Colors.white,
+                              letterSpacing: 0.5)),
                     ),
                   )),
             ),

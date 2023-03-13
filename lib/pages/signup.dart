@@ -46,7 +46,8 @@ class _SignupState extends State<Signup> {
     final text = emailController.value.text;
     if (text.isEmpty & buttonCheck) {
       return 'required';
-    }else {
+    }
+      else{
       return '';
     }
   }
@@ -54,7 +55,10 @@ class _SignupState extends State<Signup> {
     final text = passwordController.value.text;
     if (text.isEmpty && buttonCheck) {
       return 'required';
-    }else {
+    } else if (text.length < 8 && text.isNotEmpty) {
+      return 'minimum of 8 characters';
+    }
+     else {
       return '';
     }
   }
@@ -78,7 +82,6 @@ class _SignupState extends State<Signup> {
         isLoading = false;
       });
     } else {
-
       Navigator.pop(context);
     }
   }
@@ -91,7 +94,7 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true ? Loading() : Scaffold(
+    return isLoading == true ? const Loading() : Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
@@ -110,7 +113,8 @@ class _SignupState extends State<Signup> {
                     height: 20,
                     child: Text(
                         signUpError,
-                        style: TextStyle(color: Colors.red,fontSize: 20)),
+                        style: const TextStyle(color: Colors.red,fontSize: 20,
+                                  letterSpacing: 0.5)),
                   ),
                 ),
                 Padding(
@@ -120,7 +124,8 @@ class _SignupState extends State<Signup> {
                     child: TextField(
                       onChanged: (_) => setState(() {}),
                       controller: usernameController,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(color: Colors.white, fontSize: 20,
+                                letterSpacing: 0.5),
                       cursorColor: Colors.deepPurpleAccent,
                       decoration: InputDecoration(
                         errorText: _usernameErrorText,
@@ -129,7 +134,8 @@ class _SignupState extends State<Signup> {
                         focusedBorder: customOutlineInputBorder(),
                         focusedErrorBorder: customOutlineInputBorder(),
                         labelText: 'Username',
-                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent),
+                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent,
+                                  letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -141,7 +147,8 @@ class _SignupState extends State<Signup> {
                     child: TextField(
                       onChanged: (_) => setState(() {}),
                       controller: emailController,
-                      style: const TextStyle(color: Colors.white,fontSize: 20),
+                      style: const TextStyle(color: Colors.white,fontSize: 20,
+                                letterSpacing: 0.5),
                       cursorColor: Colors.deepPurpleAccent,
                       decoration: InputDecoration(
                         errorText: _emailErrorText,
@@ -150,7 +157,8 @@ class _SignupState extends State<Signup> {
                         focusedBorder: customOutlineInputBorder(),
                         focusedErrorBorder: customOutlineInputBorder(),
                         labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.deepPurpleAccent),
+                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent,
+                                  letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -172,7 +180,8 @@ class _SignupState extends State<Signup> {
                         focusedBorder: customOutlineInputBorder(),
                         focusedErrorBorder: customOutlineInputBorder(),
                         labelText: 'Password',
-                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent),
+                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent,
+                                  letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -185,7 +194,8 @@ class _SignupState extends State<Signup> {
                       onChanged: (_) => setState(() {}),
                       controller: password2Controller,
                       obscureText: true,
-                      style: const TextStyle(color: Colors.white,fontSize: 20),
+                      style: const TextStyle(color: Colors.white,fontSize: 20,
+                                letterSpacing: 0.5),
                       cursorColor: Colors.deepPurpleAccent,
                       decoration: InputDecoration(
                         errorText: _password2ErrorText,
@@ -194,7 +204,8 @@ class _SignupState extends State<Signup> {
                         focusedBorder: customOutlineInputBorder(),
                         focusedErrorBorder: customOutlineInputBorder(),
                         labelText: 'Password Check',
-                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent),
+                        labelStyle: const TextStyle(color: Colors.deepPurpleAccent,
+                                  letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -212,17 +223,19 @@ class _SignupState extends State<Signup> {
                     onPressed: () async {
                       setState(() => buttonCheck = true);
                       if ((usernameController.value.text.isNotEmpty &&
-                          emailController.value.text.isNotEmpty) &&
+                            emailController.value.text.isNotEmpty) 
+                          &&
                           (passwordController.value.text.isNotEmpty &&
                               (password2Controller.value.text.toString() ==
-                                  passwordController.value.text.toString()))) {
+                                  passwordController.value.text.toString())) 
+                                  && passwordController.value.text.length > 7) {
                         setState(() => isLoading = true);
                         _submit();
                       }
                     },
                     child: const Text(
                       'Sign Up',
-                      style: TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24, letterSpacing: 0.5),
                     ),
                   ),
                 ),

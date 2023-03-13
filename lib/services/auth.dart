@@ -19,6 +19,13 @@ class AuthService{
     }
   }
 
+
+  Future reloadUser() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      return await FirebaseAuth.instance.currentUser!.reload();
+    }
+  }
+
   //Change FirebaseUser to a LocalUser
   LocalUser? getLocalUserFromFirebaseUser(User? user){
     if (user != null) {
@@ -47,9 +54,10 @@ class AuthService{
       
       //create a new doc in firestore users
       await DatabaseService(uid: _user!.uid).updateUserData(50); //default values
+      Globals.localUser!.reputation = 50;
       return _user;
     } catch(e) {
-        print(e.toString());
+        print("//// registration error: ${e.toString()}");
         return null;
     }
   }

@@ -2,11 +2,16 @@ import 'package:hottake/models/data.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:convert';
 
+import 'package:hottake/services/auth.dart';
+
 class ServerService{
   String uid;
   ServerService({required this.uid});
+  AuthService auth = AuthService();
 
   final functions = FirebaseFunctions.instance;
+
+  
 
   Future<String?> get requestChat async {
 

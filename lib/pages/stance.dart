@@ -55,7 +55,7 @@ class _StancePageState extends State<StancePage> {
                       forFontSize = 100;
                       stanceColor = Colors.blue[300];
                       Globals.stance = 'yay';
-                      Navigator.pushNamed(context, '/stance/chat');
+                      Navigator.popAndPushNamed(context, '/stance/chat');
                     }
                   }
                   if (directionDown) {
@@ -65,7 +65,7 @@ class _StancePageState extends State<StancePage> {
                       againstFontSize = 100;
                       stanceColor = Colors.redAccent;
                       Globals.stance = 'nay';
-                      Navigator.pushNamed(context, '/stance/chat');
+                      Navigator.popAndPushNamed(context, '/stance/chat');
                     }
                   }
                 });
@@ -81,6 +81,7 @@ class _StancePageState extends State<StancePage> {
                           'For',
                           style: TextStyle(
                               color: Colors.blue[300],
+                              letterSpacing: 0.5,
                               fontSize: forFontSize.clamp(10, 100)),
                         )),
                       ),
@@ -96,7 +97,8 @@ class _StancePageState extends State<StancePage> {
                             child: Text(
                           'Swipe',
                           style:
-                              TextStyle(color: Colors.grey[600], fontSize: 40),
+                              TextStyle(color: Colors.grey[600], fontSize: 40,
+                          letterSpacing: 0.5),
                         )),
                       ),
                       Expanded(
@@ -112,6 +114,7 @@ class _StancePageState extends State<StancePage> {
                           'Against',
                           style: TextStyle(
                               color: Colors.red[300],
+                              letterSpacing: 0.5,
                               fontSize: againstFontSize.clamp(10, 100)),
                         )),
                       ),

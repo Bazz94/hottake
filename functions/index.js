@@ -5,74 +5,84 @@ admin.initializeApp();
 
 
 // looks for opponent, found -> join chat, else => create chat
-exports.requestChat = functions.https.onCall(async (data, context) => {
+exports.requestChat = functions
+  .runWith({ enforceAppCheck: true })
+  .https.onCall(async (data, context) => {
 
-  // init
-  const uid = context.auth.uid;
-  const stance = data.stance;
-  const topic = data.topic;
-  const chatsCollection = admin.firestore().collection("chats");
-  const chatsSnap = await chatsCollection
-      .where(stance, "==", "null")
-      .orderBy("time")
-      .limit(100).get();
-  let yay;
-  let nay;
-  let chatID = "null";
-  let found = false;
-
-  // has opponent been found
-  if (!chatsSnap.empty) {
-    // join Chat, return opponent
-    found = true;
-    const chat = chatsSnap.docs.at(0);
-    chatID = chat.id;
-    // update chat with user
-    if (stance == "yay") {
-      await chatsCollection.doc(chatID).update({ yay: uid });
-    } else {
-      await chatsCollection.doc(chatID).update({ nay: uid });
-    }
-  } else { //Opponent not found
-    // create Chat
-    if (stance == "yay") {
-      yay = uid;
-      nay = "null";
-    } else {
-      yay = "null";
-      nay = uid;
+    //Authentication 
+    if (context.app == undefined) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'The function must be called from an App Check verified app.');
     }
 
-    const data = {
-      topic: topic,
-      yay: yay,
-      nay: nay,
-      active: true,
-      save: false,
-      nayReview: "",
-      yayReview: "",
-      time: new Date(),
-    };
+    // init
+    const uid = context.auth.uid;
+    const stance = data.stance;
+    const topic = data.topic;
+    const chatsCollection = admin.firestore().collection("chats");
+    const chatsSnap = await chatsCollection
+      .where('topic', '==', topic)
+      .where(stance, "==", 'null')
+      .orderBy('time')
+      .limit(1).get();
+    let yay;
+    let nay;
+    let chatID = "null";
+    let found = false;
 
-    //create chat in chats
-    await chatsCollection.add(data).then((documentSnapshot) =>
-      chatID = documentSnapshot.id);
-    await chatsCollection.doc(chatID).collection("messages").add({
-      content: topic,
-      owner: "admin",
-      time: new Date()
-    });
-  }
+    // has opponent been found
+    if (!chatsSnap.empty) {
+      // join Chat, return opponent
+      found = true;
+      const chat = chatsSnap.docs.at(0);
+      chatID = chat.id;
+      // update chat with user
+      if (stance == "yay") {
+        await chatsCollection.doc(chatID).update({ yay: uid });
+      } else {
+        await chatsCollection.doc(chatID).update({ nay: uid });
+      }
+    } else { //Opponent not found
+      // create Chat
+      if (stance == "yay") {
+        yay = uid;
+        nay = "null";
+      } else {
+        yay = "null";
+        nay = uid;
+      }
 
-  functions.logger.log("//// chatID: ", chatID);
+      const data = {
+        topic: topic,
+        yay: yay,
+        nay: nay,
+        active: true,
+        save: false,
+        nayReview: "",
+        yayReview: "",
+        time: new Date(),
+      };
 
-  const response = {
-    found: found,
-    chat: chatID,
-  }
+      //create chat in chats
+      await chatsCollection.add(data).then((documentSnapshot) =>
+        chatID = documentSnapshot.id);
+      await chatsCollection.doc(chatID).collection("messages").add({
+        content: topic,
+        owner: "admin",
+        time: new Date()
+      });
+    }
 
-  return response;
-});
+    functions.logger.log("//// chatID: ", chatID);
+
+    const response = {
+      found: found,
+      chat: chatID,
+    }
+
+    return response;
+  });
 
 
 

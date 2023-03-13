@@ -14,7 +14,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final AuthService _auth = AuthService();
   bool isLoading = false;
-  final TextStyle myStyle = const TextStyle(fontSize: 20);
+  final TextStyle myStyle = const TextStyle(fontSize: 20, letterSpacing: 0.5);
   String headerText = 'Welcome';
   Color headerTextColor = Colors.white;
   bool buttonCheck = false;
@@ -23,6 +23,7 @@ class _LoginState extends State<Login> {
 
   String? get _emailErrorText {
     final text = emailController.value.text;
+    
     if (text.isEmpty && buttonCheck) {
       return 'required';
     } else {
@@ -34,9 +35,10 @@ class _LoginState extends State<Login> {
     final text = passwordController.value.text;
     if (text.isEmpty && buttonCheck) {
       return 'required';
-    } else {
+    }  {
       return '';
     }
+    
   }
 
   void _submit() async {
@@ -52,7 +54,7 @@ class _LoginState extends State<Login> {
     }
   }
 
-  void _submitGoogle() async {
+   void _submitGoogle() async {
     User? result = await _auth.googleSignIn();
     if (result == null) {
       setState(() {
@@ -104,6 +106,7 @@ class _LoginState extends State<Login> {
                           style: TextStyle(
                             color: headerTextColor,
                             fontSize: 24,
+                            letterSpacing: 0.5
                           ),
                         ),
                       ),
@@ -115,6 +118,7 @@ class _LoginState extends State<Login> {
                             onChanged: (_) => setState(() {}),
                             controller: emailController,
                             style: const TextStyle(
+                              letterSpacing: 0.5,
                                 color: Colors.white, fontSize: 20),
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
@@ -125,6 +129,7 @@ class _LoginState extends State<Login> {
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Email',
                               labelStyle: const TextStyle(
+                                letterSpacing: 0.5,
                                   color: Colors.deepPurpleAccent),
                             ),
                           ),
@@ -135,9 +140,11 @@ class _LoginState extends State<Login> {
                         child: SizedBox(
                           height: 70,
                           child: TextField(
+                            obscureText: true,
                             onChanged: (_) => setState(() {}),
                             controller: passwordController,
                             style: const TextStyle(
+                              letterSpacing: 0.5,
                                 color: Colors.white, fontSize: 20),
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
@@ -148,7 +155,8 @@ class _LoginState extends State<Login> {
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Password',
                               labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent),
+                                  color: Colors.deepPurpleAccent,
+                                  letterSpacing: 0.5),
                             ),
                           ),
                         ),
@@ -164,8 +172,8 @@ class _LoginState extends State<Login> {
                           onPressed: () {
                             setState(() {
                               buttonCheck = true;
-                              if (emailController.value.text.isNotEmpty &&
-                                  passwordController.value.text.isNotEmpty) {
+                              if (emailController.value.text.isNotEmpty 
+                                && passwordController.value.text.isNotEmpty ) {
                                 isLoading = true;
                                 _submit();
                               }
@@ -173,7 +181,7 @@ class _LoginState extends State<Login> {
                           },
                           child: const Text(
                             'Login',
-                            style: TextStyle(fontSize: 24),
+                            style: TextStyle(fontSize: 24, letterSpacing: 0.5),
                           ),
                         ),
                       ),
@@ -185,7 +193,7 @@ class _LoginState extends State<Login> {
                             backgroundColor: Colors.white,
                             minimumSize: const Size.fromHeight(50),
                           ),
-                          onPressed: () {
+                          onPressed: () async{
                             setState(() => isLoading = true);
                             _submitGoogle();
                           },
@@ -193,7 +201,8 @@ class _LoginState extends State<Login> {
                               color: Colors.black),
                           label: const Text(
                             'Google Login',
-                            style: TextStyle(fontSize: 24, color: Colors.black),
+                            style: TextStyle(fontSize: 24, color: Colors.black,
+                                letterSpacing: 0.5),
                           ),
                         ),
                       ),
@@ -210,7 +219,7 @@ class _LoginState extends State<Login> {
                           },
                           child: const Text(
                             'Sign up',
-                            style: TextStyle(fontSize: 24),
+                            style: TextStyle(color: Colors.white,fontSize: 24, letterSpacing: 0.5),
                           ),
                         ),
                       ),

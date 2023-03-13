@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/models/data.dart';
@@ -11,18 +13,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Text title = const Text('Hottake');
+  Text title = const Text('Hottake',style: TextStyle(letterSpacing: 0.5),);
   late Future<List<Widget>> _loaded;
-  TextStyle myStyle = const TextStyle(fontSize: 24, color: Colors.white);
-  DatabaseService database = DatabaseService(uid: Globals.localUser!.uid);
+  TextStyle titleStyle = const TextStyle(
+    fontSize: 24,
+    color: Colors.white,
+    letterSpacing: 0.5
+  );
 
   @override
   void initState() {
-    super.initState();
     print("//// Home init");
     Globals.stance = null;
     Globals.topic = null;
     _loaded = _load();
+    super.initState();
   }
 
   @override
@@ -32,7 +37,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
         onWillPop: _onWillPop,
         child: FutureBuilder<List<Widget>>(
@@ -62,7 +66,7 @@ class _HomeState extends State<Home> {
                     body: SingleChildScrollView(
                       child: Center(
                         child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: const EdgeInsets.fromLTRB(5, 16, 5, 16),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: children,
@@ -91,7 +95,6 @@ class _HomeState extends State<Home> {
     child: Center(
       child: Text('Pick a topic',
           textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
           style: TextStyle(fontSize: 24, color: Colors.white)),
     ),
   );
@@ -99,34 +102,56 @@ class _HomeState extends State<Home> {
   Widget makeTile(Topic t) {
     String loadingImg =
         'https://img.freepik.com/free-vector/white-abstract-background_23-2148806276.jpg?w=2000';
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: SizedBox(
-        height: 110,
-        child: Card(
-            color: Colors.deepPurpleAccent,
-            child: InkWell(
-              onTap: () {
-                Globals.topic = t;
-                Navigator.pushNamed(context, '/stance');
-              },
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image.network(
-                      t.image != null ? t.image! : loadingImg,
-                      alignment: Alignment.topLeft,
-                      fit: BoxFit.fill,
+    return SizedBox(
+      height: 110,
+      child: Card(
+          color: Colors.deepPurpleAccent,
+          clipBehavior: Clip.hardEdge,
+          child: InkWell(
+            onTap: () {
+              Globals.topic = t;
+              Navigator.pushNamed(context, '/stance');
+            },
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CachedNetworkImage(
+                  fadeInDuration: Duration(milliseconds: 0),
+                  width: 110,
+                  height: 110,
+                  fit: BoxFit.fill,
+                  imageUrl: t.image != null ? t.image! : loadingImg,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[850],
+                    child: const Center(
+                      child: SpinKitDoubleBounce(
+                        color: Colors.deepPurpleAccent,
+                        size: 20,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Text(t.title, style: myStyle),
-                ],
-              ),
-            )),
-      ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 10),
+                            Center(child: Text(t.title, style: titleStyle)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )),
     );
   }
 

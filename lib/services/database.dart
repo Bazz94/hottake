@@ -20,8 +20,11 @@ class DatabaseService {
 
   Future<int?> get getReputation async {
     DocumentSnapshot doc = await _usersCollection.doc(uid).get();
-    final data = doc.data() as Map<String, dynamic>;
-    return data['reputation'];
+    print("//// flag 1: $doc");
+    final data = doc.data();
+    print("//// flag 2: $data");
+    final dataMap = data as Map<String, dynamic>;
+    return dataMap['reputation'];
   }
 
   //Get topics collection
@@ -95,7 +98,7 @@ class DatabaseService {
   List<ChatMessage> _snapToMessages(QuerySnapshot snap) {
     List<ChatMessage> list = [];
     for (var doc in snap.docs) {
-      print("////chat message list: ${doc.data()}");
+      print("//// chat message list: ${doc.data()}");
       if (doc.get('content') != "") {
         list.add(ChatMessage(
             content: doc.get('content'),
@@ -129,8 +132,6 @@ class DatabaseService {
           nay = Globals.localUser!;
         }
         active = dataMap['active'];
-        print("////1 chatid: ${Globals.chatID}");
-        print("////1 topic: ${Globals.topic}");
         if (Globals.chatID != null && Globals.topic != null) {
           return Chat(
             chatID: Globals.chatID!,

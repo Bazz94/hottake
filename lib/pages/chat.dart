@@ -55,25 +55,30 @@ class _ChatState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     //Searching
 
+    if (Globals.localUser == null) {
+      print("//// uid is null on chat");
+      Navigator.popAndPushNamed(context, '/login');
+    }
+
     if (phase == Phase.searching) {
       if (chatSearchOnce == false) {
-         chatSearchOnce = true;
-         server.requestChat.then((chatID) {
-            if (chatID == null) {
-              print("//// error getting chat");
-              Navigator.popAndPushNamed(context, '/home');
-            } else {
-              presence.goOnline(chatID);
-            }
-            if (mounted) {
-              setState(() {});
-            }
+        chatSearchOnce = true;
+        server.requestChat.then((chatID) {
+          if (chatID == null) {
+            print("//// chatID is null");
+            Navigator.popAndPushNamed(context, '/home');
+          } else {
+            presence.goOnline(chatID);
+          }
+          if (mounted) {
+            setState(() {});
+          }
         }).onError((error, stackTrace) {
-          print("//// error requesting chat");
+          print("//// requesting chat: ${error.toString()}");
           Navigator.pop(context);
         });
       }
-      
+
       print("//// chatID: ${Globals.chatID}");
 
       if (Globals.chatID != null) {
@@ -81,7 +86,7 @@ class _ChatState extends State<ChatScreen> {
         chatFuture.then((chat) {
           if (chat != null) {
             print("//// chat data received: ${chat.chatID}");
-            
+
             if (chat.yay != null && chat.nay != null) {
               print("//// opponent has been found");
               if (Globals.localUser!.uid == chat.yay!.uid) {
@@ -110,9 +115,9 @@ class _ChatState extends State<ChatScreen> {
           if (chat != null) {
             if (chat.active == false) {
               if (mounted) {
-              setState(() {
-                phase = Phase.review;
-              });
+                setState(() {
+                  phase = Phase.review;
+                });
               }
             }
           }
@@ -232,22 +237,17 @@ class _ChatState extends State<ChatScreen> {
       ),
       onPressed: () {
         //End chat
-          database.endChat();
-          database.sendMessage(
-            Globals.chatID,
-            "${Globals.localUser!.username} has ended the chat",
-            LocalUser(uid: "admin"),
-          );
-        setState(() {
-        });
+        database.endChat();
+        database.sendMessage(
+          Globals.chatID,
+          "${Globals.localUser!.username} has ended the chat",
+          LocalUser(uid: "admin"),
+        );
+        setState(() {});
       },
       child: const Text(
         'End',
-        style: TextStyle(
-          fontSize: 18,
-          color: Colors.white,
-          letterSpacing: 0.5
-        ),
+        style: TextStyle(fontSize: 18, color: Colors.white, letterSpacing: 0.5),
       ),
     );
   }
@@ -263,9 +263,10 @@ class _ChatState extends State<ChatScreen> {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: Globals.opponentUser != null 
-                ? Globals.getReputationColour(Globals.opponentUser!.reputation!)
-                : Colors.white,
+              color: Globals.opponentUser != null
+                  ? Globals.getReputationColour(
+                      Globals.opponentUser!.reputation!)
+                  : Colors.white,
               shape: BoxShape.circle,
             ),
           ),
@@ -301,7 +302,6 @@ class _ChatState extends State<ChatScreen> {
                         fontSize: 15,
                         color:
                             MessageStyle.getTextColor(messages[index].owner)),
-                            
                   ),
                   const SizedBox(
                     height: 6,
@@ -337,14 +337,16 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () async {
                       //Start Searching for new opponent
-                      print("//// Next Pressed!"); 
+                      print("//// Next Pressed!");
                       Globals.chatID = null;
                       Globals.opponentUser = null;
                       await Navigator.popAndPushNamed(context, '/loading');
                     },
                     child: const Center(
                       child: Text("Next",
-                          style: TextStyle(fontSize: 24, color: Colors.white,
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
                               letterSpacing: 0.5)),
                     ),
                   )),
@@ -381,7 +383,9 @@ class _ChatState extends State<ChatScreen> {
                     },
                     child: const Center(
                       child: Text("Good",
-                          style: TextStyle(fontSize: 24, color: Colors.white,
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
                               letterSpacing: 0.5)),
                     ),
                   )),
@@ -411,7 +415,9 @@ class _ChatState extends State<ChatScreen> {
                     },
                     child: const Center(
                       child: Text("Bad",
-                          style: TextStyle(fontSize: 24, color: Colors.white,
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
                               letterSpacing: 0.5)),
                     ),
                   )),
@@ -458,12 +464,11 @@ class _ChatState extends State<ChatScreen> {
                     height: 43,
                     child: FloatingActionButton(
                       onPressed: () {
-                          database.sendMessage(Globals.chatID,
-                              chatController.text, Globals.localUser!);
-                          chatController.clear();
-                          scrollController.jumpTo(messages.length - 1);
-                        setState(() {
-                        });
+                        database.sendMessage(Globals.chatID,
+                            chatController.text, Globals.localUser!);
+                        chatController.clear();
+                        scrollController.jumpTo(messages.length - 1);
+                        setState(() {});
                       },
                       backgroundColor: Colors.deepPurple,
                       elevation: 0,
@@ -498,7 +503,7 @@ class _ChatState extends State<ChatScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => Home()),
+                        builder: (BuildContext context) => const Home()),
                     ModalRoute.withName('/home'),
                   );
                 },

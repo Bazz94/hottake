@@ -17,7 +17,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if(kIsWeb){
+  if (kIsWeb) {
     await Firebase.initializeApp(
         options: FirebaseOptions(
             apiKey: Private.apiKey,
@@ -37,7 +37,7 @@ Future<void> main() async {
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthService auth = AuthService();
     String? uid = auth.getUid;
-    
+
     print('//// initial uid: $uid');
 
     return MultiProvider(
@@ -77,16 +77,16 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.grey[850],
           fontFamily: 'LeagueSpartan',
         ),
-        home: Init(),
+        home: const Init(),
         routes: {
-          '/init': (context) => Init(),
-          '/login': (context) => Login(),
-          '/signup': (context) => Signup(),
-          '/home': (context) => Home(),
-          '/settings': (context) => SettingsScreen(),
-          '/stance': (context) => StancePage(),
-          '/stance/chat': (context) => ChatInit(),
-          '/loading':(context) => Loading(),
+          '/init': (context) => const Init(),
+          '/login': (context) => const Login(),
+          '/signup': (context) => const Signup(),
+          '/home': (context) => const Home(),
+          '/settings': (context) => const SettingsScreen(),
+          '/stance': (context) => const StancePage(),
+          '/stance/chat': (context) => const ChatInit(),
+          '/loading': (context) => const Loading(),
         },
       ),
     );

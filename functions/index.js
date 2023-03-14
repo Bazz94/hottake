@@ -161,3 +161,32 @@ async function updateReputation(uid, review) {
     await userRef.update({ "reputation": reputation });
   }
 }
+
+
+exports.deleteUserData = functions.auth.user().onDelete((user) => {
+  const  uid = user.uid;
+  const userRef = admin.firestore().collection("users").doc(uid);
+  userRef.delete().then(() => {
+      functions.logger.log('//// ', uid, ' delete successful');
+    }).catch(() => {
+      functions.logger.log('//// ', uid, ' delete unsuccessful');
+    });
+  return true;
+});
+
+
+exports.createUserData = functions.auth.user().onCreate((user) => {
+  const uid = user.uid;
+  const userRef = admin.firestore().collection("users");
+  userRef.doc(uid).set({
+    'reputation': 50,
+    'username': user.displayName
+  })
+    .then(() => {
+      functions.logger.log('//// ', uid, ' created successful');
+    }).catch(() => {
+      functions.logger.log('//// ', uid, ' created unsuccessful');
+    });
+  return true;
+});
+

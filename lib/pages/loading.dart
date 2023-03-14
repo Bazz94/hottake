@@ -10,11 +10,9 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if (Globals.topic != null) {
-      Future.delayed(const Duration(seconds: 0)).then((value) { //a delay is needed for when requeing since offline() needs to finish before online() can work
-        print("//// pushNamed chat page");
-
-        Navigator.popAndPushNamed(context, '/stance/chat');
-      });
+      
+      print("//// pushNamed chat page");
+      Navigator.popAndPushNamed(context, '/stance/chat');
     }
 
     return Container(

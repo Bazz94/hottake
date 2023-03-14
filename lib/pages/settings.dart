@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
 
@@ -38,7 +39,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _controllerEmail = Globals.localUser!.email == null
         ? TextEditingController(text: 'placeholder')
         : TextEditingController(text: Globals.localUser!.email);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    print("//// dispose settings page");
+    super.dispose();
   }
 
   void _editUsername() {
@@ -53,6 +61,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (Globals.localUser == null) {
+      print("//// uid is null on settings");
+      Navigator.popAndPushNamed(context, '/login');
+    }
+
     return isLoading == true
         ? const Loading()
         : Scaffold(
@@ -74,19 +87,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       //Username
                       Expanded(
                         flex: 1,
-                        child: Row(
-                          //Row 1
-                          children: [
-                            Expanded(
-                              flex: 5,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            //Row 1
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                flex: 5,
                                 child: TextField(
+                                  maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                  maxLength: 16,
                                   enabled: usernameEditable,
                                   controller: _controllerUsername,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: const TextStyle(color: Colors.white, letterSpacing: 0.5,fontSize: 15),
                                   cursorColor: Colors.deepPurpleAccent,
                                   decoration: const InputDecoration(
+                                    
+                                    //contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.deepPurple),
@@ -98,25 +117,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     labelText: 'Username',
                                     labelStyle: TextStyle(
                                         color: Colors.deepPurpleAccent,
-                                        letterSpacing: 0.5),
+                                        letterSpacing: 0.5,height: 0.4),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: IconButton(
-                                  icon: usernameEditable
-                                      ? const Icon(Icons.check_outlined)
-                                      : const Icon(Icons.create),
-                                  color: Colors.white,
-                                  onPressed: _editUsername,
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: IconButton(
+                                    icon: usernameEditable
+                                        ? const Icon(Icons.check_outlined)
+                                        : const Icon(Icons.create),
+                                    color: Colors.white,
+                                    onPressed: _editUsername,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       // Email
@@ -171,10 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     height: 10,
                                     decoration: BoxDecoration(
                                       color: Globals.getReputationColour(
-                                          Globals.localUser!.reputation == null
-                                          ? 50
-                                          : Globals.localUser!.reputation!
-                                          ),
+                                          Globals.localUser!.reputation),
                                       shape: BoxShape.circle,
                                     ),
                                   ),

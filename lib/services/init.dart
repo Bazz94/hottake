@@ -1,11 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:hottake/models/data.dart';
 import 'package:provider/provider.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/login.dart';
-import 'package:hottake/services/database.dart';
-
 import 'auth.dart';
 
 class Init extends StatefulWidget {
@@ -20,7 +17,6 @@ class _Init extends State<Init> {
 
   @override
   Widget build(BuildContext context) {
-    
     var user = Provider.of<LocalUser?>(context);
     String? uid;
     if (user != null) {
@@ -30,17 +26,15 @@ class _Init extends State<Init> {
       }
       print('//// current uid: $uid');
       Globals.localUser = user;
-    }
-    auth.reloadUser().then((value) {
-      print("//// reload user successful");
-    })
-    .onError((error, stackTrace) {
-      print("//// reload user error");
-      setState(() {
-        user = null;
+      auth.reloadUser().then((value) {
+        print("//// reload user successful");
+      }).catchError((error, stackTrace) {
+        print("//// reload error: ${error.toString()}");
+        Globals.localUser = null;
       });
-    });
+    }
 
-    return user == null ? Login() : Home();
+    print("//// Global localUser on init: ${Globals.localUser}");
+    return Globals.localUser == null ? const Login() : const Home();
   }
 }

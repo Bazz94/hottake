@@ -46,6 +46,7 @@ dependencies:
   cloud_functions: ^4.0.5
   firebase_database: ^10.0.7
   cached_network_image: ^3.2.3
+  connectivity_plus: ^3.0.3
 
 
 dev_dependencies:

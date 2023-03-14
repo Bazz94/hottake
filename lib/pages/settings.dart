@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
-
 import '../models/data.dart';
+import '../models/styles.dart';
 import '../services/database.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -21,7 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late TextEditingController _controllerUsername;
   late TextEditingController _controllerEmail;
   late bool usernameEditable;
-  DatabaseService database = DatabaseService(uid: Globals.localUser!.uid);
+  DatabaseService database = DatabaseService();
 
   @override
   void initState() {
@@ -73,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // Here we take the value from the MyHomePage object that was created by
               // the App.build method, and use it to set our appbar title.
               centerTitle: true,
-              title: const Text("Settings"),
+              title: Text("Settings", style: TextStyles.title),
             ),
             resizeToAvoidBottomInset: false,
             body: Center(
@@ -97,15 +97,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 flex: 5,
                                 child: TextField(
                                   maxLengthEnforcement:
-                                    MaxLengthEnforcement.enforced,
+                                      MaxLengthEnforcement.enforced,
                                   maxLength: 16,
                                   enabled: usernameEditable,
                                   controller: _controllerUsername,
-                                  style: const TextStyle(color: Colors.white, letterSpacing: 0.5,fontSize: 15),
+                                  style: TextStyles.textField,
                                   cursorColor: Colors.deepPurpleAccent,
                                   decoration: const InputDecoration(
-                                    
-                                    //contentPadding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.deepPurple),
@@ -117,7 +115,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     labelText: 'Username',
                                     labelStyle: TextStyle(
                                         color: Colors.deepPurpleAccent,
-                                        letterSpacing: 0.5,height: 0.4),
+                                        letterSpacing: 0.5,
+                                        height: 0.1 //Issue with this widget so a custom style is used
+                                        ),
                                   ),
                                 ),
                               ),
@@ -146,22 +146,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: TextField(
                             enabled: false,
                             controller: _controllerEmail,
-                            style: const TextStyle(
-                                color: Colors.white, letterSpacing: 0.5),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
-                            decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
+                            decoration: InputDecoration(
+                              enabledBorder: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.deepPurple),
                               ),
-                              focusedBorder: OutlineInputBorder(
+                              focusedBorder: const OutlineInputBorder(
                                 borderSide:
                                     BorderSide(color: Colors.deepPurpleAccent),
                               ),
                               labelText: 'Email',
-                              labelStyle: TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -175,13 +172,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             surfaceTintColor: Colors.deepPurpleAccent,
                             child: Row(
                               children: [
-                                const Text(
+                                Text(
                                   "Reputation: ",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
-                                    fontSize: 16,
-                                  ),
+                                  style: TextStyles.textField,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -221,9 +214,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               print("//// error signing out: ${e.toString()}");
                             }
                           },
-                          child: const Text(
+                          child: Text(
                             'Log out',
-                            style: TextStyle(fontSize: 24, letterSpacing: 0.5),
+                            style: TextStyles.buttonDark,
                           ),
                         ),
                       ),

@@ -85,7 +85,7 @@ class _SearchingState extends State<Searching> {
                   const Flexible(
                     flex: 1,
                     child: SizedBox(
-                      height: 50,
+                      height: 40,
                     ),
                   ), //Spacing
                   const Flexible(
@@ -98,7 +98,7 @@ class _SearchingState extends State<Searching> {
                   const Flexible(
                     flex: 1,
                     child: SizedBox(
-                      height: 50,
+                      height: 60,
                     ),
                   ), //Spacing
                   const Flexible(

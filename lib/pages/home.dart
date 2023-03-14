@@ -6,6 +6,8 @@ import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/models/data.dart';
 
+import '../models/styles.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
   @override
@@ -13,13 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Text title = const Text(
-    'Hottake',
-    style: TextStyle(letterSpacing: 0.5),
-  );
   late Future<List<Widget>> _loaded;
-  TextStyle titleStyle =
-      const TextStyle(fontSize: 24, color: Colors.white, letterSpacing: 0.5);
 
   @override
   void initState() {
@@ -35,6 +31,17 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
+  Future<List<Widget>> _load() async {
+    DatabaseService database = DatabaseService();
+    List<Topic> topics = await database.topics;
+    List<Widget> wids = <Widget>[];
+    wids.add(myLabel);
+    for (var t in topics) {
+      wids.add(makeTile(t));
+    }
+    return wids;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (Globals.localUser == null) {
@@ -42,10 +49,14 @@ class _HomeState extends State<Home> {
       Navigator.popAndPushNamed(context, '/login');
     }
 
+  
+
     return WillPopScope(
         onWillPop: _onWillPop,
         child: FutureBuilder<List<Widget>>(
-            future: _loaded,
+            future: _loaded.catchError((error) {
+              Navigator.pop(context);
+            }),
             builder:
                 (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
               List<Widget> children = <Widget>[];
@@ -56,7 +67,7 @@ class _HomeState extends State<Home> {
                       // Here we take the value from the MyHomePage object that was created by
                       // the App.build method, and use it to set our appbar title.
                       centerTitle: true,
-                      title: title,
+                      title: Text('Hottake', style: TextStyles.title),
                       //leading:
                       actions: [
                         IconButton(
@@ -84,23 +95,13 @@ class _HomeState extends State<Home> {
             }));
   }
 
-  Future<List<Widget>> _load() async {
-    DatabaseService database = DatabaseService();
-    List<Topic> topics = await database.topics;
-    List<Widget> wids = <Widget>[];
-    wids.add(myLabel);
-    for (var t in topics) {
-      wids.add(makeTile(t));
-    }
-    return wids;
-  }
-
-  Widget myLabel = const Padding(
-    padding: EdgeInsets.all(8.0),
+  Widget myLabel = Padding(
+    padding: const EdgeInsets.all(8.0),
     child: Center(
       child: Text('Pick a topic',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 24, color: Colors.white)),
+          style: TextStyles.title,
+      ),
     ),
   );
 
@@ -147,7 +148,7 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(width: 10),
-                            Center(child: Text(t.title, style: titleStyle)),
+                            Center(child: Text(t.title, style: TextStyles.title)),
                           ],
                         ),
                       ),

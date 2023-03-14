@@ -1,7 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hottake/pages/error.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/auth.dart';
+import 'package:hottake/services/connectivity.dart';
 import 'shared/private.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -40,15 +43,21 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     AuthService auth = AuthService();
     String? uid = auth.getUid;
-
     print('//// initial uid: $uid');
+    
+  
 
     return MultiProvider(
       providers: [
@@ -77,7 +86,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.grey[850],
           fontFamily: 'LeagueSpartan',
         ),
-        home: const Init(),
+        home: Init(),
         routes: {
           '/init': (context) => const Init(),
           '/login': (context) => const Login(),
@@ -87,6 +96,7 @@ class MyApp extends StatelessWidget {
           '/stance': (context) => const StancePage(),
           '/stance/chat': (context) => const ChatInit(),
           '/loading': (context) => const Loading(),
+          '/error' :(context) => const ErrorPage(),
         },
       ),
     );

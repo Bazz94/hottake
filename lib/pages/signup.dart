@@ -4,6 +4,8 @@ import 'package:hottake/services/auth.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/styles.dart';
+
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
 
@@ -116,10 +118,7 @@ class _SignupState extends State<Signup> {
                         child: SizedBox(
                           height: 20,
                           child: Text(signUpError,
-                              style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 20,
-                                  letterSpacing: 0.5)),
+                              style: TextStyles.titleError),
                         ),
                       ),
                       Padding(
@@ -131,10 +130,7 @@ class _SignupState extends State<Signup> {
                             maxLengthEnforcement: MaxLengthEnforcement.enforced,
                             onChanged: (_) => setState(() {}),
                             controller: usernameController,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                letterSpacing: 0.5),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _usernameErrorText,
@@ -143,9 +139,7 @@ class _SignupState extends State<Signup> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Username',
-                              labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -159,10 +153,7 @@ class _SignupState extends State<Signup> {
                             maxLength: 255,
                             onChanged: (_) => setState(() {}),
                             controller: emailController,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                letterSpacing: 0.5),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _emailErrorText,
@@ -171,9 +162,7 @@ class _SignupState extends State<Signup> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Email',
-                              labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -188,8 +177,7 @@ class _SignupState extends State<Signup> {
                             onChanged: (_) => setState(() {}),
                             controller: passwordController,
                             obscureText: true,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 20),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _passwordErrorText,
@@ -198,9 +186,7 @@ class _SignupState extends State<Signup> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Password',
-                              labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -213,10 +199,7 @@ class _SignupState extends State<Signup> {
                             onChanged: (_) => setState(() {}),
                             controller: password2Controller,
                             obscureText: true,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                letterSpacing: 0.5),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _password2ErrorText,
@@ -225,9 +208,7 @@ class _SignupState extends State<Signup> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Password Check',
-                              labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -256,9 +237,9 @@ class _SignupState extends State<Signup> {
                               _submit();
                             }
                           },
-                          child: const Text(
+                          child: Text(
                             'Sign Up',
-                            style: TextStyle(fontSize: 24, letterSpacing: 0.5),
+                            style: TextStyles.buttonPurple,
                           ),
                         ),
                       ),

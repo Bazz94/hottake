@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hottake/models/data.dart';
 import 'package:hottake/pages/home.dart';
@@ -6,6 +7,9 @@ import 'package:hottake/services/database.dart';
 import 'package:hottake/services/presence.dart';
 import 'package:hottake/services/server.dart';
 import 'package:provider/provider.dart';
+
+import '../models/styles.dart';
+import '../services/connectivity.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -36,6 +40,7 @@ class _ChatState extends State<ChatScreen> {
   @override
   void initState() {
     print("//// chat init");
+
     super.initState();
   }
 
@@ -54,6 +59,18 @@ class _ChatState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     //Searching
+
+    ConnectivityService.subscription.onData((result) {
+      print("////1 Connection status: ${result.toString()}");
+      if (result != ConnectivityResult.none) {
+        ConnectivityService.connectionsStatus = true;
+      } else {
+        ConnectivityService.connectionsStatus = false;
+        if (mounted) {
+          Navigator.popAndPushNamed(context, '/init');
+        }
+      }
+    });
 
     if (Globals.localUser == null) {
       print("//// uid is null on chat");

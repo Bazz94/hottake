@@ -4,6 +4,8 @@ import 'package:hottake/services/auth.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/styles.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -16,7 +18,7 @@ class _LoginState extends State<Login> {
   bool isLoading = false;
   final TextStyle myStyle = const TextStyle(fontSize: 20, letterSpacing: 0.5);
   String headerText = 'Welcome';
-  Color headerTextColor = Colors.white;
+  TextStyle titleStyle = TextStyles.title;
   bool buttonCheck = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -55,7 +57,7 @@ class _LoginState extends State<Login> {
     if (result == null) {
       setState(() {
         headerText = 'Incorrect email or password';
-        headerTextColor = Colors.red;
+        titleStyle = TextStyles.titleError;
         isLoading = false;
       });
     }
@@ -66,7 +68,7 @@ class _LoginState extends State<Login> {
     if (result == null) {
       setState(() {
         headerText = 'Google sign in failed';
-        headerTextColor = Colors.red;
+        titleStyle = TextStyles.titleError;
         isLoading = false;
       });
     }
@@ -94,7 +96,7 @@ class _LoginState extends State<Login> {
         : Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: const Text("Hottake"),
+              title: Text("Hottake", style: TextStyles.title),
             ),
             body: SingleChildScrollView(
               child: Center(
@@ -109,10 +111,7 @@ class _LoginState extends State<Login> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           headerText,
-                          style: TextStyle(
-                              color: headerTextColor,
-                              fontSize: 24,
-                              letterSpacing: 0.5),
+                          style: titleStyle
                         ),
                       ),
                       Padding(
@@ -122,10 +121,7 @@ class _LoginState extends State<Login> {
                           child: TextField(
                             onChanged: (_) => setState(() {}),
                             controller: emailController,
-                            style: const TextStyle(
-                                letterSpacing: 0.5,
-                                color: Colors.white,
-                                fontSize: 20),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _emailErrorText,
@@ -134,9 +130,7 @@ class _LoginState extends State<Login> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Email',
-                              labelStyle: const TextStyle(
-                                  letterSpacing: 0.5,
-                                  color: Colors.deepPurpleAccent),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -149,10 +143,7 @@ class _LoginState extends State<Login> {
                             obscureText: true,
                             onChanged: (_) => setState(() {}),
                             controller: passwordController,
-                            style: const TextStyle(
-                                letterSpacing: 0.5,
-                                color: Colors.white,
-                                fontSize: 20),
+                            style: TextStyles.textField,
                             cursorColor: Colors.deepPurpleAccent,
                             decoration: InputDecoration(
                               errorText: _passwordErrorText,
@@ -161,9 +152,7 @@ class _LoginState extends State<Login> {
                               focusedBorder: customOutlineInputBorder(),
                               focusedErrorBorder: customOutlineInputBorder(),
                               labelText: 'Password',
-                              labelStyle: const TextStyle(
-                                  color: Colors.deepPurpleAccent,
-                                  letterSpacing: 0.5),
+                              labelStyle: TextStyles.textFieldLabel,
                             ),
                           ),
                         ),
@@ -206,12 +195,9 @@ class _LoginState extends State<Login> {
                           },
                           icon: const FaIcon(FontAwesomeIcons.google,
                               color: Colors.black),
-                          label: const Text(
+                          label: Text(
                             'Google Login',
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.black,
-                                letterSpacing: 0.5),
+                            style: TextStyles.buttonLight,
                           ),
                         ),
                       ),
@@ -226,12 +212,9 @@ class _LoginState extends State<Login> {
                           onPressed: () async {
                             Navigator.pushNamed(context, '/signup');
                           },
-                          child: const Text(
+                          child: Text(
                             'Sign up',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                letterSpacing: 0.5),
+                            style: TextStyles.buttonPurple,
                           ),
                         ),
                       ),

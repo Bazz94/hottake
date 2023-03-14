@@ -11,20 +11,17 @@ class DatabaseService {
   static final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  //updates to firestore and will create if there is no doc
-  Future updateUserData(int reputation) async {
-    return await _usersCollection.doc(uid).set({
-      'reputation': reputation,
-    });
-  }
-
   Future<int?> get getReputation async {
-    DocumentSnapshot doc = await _usersCollection.doc(uid).get();
-    print("//// flag 1: $doc");
-    final data = doc.data();
-    print("//// flag 2: $data");
-    final dataMap = data as Map<String, dynamic>;
-    return dataMap['reputation'];
+    try {
+      DocumentSnapshot doc =
+          await _usersCollection.doc(Globals.localUser!.uid).get();
+      final data = doc.data();
+      final dataMap = data as Map<String, dynamic>;
+      return dataMap['reputation'];
+    } catch (error) {
+      print("//// getReputation: ${error.toString()}");
+      return null;
+    }
   }
 
   //Get topics collection
@@ -34,8 +31,9 @@ class DatabaseService {
   Future<List<Topic>> get topics async {
     List<Future<Topic>>? futureList;
     List<Topic> list = <Topic>[];
-    await _topicsCollection.get().then(
-        (snap) => {
+    await _topicsCollection
+        .get()
+        .then((snap) => {
               futureList = snap.docs.map((doc) async {
                 final data = doc.data() as Map<String, dynamic>;
                 String? imageURL = '';
@@ -46,8 +44,10 @@ class DatabaseService {
                   image: imageURL,
                 );
               }).toList(),
-            },
-        onError: (e) => print(e.toString()));
+            })
+        .catchError((error) {
+      print("//// get topics: ${error.toString()}");
+    });
     for (var futureTopic in futureList!) {
       await futureTopic.then((topic) => {
             list.add(topic),
@@ -62,9 +62,9 @@ class DatabaseService {
       String url = await ref.child(path).getDownloadURL();
       return url;
     } catch (e) {
-      String msg = e.toString();
+      print(e.toString());
+      return null;
     }
-    return null;
   }
 
   //Get chats collection
@@ -78,9 +78,15 @@ class DatabaseService {
       'time': DateTime.now()
     };
     if (chatID != null) {
-      _chatsCollection.doc(chatID).collection("messages").add(data);
+      _chatsCollection
+          .doc(chatID)
+          .collection("messages")
+          .add(data)
+          .catchError((error) {
+        print("//// sendMessage: ${error.toString()}");
+      });
     } else {
-      print("////message could not be sent");
+      print("//// ChatID is null");
     }
   }
 
@@ -92,13 +98,15 @@ class DatabaseService {
         .orderBy("time")
         .limit(100)
         .snapshots()
-        .map(_snapToMessages);
+        .map(_snapToMessages)
+        .handleError((error) {
+      print("//// get messages: ${error.toString()}");
+    });
   }
 
   List<ChatMessage> _snapToMessages(QuerySnapshot snap) {
     List<ChatMessage> list = [];
     for (var doc in snap.docs) {
-      print("//// chat message list: ${doc.data()}");
       if (doc.get('content') != "") {
         list.add(ChatMessage(
             content: doc.get('content'),
@@ -112,7 +120,13 @@ class DatabaseService {
   //get Info from chat
   Stream<Future<Chat?>> get chats {
     print("//// chat retrieved");
-    return _chatsCollection.doc(Globals.chatID).snapshots().map(_snapToChat);
+    return _chatsCollection
+        .doc(Globals.chatID)
+        .snapshots()
+        .map(_snapToChat)
+        .handleError((error) {
+      print("//// get chats: ${error.toString()}");
+    });
   }
 
   Future<Chat?> _snapToChat(DocumentSnapshot? doc) async {
@@ -124,10 +138,10 @@ class DatabaseService {
         bool active;
         if (Globals.stance == 'yay') {
           yay = Globals.localUser!;
-          nay = await uidToLocalUser(dataMap['nay']);
+          nay = await _uidToLocalUser(dataMap['nay']);
           Globals.opponentUser = nay;
         } else {
-          yay = await uidToLocalUser(dataMap['yay']);
+          yay = await _uidToLocalUser(dataMap['yay']);
           Globals.opponentUser = yay;
           nay = Globals.localUser!;
         }
@@ -146,7 +160,7 @@ class DatabaseService {
     return null;
   }
 
-  Future<LocalUser?> uidToLocalUser(String? id) async {
+  Future<LocalUser?> _uidToLocalUser(String? id) async {
     String? username;
     int? reputation;
     if (id != null && id != "null") {
@@ -155,21 +169,41 @@ class DatabaseService {
         final data = doc.data() as Map<String, dynamic>;
         username = data['username'];
         reputation = data['reputation'];
+      }).catchError((error) {
+        print("//// _uidToLocalUser: ${error.toString()}");
+        return null;
       });
       return LocalUser(uid: id, username: username!, reputation: reputation!);
+    } else {
+      return null;
     }
-    return null;
   }
 
   void endChat() {
-    _chatsCollection.doc(Globals.chatID).update({"active": false});
+    _chatsCollection
+        .doc(Globals.chatID)
+        .update({"active": false}).catchError((error) {
+      print("//// endChat: ${error.toString()}");
+    });
   }
 
   void sendReview(String? review) {
-    if (Globals.stance == "nay") {
-      _chatsCollection.doc(Globals.chatID).update({"nayReview": review});
-    } else {
-      _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
+    try {
+      if (Globals.stance == "nay") {
+        _chatsCollection.doc(Globals.chatID).update({"nayReview": review});
+      } else {
+        _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
+      }
+    } catch (error) {
+      print("//// sendReview: ${error.toString()}");
     }
+  }
+
+  Future updateUserData(String username) async {
+    return await _usersCollection
+        .doc(Globals.localUser!.uid)
+        .update({'username': username}).catchError((error) {
+      print("//// updateUserData: ${error.toString()}");
+    });
   }
 }

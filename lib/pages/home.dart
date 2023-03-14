@@ -13,13 +13,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Text title = const Text('Hottake',style: TextStyle(letterSpacing: 0.5),);
-  late Future<List<Widget>> _loaded;
-  TextStyle titleStyle = const TextStyle(
-    fontSize: 24,
-    color: Colors.white,
-    letterSpacing: 0.5
+  Text title = const Text(
+    'Hottake',
+    style: TextStyle(letterSpacing: 0.5),
   );
+  late Future<List<Widget>> _loaded;
+  TextStyle titleStyle =
+      const TextStyle(fontSize: 24, color: Colors.white, letterSpacing: 0.5);
 
   @override
   void initState() {
@@ -37,6 +37,11 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (Globals.localUser == null) {
+      print("//// uid is null");
+      Navigator.popAndPushNamed(context, '/login');
+    }
+
     return WillPopScope(
         onWillPop: _onWillPop,
         child: FutureBuilder<List<Widget>>(
@@ -116,7 +121,7 @@ class _HomeState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CachedNetworkImage(
-                  fadeInDuration: Duration(milliseconds: 0),
+                  fadeInDuration: const Duration(milliseconds: 0),
                   width: 110,
                   height: 110,
                   fit: BoxFit.fill,

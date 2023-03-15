@@ -5,75 +5,88 @@ admin.initializeApp();
 
 
 // looks for opponent, found -> join chat, else => create chat
-exports.requestChat = functions.https.onCall(async (data, context) => {
+exports.requestChat = functions
+  .runWith({ enforceAppCheck: true })
+  .https.onCall(async (data, context) => {
 
-  // init
-  const uid = context.auth.uid;
-  const stance = data.stance;
-  const topic = data.topic;
-  const chatsCollection = admin.firestore().collection("chats");
-  const chatsSnap = await chatsCollection.where(stance, "==", "null").orderBy("time").limit(100).get();
-  let yay;
-  let nay;
-  let chatID = "null";
-  let found = false;
-
-  // has opponent been found
-  if (!chatsSnap.empty) {
-    // join Chat, return opponent
-    found = true;
-    const chat = chatsSnap.docs.at(0);
-    chatID = chat.id;
-    // update chat with user
-    if (stance == "yay") {
-      await chatsCollection.doc(chatID).update({ yay: uid });
-    } else {
-      await chatsCollection.doc(chatID).update({ nay: uid });
-    }
-  } else { //Opponent not found
-    // create Chat
-    if (stance == "yay") {
-      yay = uid;
-      nay = "null";
-    } else {
-      yay = "null";
-      nay = uid;
+    //Authentication 
+    if (context.app == undefined) {
+      throw new functions.https.HttpsError(
+        'failed-precondition',
+        'The function must be called from an App Check verified app.');
     }
 
-    const data = {
-      topic: topic,
-      yay: yay,
-      nay: nay,
-      active: true,
-      save: false,
-      nayReview: "",
-      yayReview: "",
-      time: new Date(),
-    };
+    // init
+    const uid = context.auth.uid;
+    const stance = data.stance;
+    const topic = data.topic;
+    const chatsCollection = admin.firestore().collection("chats");
+    const chatsSnap = await chatsCollection
+      .where('topic', '==', topic)
+      .where(stance, "==", 'null')
+      .orderBy('time')
+      .limit(1).get();
+    let yay;
+    let nay;
+    let chatID = "null";
+    let found = false;
 
-    //create chat in chats
-    await chatsCollection.add(data).then((documentSnapshot) =>
-      chatID = documentSnapshot.id);
-    await chatsCollection.doc(chatID).collection("messages").add({
-      content: topic,
-      owner: "admin",
-      time: new Date()
-    });
-  }
+    // has opponent been found
+    if (!chatsSnap.empty) {
+      // join Chat, return opponent
+      found = true;
+      const chat = chatsSnap.docs.at(0);
+      chatID = chat.id;
+      // update chat with user
+      if (stance == "yay") {
+        await chatsCollection.doc(chatID).update({ yay: uid });
+      } else {
+        await chatsCollection.doc(chatID).update({ nay: uid });
+      }
+    } else { //Opponent not found
+      // create Chat
+      if (stance == "yay") {
+        yay = uid;
+        nay = "null";
+      } else {
+        yay = "null";
+        nay = uid;
+      }
 
-  functions.logger.log("//// chatID: ", chatID);
+      const data = {
+        topic: topic,
+        yay: yay,
+        nay: nay,
+        active: true,
+        save: false,
+        nayReview: "",
+        yayReview: "",
+        time: new Date(),
+      };
 
-  const response = {
-    found: found,
-    chat: chatID,
-  }
+      //create chat in chats
+      await chatsCollection.add(data).then((documentSnapshot) =>
+        chatID = documentSnapshot.id);
+      await chatsCollection.doc(chatID).collection("messages").add({
+        content: topic,
+        owner: "admin",
+        time: new Date()
+      });
+    }
 
-  return response;
-});
+    functions.logger.log("//// chatID: ", chatID);
+
+    const response = {
+      found: found,
+      chat: chatID,
+    }
+
+    return response;
+  });
 
 
 
-exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
+exports.deleteChat = functions.runWith({ timeoutSeconds: 540, memory: '2GB' }).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   //function fires when a users active value has changed
   if (change.after.val() == false) {//user has gone offline
     const database = admin.database();
@@ -101,9 +114,9 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
         opponentActive = false;
       }
     } else { //numChildren is equal to 1, the user has started searching but left 
-            // before finding a match
+      // before finding a match
       opponentActive = false;
-    } 
+    }
     //delete chat
     if (opponentActive == false) {
       //updating user ratings 
@@ -118,9 +131,9 @@ exports.deleteChat = functions.runWith({timeoutSeconds: 540, memory: '2GB'}).dat
       }
       //delete chat from realtime  database
       await database.ref('/presence/' + chatID).remove().then(() => {
-        functions.logger.log('//// ',chatsDocRef.path,' delete successful');
+        functions.logger.log('//// ', chatsDocRef.path, ' delete successful');
       }).catch((error) => {
-        functions.logger.log('//// ',chatsDocRef.path,' delete unsuccessful: ', error);
+        functions.logger.log('//// ', chatsDocRef.path, ' delete unsuccessful: ', error);
       });
     }
   }
@@ -148,3 +161,32 @@ async function updateReputation(uid, review) {
     await userRef.update({ "reputation": reputation });
   }
 }
+
+
+exports.deleteUserData = functions.auth.user().onDelete((user) => {
+  const  uid = user.uid;
+  const userRef = admin.firestore().collection("users").doc(uid);
+  userRef.delete().then(() => {
+      functions.logger.log('//// ', uid, ' delete successful');
+    }).catch(() => {
+      functions.logger.log('//// ', uid, ' delete unsuccessful');
+    });
+  return true;
+});
+
+
+exports.createUserData = functions.auth.user().onCreate((user) => {
+  const uid = user.uid;
+  const userRef = admin.firestore().collection("users");
+  userRef.doc(uid).set({
+    'reputation': 50,
+    'username': user.displayName
+  })
+    .then(() => {
+      functions.logger.log('//// ', uid, ' created successful');
+    }).catch(() => {
+      functions.logger.log('//// ', uid, ' created unsuccessful');
+    });
+  return true;
+});
+

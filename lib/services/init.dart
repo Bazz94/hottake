@@ -10,8 +10,8 @@ import 'auth.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Init extends StatefulWidget {
-  const Init({Key? key}) : super(key: key);
-
+  const Init({Key? key, this.reset = false}) : super(key: key);
+  final bool reset;
   @override
   State<Init> createState() => _Init();
 }
@@ -19,7 +19,7 @@ class Init extends StatefulWidget {
 class _Init extends State<Init> {
   AuthService auth = AuthService();
   late Future<Widget> _loaded;
-
+   
   @override
   void initState() {
     _loaded = getData();
@@ -55,16 +55,21 @@ class _Init extends State<Init> {
 
   @override
   Widget build(BuildContext context) {
+    print("reset: ${widget.reset}");
     var user = Provider.of<LocalUser?>(context);
     String? uid;
     if (user != null) {
       uid = user.uid;
       if (user != Globals.localUser) {
-        setState(() {});
+        setState(() {
+          if (widget.reset == true) {
+            _loaded = getData();
+          }
+        });
       }
-      print('//// current uid: $uid');
       Globals.localUser = user;
-    }
+      print('//// current uid: ${Globals.localUser!.uid}');
+    } 
 
     if (ConnectivityService.isOnline == false) {
       return const ErrorPage();
@@ -76,11 +81,14 @@ class _Init extends State<Init> {
         BuildContext context,
         AsyncSnapshot<Widget> widget,) 
         {
-          print("//// build run: ${widget.hasData}");
+          print("//// hasData: ${widget.hasData}");
+          print('//// current uid: ${Globals.localUser}');
           if (widget.hasData) {
+            print("//// widget: ${widget.data.toString()}");
+            
             return widget.data!;
           } else {
-            return const Loading();
+            return Loading();
           }
       },
     );

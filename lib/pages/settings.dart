@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
+import 'package:hottake/services/init.dart';
 import '../models/data.dart';
 import '../models/styles.dart';
 import '../services/connectivity.dart';
@@ -64,12 +65,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     if (Globals.localUser == null) {
       print("//// uid is null on settings");
-      Navigator.popAndPushNamed(context, '/login');
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
     }
 
     if (ConnectivityService.isOnline == false) {
       if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration.zero, () {
           Navigator.popAndPushNamed(context, '/init');
         });
       }
@@ -215,13 +218,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           onPressed: () async {
                             setState(() => isLoading = true);
-                            Navigator.popAndPushNamed(context, '/init');
-                            try {
-                              await _auth.signOut();
-                            } catch (e) {
-                              setState(() => isLoading = false);
-                              print("//// error signing out: ${e.toString()}");
-                            }
+                            await _auth.signOut();
+                            Future.delayed(Duration.zero, () {
+                              //Navigator.pop(context);
+                              bool reset = true;
+                              Navigator.popAndPushNamed(context, '/init');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Init(reset: true),
+                                ),
+                              );
+                            });
                           },
                           child: Text(
                             'Log out',

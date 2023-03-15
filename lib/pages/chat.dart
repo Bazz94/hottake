@@ -1,11 +1,13 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hottake/models/data.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/searching.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/services/presence.dart';
-import 'package:hottake/services/server.dart';
 import 'package:provider/provider.dart';
+import '../models/styles.dart';
+import '../services/connectivity.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -21,12 +23,12 @@ enum DropDownItems { report, leave }
 class _ChatState extends State<ChatScreen> {
   List<ChatMessage> messages = [];
   Phase phase = Phase.searching;
-  late String? opponentUsername = "waiting..."; //default value
+  String? opponentUsername = "waiting..."; //default value
   final chatController = TextEditingController();
   final scrollController = ScrollController();
-  DatabaseService database = DatabaseService(uid: Globals.localUser!.uid);
-  ServerService server = ServerService(uid: Globals.localUser!.uid);
-  PresenceService presence = PresenceService(uid: Globals.localUser!.uid);
+  DatabaseService database = DatabaseService();
+  
+  
   bool opponentOffline = false;
   bool submittedReport = false; //flag used to stop user from deleting chat
   bool postMessageSentOnce = false;
@@ -35,21 +37,15 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("//// init called");
-    server.requestChat.then((value) {
-      setState(() {});
-    });
+    print("//// chat init");
     super.initState();
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     // Clean up the controller when the widget is disposed.
+    
     chatController.dispose();
-    presence.goOffline(Globals.chatID);
-    Globals.chatID = null;
-    Globals.opponentUser = null;
-    messages.clear();
     print("//// dispose chat screen");
     super.dispose();
   }
@@ -58,31 +54,33 @@ class _ChatState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     //Searching
 
-    if (phase == Phase.searching) {
-      if (chatSearchOnce == false) {
-         chatSearchOnce = true;
-         
-      }
-      
-      print("////chatID: ${Globals.chatID}");
+    print("//// flag 2: ${ConnectivityService.isOnline}");
+    if (ConnectivityService.isOnline == false) {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
+    }
 
+    if (phase == Phase.searching) {
+      print("//// chatID: ${Globals.chatID}");
       if (Globals.chatID != null) {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
         chatFuture.then((chat) {
           if (chat != null) {
-            print("////chat data received: ${chat.chatID}");
-            presence.goOnline(Globals.chatID!);
+            print("//// chat data received: ${chat.chatID}");
+
             if (chat.yay != null && chat.nay != null) {
-              print("opponent has been found");
-              presence.goOnline(Globals.chatID!);
+              print("//// opponent has been found");
               if (Globals.localUser!.uid == chat.yay!.uid) {
                 opponentUsername = chat.nay?.username!;
               } else {
                 opponentUsername = chat.yay?.username!;
               }
-              setState(() {
-                phase = Phase.debate;
-              });
+              if (mounted) {
+                setState(() {
+                  phase = Phase.debate;
+                });
+              }
             }
           }
         });
@@ -98,9 +96,11 @@ class _ChatState extends State<ChatScreen> {
         chatFuture.then((chat) {
           if (chat != null) {
             if (chat.active == false) {
-              setState(() {
-                phase = Phase.review;
-              });
+              if (mounted) {
+                setState(() {
+                  phase = Phase.review;
+                });
+              }
             }
           }
         });
@@ -139,8 +139,8 @@ class _ChatState extends State<ChatScreen> {
     if (phase == Phase.review) {
       //ask user to review opponent
       if (postMessageSentOnce == false) {
+        postMessageSentOnce = true;
         setState(() {
-          postMessageSentOnce = true;
           messages.add(ChatMessage(
               content: "    How was your interaction?    ",
               owner: "admin",
@@ -149,8 +149,7 @@ class _ChatState extends State<ChatScreen> {
       }
     }
 
-    //Post
-    if (phase == Phase.post) {}
+    print("//// Phase: $phase");
 
     return phase == Phase.searching
         ? const Searching()
@@ -160,7 +159,7 @@ class _ChatState extends State<ChatScreen> {
               child: Scaffold(
                   appBar: AppBar(
                     centerTitle: true,
-                    title: titleWidget(),
+                    title: getTitleWidget(),
                     actions: [
                       phase != Phase.debate ? Container() : endButton(),
                     ],
@@ -220,37 +219,37 @@ class _ChatState extends State<ChatScreen> {
       ),
       onPressed: () {
         //End chat
-        setState(() {
-          database.endChat();
-          database.sendMessage(
-            Globals.chatID,
-            "${Globals.localUser!.username} has ended the chat",
-            LocalUser(uid: "admin"),
-          );
-        });
+        database.endChat();
+        database.sendMessage(
+          Globals.chatID,
+          "${Globals.localUser!.username} has ended the chat",
+          LocalUser(uid: "admin"),
+        );
+        setState(() {});
       },
-      child: const Text(
+      child: Text(
         'End',
-        style: TextStyle(
-          fontSize: 18,
-          color: Colors.white,
-        ),
+        style: TextStyles.buttonPurple,
       ),
     );
   }
 
-  Widget titleWidget() {
+  Widget getTitleWidget() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(opponentUsername == null ? "none" : opponentUsername!),
+        Text(opponentUsername == null ? "none" : opponentUsername!,
+            style: TextStyles.title),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-              color: Globals.getReputationColour(Globals.opponentUser!.reputation!),
+              color: Globals.opponentUser != null
+                  ? Globals.getReputationColour(
+                      Globals.opponentUser!.reputation!)
+                  : Colors.white,
               shape: BoxShape.circle,
             ),
           ),
@@ -319,23 +318,14 @@ class _ChatState extends State<ChatScreen> {
               child: Card(
                   color: Colors.deepPurpleAccent,
                   child: InkWell(
-                    onTap: () {
-                      // // Start Searching for new opponent
-                      // presence.goOffline(Globals.chatID);
-                      // Globals.chatID = null;
-                      // Globals.opponentUser = null;
-                      // messages.clear();
-                      // chatController.clear();
-                      // chatSearchOnce = false;
-                      // setState(() {
-                      //   phase = Phase.searching;
-                      // });
-                      
-                      Navigator.pushNamed(context, '/stance/chat');
+                    onTap: () async {
+                      //Start Searching for new opponent
+                      print("//// Next Pressed!");
+                      await PresenceService.goOffline(Globals.chatID!);
+                      Navigator.popAndPushNamed(context, '/stance/chat');
                     },
-                    child: const Center(
-                      child: Text("Next",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    child: Center(
+                      child: Text("Next", style: TextStyles.buttonPurple),
                     ),
                   )),
             ),
@@ -369,9 +359,8 @@ class _ChatState extends State<ChatScreen> {
                         phase = Phase.post;
                       });
                     },
-                    child: const Center(
-                      child: Text("Good",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    child: Center(
+                      child: Text("Good", style: TextStyles.buttonPurple),
                     ),
                   )),
             ),
@@ -398,9 +387,8 @@ class _ChatState extends State<ChatScreen> {
                         phase = Phase.post;
                       });
                     },
-                    child: const Center(
-                      child: Text("Bad",
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    child: Center(
+                      child: Text("Bad", style: TextStyles.buttonPurple),
                     ),
                   )),
             ),
@@ -431,10 +419,11 @@ class _ChatState extends State<ChatScreen> {
                       textInputAction: TextInputAction.newline,
                       maxLines: 3,
                       minLines: 1,
+                      style: const TextStyle(fontSize: 16),
                       cursorColor: Colors.deepPurpleAccent,
                       controller: chatController,
                       decoration: const InputDecoration(
-                          hintText: "Write message...",
+                          hintText: "Write a message...",
                           hintStyle: TextStyle(color: Colors.black),
                           border: InputBorder.none),
                     ),
@@ -446,12 +435,11 @@ class _ChatState extends State<ChatScreen> {
                     height: 43,
                     child: FloatingActionButton(
                       onPressed: () {
-                        setState(() {
-                          database.sendMessage(Globals.chatID,
-                              chatController.text, Globals.localUser!);
-                          chatController.clear();
-                          scrollController.jumpTo(messages.length - 1);
-                        });
+                        database.sendMessage(Globals.chatID,
+                            chatController.text, Globals.localUser!);
+                        chatController.clear();
+                        scrollController.jumpTo(messages.length - 1);
+                        setState(() {});
                       },
                       backgroundColor: Colors.deepPurple,
                       elevation: 0,
@@ -483,10 +471,11 @@ class _ChatState extends State<ChatScreen> {
               TextButton(
                 child: const Text("YES"),
                 onPressed: () {
+                  PresenceService.goOffline(Globals.chatID!);
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => Home()),
+                        builder: (BuildContext context) => const Home()),
                     ModalRoute.withName('/home'),
                   );
                 },

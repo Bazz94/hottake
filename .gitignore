@@ -26,3 +26,5 @@ doc/api/
 lib/shared/private.dart
 android/app/google-services.json
 .vscode
+.eslintrc.js
+functions/.eslintrc.json

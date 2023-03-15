@@ -55,7 +55,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '995196928700',
     projectId: 'hottake-project',
     authDomain: 'hottake-project.firebaseapp.com',
-    databaseURL: 'https://hottake-project-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL:
+        'https://hottake-project-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'hottake-project.appspot.com',
     measurementId: 'G-MZW8VRVWQ6',
   );
@@ -65,7 +66,8 @@ class DefaultFirebaseOptions {
     appId: '1:995196928700:android:44b5b4ee17bd05e8b046b9',
     messagingSenderId: '995196928700',
     projectId: 'hottake-project',
-    databaseURL: 'https://hottake-project-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL:
+        'https://hottake-project-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'hottake-project.appspot.com',
   );
 }

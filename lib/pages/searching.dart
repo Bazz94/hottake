@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/pages/home.dart';
+import 'package:hottake/services/connectivity.dart';
 
 class Searching extends StatefulWidget {
   const Searching({Key? key}) : super(key: key);
@@ -31,6 +33,14 @@ class _SearchingState extends State<Searching> {
 
   @override
   Widget build(BuildContext context) {
+
+    print("//// flag 3: ${ConnectivityService.isOnline}");
+    if (ConnectivityService.isOnline == false) {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
+    }
+
     timer = Timer(const Duration(seconds: 1), () async {
       double difference =
           startTime.difference(DateTime.now()).inSeconds.abs().toDouble();

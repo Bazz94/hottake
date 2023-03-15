@@ -13,7 +13,6 @@ class _StancePageState extends State<StancePage> {
   double forFontSize = 35;
   double againstFontSize = 35;
   int startPoint = 0;
-  String uid = Globals.localUser!.uid;
 
   @override
   void dispose() {

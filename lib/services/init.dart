@@ -5,6 +5,7 @@ import 'package:hottake/services/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/login.dart';
+import '../pages/loading.dart';
 import 'auth.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -17,28 +18,40 @@ class Init extends StatefulWidget {
 
 class _Init extends State<Init> {
   AuthService auth = AuthService();
+  late Future<Widget> _loaded;
 
   @override
   void initState() {
-    
+    _loaded = getData();
     ConnectivityService.subscription.onData((result) {
       setState(() {
-        print("//// Connection status: ${result.toString()}");
+        print("////1 Connection status: ${result.toString()}");
         if (result != ConnectivityResult.none) {
-          ConnectivityService.connectionsStatus = true;
+          ConnectivityService.isOnline = true;
         } else {
-          ConnectivityService.connectionsStatus = false;
+          ConnectivityService.isOnline = false;
         }
       });
     });
     super.initState();
-  } 
+  }
 
   @override
-  void dispose() { 
-    ConnectivityService.dispose();
+  void dispose() {
+    print("//// init dispose");
+    ConnectivityService.dispose;
     super.dispose();
-  } 
+  }
+
+  Future<Widget> getData() async {
+    await auth.reloadUser();
+    print("//// localUser: ${Globals.localUser}");
+    if (Globals.localUser != null) {
+      return Home();
+    } else {
+      return Login();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,21 +64,26 @@ class _Init extends State<Init> {
       }
       print('//// current uid: $uid');
       Globals.localUser = user;
-      auth.reloadUser().then((value) {
-        print("//// reload user successful");
-      }).catchError((error, stackTrace) {
-        print("//// reload error: ${error.toString()}");
-        Globals.localUser = null;
-      });
     }
 
-    if (ConnectivityService.connectionsStatus == false) {
-      return ErrorPage();
+    if (ConnectivityService.isOnline == false) {
+      return const ErrorPage();
     }
 
-    print("//// Global localUser on init: ${Globals.localUser}");
-    return Globals.localUser == null 
-      ? const Login() 
-      : const Home();
+    return FutureBuilder<Widget>(
+      future: _loaded,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<Widget> widget,) 
+        {
+          print("//// build run: ${widget.hasData}");
+          if (widget.hasData) {
+            return widget.data!;
+          } else {
+            return const Loading();
+          }
+      },
+    );
   }
 }
+

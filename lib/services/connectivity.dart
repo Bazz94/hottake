@@ -2,15 +2,15 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityService {
-  static bool connectionsStatus = false;
+  static bool isOnline = false;
 
   static final subscription = Connectivity().onConnectivityChanged
   .listen((ConnectivityResult result) {
     print("//// Connection status: ${result.toString()}");
     if (result != ConnectivityResult.none) {
-      connectionsStatus = true;
+      isOnline = true;
     } else {
-      connectionsStatus = false;
+      isOnline = false;
     }
   });
 

@@ -4,6 +4,7 @@ import 'package:hottake/services/auth.dart';
 import "package:hottake/pages/loading.dart";
 import '../models/data.dart';
 import '../models/styles.dart';
+import '../services/connectivity.dart';
 import '../services/database.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -64,6 +65,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (Globals.localUser == null) {
       print("//// uid is null on settings");
       Navigator.popAndPushNamed(context, '/login');
+    }
+
+    if (ConnectivityService.isOnline == false) {
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.popAndPushNamed(context, '/init');
+        });
+      }
     }
 
     return isLoading == true
@@ -201,7 +210,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.deepPurple,
+                            foregroundColor: Colors.deepPurpleAccent,
                             minimumSize: const Size.fromHeight(50),
                           ),
                           onPressed: () async {
@@ -227,5 +236,3 @@ class _SettingsScreenState extends State<SettingsScreen> {
           );
   }
 }
-
-/////////////////////////////////////////////////////////////////////////////

@@ -1,2 +1,2 @@
 # hottake
-A Flutter project in development trageted at android and web, for my dev portfolio.
+A chat app that lets you debate topics with anonymous people. Made with Flutter and Firebase, for Android and Web.

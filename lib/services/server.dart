@@ -3,8 +3,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:convert';
 
 class ServerService {
-  String uid;
-  ServerService({required this.uid});
 
   Future<String?> get requestChat async {
     Map dataToSend = {
@@ -23,7 +21,6 @@ class ServerService {
       print('//// received from server: $data');
       if (data != null) {
         Globals.chatID = data["chat"];
-
         return Globals.chatID;
       }
     } on FirebaseFunctionsException catch (error) {

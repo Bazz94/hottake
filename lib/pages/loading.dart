@@ -10,11 +10,11 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    if (Globals.topic != null) {
-      
-      print("//// pushNamed chat page");
-      Navigator.popAndPushNamed(context, '/stance/chat');
-    }
+    // if (Globals.topic != null) {
+    //   print("//// pushNamed chat page");
+    //   Navigator.popAndPushNamed(context, '/stance/chat');
+    // }
+    
 
     return SafeArea(
         child: Scaffold(

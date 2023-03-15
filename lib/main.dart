@@ -89,9 +89,7 @@ class _MyAppState extends State<MyApp> {
         home: Init(),
         routes: {
           '/init': (context) => const Init(),
-          '/login': (context) => const Login(),
           '/signup': (context) => const Signup(),
-          '/home': (context) => const Home(),
           '/settings': (context) => const SettingsScreen(),
           '/stance': (context) => const StancePage(),
           '/stance/chat': (context) => const ChatInit(),

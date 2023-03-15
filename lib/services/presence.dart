@@ -1,20 +1,18 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hottake/models/data.dart';
+import 'package:hottake/services/connectivity.dart';
 
 class PresenceService {
-  String uid;
   static bool _isOnline = false;
   static bool? opponentOnline;
-  static bool _queueOffline = false;
-  static String? _localChatID;
-  PresenceService({required this.uid});
+  
 
   static final _presenceRef = FirebaseDatabase.instance.ref("presence/");
 
-  goOnline(String chatID) async {
-    if (_isOnline != true) {
-      _localChatID = chatID;
-      print('//// Go online');
+  static goOnline(String chatID) async {
+    if (_isOnline != true && ConnectivityService.isOnline) {
+      String uid = Globals.localUser!.uid;
+      print('//// Go online: $chatID');
       try {
         _isOnline = true;
         await _presenceRef.child("$chatID/$uid").set({
@@ -23,29 +21,25 @@ class PresenceService {
         await _presenceRef.child("$chatID/$uid").onDisconnect().set({
           'active': false,
         });
-        if (_queueOffline == true) {
-          goOffline();
-          _queueOffline = false;
-        }
       } catch (error) {
         print("//// goOnline: ${error.toString()}");
       }
     }
   }
 
-  goOffline() async {
-    if (_isOnline == true) {
+  static goOffline(String chatID) async {
+    if (_isOnline == true && ConnectivityService.isOnline) {
+      String uid = Globals.localUser!.uid;
+      print("//// Go offline $chatID");
       try {
-        await _presenceRef.child("$_localChatID/$uid").set({'active': false});
-        await _presenceRef.child("$_localChatID/$uid").onDisconnect().cancel();
+        await _presenceRef.child("$chatID/$uid").set({'active': false});
+        await _presenceRef.child("$chatID/$uid").onDisconnect().cancel();
         _isOnline = false;
-        print("//// Go offline");
       } catch (error) {
         print("//// goOffline: ${error.toString()}");
       }
     } else {
       print("//// goOffline called but already offline");
-      _queueOffline = true;
     }
   }
 

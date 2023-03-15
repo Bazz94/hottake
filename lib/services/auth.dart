@@ -20,7 +20,16 @@ class AuthService {
 
   Future reloadUser() async {
     if (_user != null) {
-      return await _user?.reload();
+      try{
+          await _user?.reload();
+          print("//// reload user successful");
+        } on FirebaseAuthException catch (error) {
+          if (error.code != 'network-request-failed') {
+            Globals.localUser = null;
+          }
+          print("//// error code: ${error.code}");
+          print("//// reload error: ${error.toString()}");
+        }
     }
     return null;
   }

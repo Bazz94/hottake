@@ -36,7 +36,6 @@ class TextStyles {
     fontSize: 20,
     letterSpacing: 0.5,
   );
-
 }
 
 class MessageStyle {

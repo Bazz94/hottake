@@ -118,7 +118,7 @@ class DatabaseService {
   }
 
   //get Info from chat
-  Stream<Future<Chat?>> get chats {
+  static Stream<Future<Chat?>> get chats {
     print("//// chat retrieved");
     return _chatsCollection
         .doc(Globals.chatID)
@@ -129,7 +129,7 @@ class DatabaseService {
     });
   }
 
-  Future<Chat?> _snapToChat(DocumentSnapshot? doc) async {
+  static Future<Chat?> _snapToChat(DocumentSnapshot? doc) async {
     if (doc != null) {
       final data = doc.data();
       if (data != null) {
@@ -160,7 +160,7 @@ class DatabaseService {
     return null;
   }
 
-  Future<LocalUser?> _uidToLocalUser(String? id) async {
+  static Future<LocalUser?> _uidToLocalUser(String? id) async {
     String? username;
     int? reputation;
     if (id != null && id != "null") {

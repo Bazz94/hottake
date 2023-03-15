@@ -27,7 +27,7 @@ class _ErrorPageState extends State<ErrorPage> {
                   ), //Spacing
                   Flexible(
                     flex: 1,
-                    child: Text( ConnectivityService.connectionsStatus == false
+                    child: Text( ConnectivityService.isOnline == false
                       ? "Lost connection..."
                       : "An error has occurred",
                       style: const TextStyle(

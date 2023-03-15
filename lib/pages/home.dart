@@ -5,8 +5,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/models/data.dart';
-
+import 'package:hottake/services/presence.dart';
 import '../models/styles.dart';
+import '../services/connectivity.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
+    
     super.dispose();
   }
 
@@ -44,21 +46,33 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+
     if (Globals.localUser == null) {
       print("//// uid is null");
-      Navigator.popAndPushNamed(context, '/login');
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
     }
 
+    print("//// flag 0: ${ConnectivityService.isOnline}");
+    if (ConnectivityService.isOnline == false) {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
+    }
   
 
     return WillPopScope(
         onWillPop: _onWillPop,
         child: FutureBuilder<List<Widget>>(
             future: _loaded.catchError((error) {
-              Navigator.pop(context);
+              Future.delayed(Duration.zero, () {
+                Navigator.popAndPushNamed(context, '/init');
+              });
             }),
             builder:
-                (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
+                (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) 
+            {
               List<Widget> children = <Widget>[];
               if (listTopics.hasData) {
                 children = listTopics.data!;
@@ -116,7 +130,9 @@ class _HomeState extends State<Home> {
           child: InkWell(
             onTap: () {
               Globals.topic = t;
-              Navigator.pushNamed(context, '/stance');
+              Future.delayed(Duration.zero, () {
+                Navigator.popAndPushNamed(context, '/stance');
+              });
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,6 +201,7 @@ class _HomeState extends State<Home> {
             ],
           );
         });
+        ConnectivityService.dispose();
     return Future.value(true);
   }
 }

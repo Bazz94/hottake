@@ -24,21 +24,27 @@ Future<void> main() async {
     await Firebase.initializeApp(
         options: FirebaseOptions(
             apiKey: Private.apiKey,
-            appId: Private.appId,
+            authDomain: Private.authDomain,
+            databaseURL: Private.databaseURL,
+            projectId: Private.projectId,
+            storageBucket: Private.storageBucket,
             messagingSenderId: Private.messagingSenderId,
-            projectId: Private.projectId));
+            appId: Private.appId,
+            measurementId: Private.measurementId,
+            ));
   } else {
     await Firebase.initializeApp();
   }
 
   await FirebaseAppCheck.instance.activate(
-    webRecaptchaSiteKey: 'recaptcha-v3-site-key',
+    webRecaptchaSiteKey: Private.reCaptcha,
     // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
     // your preferred provider. Choose from:
     // 1. debug provider
     // 2. safety net provider
     // 3. play integrity provider
     androidProvider: AndroidProvider.debug,
+    
   );
   runApp(const MyApp());
 }

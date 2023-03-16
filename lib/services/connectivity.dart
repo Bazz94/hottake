@@ -2,7 +2,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityService {
-  static bool isOnline = false;
+  static bool isOnline = true;
 
   static final subscription = Connectivity().onConnectivityChanged
   .listen((ConnectivityResult result) {

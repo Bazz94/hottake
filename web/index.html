@@ -28,6 +28,8 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
+  <script type="text/javascript" src="token.js"></script>
+  <script> self.FIREBASE_APPCHECK_DEBUG_TOKEN = token; </script>
 
   <title>hottake</title>
   <link rel="manifest" href="manifest.json">
@@ -37,12 +39,14 @@
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script>
+    
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
     function loadMainDartJs() {
       if (scriptLoaded) {
         return;
       }
+      
       scriptLoaded = true;
       var scriptTag = document.createElement('script');
       scriptTag.src = 'main.dart.js';

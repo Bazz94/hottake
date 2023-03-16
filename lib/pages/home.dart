@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
         child: FutureBuilder<List<Widget>>(
             future: _loaded.catchError((error) {
               Future.delayed(Duration.zero, () {
-                Navigator.popAndPushNamed(context, '/init');
+                Navigator.popAndPushNamed(context, '/error');
               });
             }),
             builder:

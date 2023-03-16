@@ -28,3 +28,4 @@ android/app/google-services.json
 .vscode
 .eslintrc.js
 functions/.eslintrc.json
+web/token.js

@@ -70,7 +70,7 @@ class _Init extends State<Init> {
       Globals.localUser = user;
       print('//// current uid: ${Globals.localUser!.uid}');
     } 
-
+    print('//// online: ${ConnectivityService.isOnline}');
     if (ConnectivityService.isOnline == false) {
       return const ErrorPage();
     }

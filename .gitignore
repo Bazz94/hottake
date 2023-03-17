@@ -31,3 +31,4 @@ functions/.eslintrc.json
 web/token.js
 public
 .eslintrc.json
+test/

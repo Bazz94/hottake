@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
@@ -106,144 +107,150 @@ class _SignupState extends State<Signup> {
               // the App.build method, and use it to set our appbar title.
               centerTitle: true,
               title: const Text("Sign Up"),
+              leading: kIsWeb
+            ? Container()
+            : null,
             ),
             body: SingleChildScrollView(
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: SizedBox(
-                          height: 20,
-                          child: Text(signUpError,
-                              style: TextStyles.titleError),
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 800),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            height: 20,
+                            child: Text(signUpError,
+                                style: TextStyles.titleError),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: SizedBox(
-                          height: 70,
-                          child: TextField(
-                            maxLength: 16,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            onChanged: (_) => setState(() {}),
-                            controller: usernameController,
-                            style: TextStyles.textField,
-                            cursorColor: Colors.deepPurpleAccent,
-                            decoration: InputDecoration(
-                              errorText: _usernameErrorText,
-                              errorBorder: customOutlineInputBorder(),
-                              enabledBorder: customOutlineInputBorder(),
-                              focusedBorder: customOutlineInputBorder(),
-                              focusedErrorBorder: customOutlineInputBorder(),
-                              labelText: 'Username',
-                              labelStyle: TextStyles.textFieldLabel,
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            height: 70,
+                            child: TextField(
+                              maxLength: 16,
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                              onChanged: (_) => setState(() {}),
+                              controller: usernameController,
+                              style: TextStyles.textField,
+                              cursorColor: Colors.deepPurpleAccent,
+                              decoration: InputDecoration(
+                                errorText: _usernameErrorText,
+                                errorBorder: customOutlineInputBorder(),
+                                enabledBorder: customOutlineInputBorder(),
+                                focusedBorder: customOutlineInputBorder(),
+                                focusedErrorBorder: customOutlineInputBorder(),
+                                labelText: 'Username',
+                                labelStyle: TextStyles.textFieldLabel,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: SizedBox(
-                          height: 70,
-                          child: TextField(
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            maxLength: 255,
-                            onChanged: (_) => setState(() {}),
-                            controller: emailController,
-                            style: TextStyles.textField,
-                            cursorColor: Colors.deepPurpleAccent,
-                            decoration: InputDecoration(
-                              errorText: _emailErrorText,
-                              errorBorder: customOutlineInputBorder(),
-                              enabledBorder: customOutlineInputBorder(),
-                              focusedBorder: customOutlineInputBorder(),
-                              focusedErrorBorder: customOutlineInputBorder(),
-                              labelText: 'Email',
-                              labelStyle: TextStyles.textFieldLabel,
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            height: 70,
+                            child: TextField(
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                              maxLength: 255,
+                              onChanged: (_) => setState(() {}),
+                              controller: emailController,
+                              style: TextStyles.textField,
+                              cursorColor: Colors.deepPurpleAccent,
+                              decoration: InputDecoration(
+                                errorText: _emailErrorText,
+                                errorBorder: customOutlineInputBorder(),
+                                enabledBorder: customOutlineInputBorder(),
+                                focusedBorder: customOutlineInputBorder(),
+                                focusedErrorBorder: customOutlineInputBorder(),
+                                labelText: 'Email',
+                                labelStyle: TextStyles.textFieldLabel,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: SizedBox(
-                          height: 70,
-                          child: TextField(
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            maxLength: 64,
-                            onChanged: (_) => setState(() {}),
-                            controller: passwordController,
-                            obscureText: true,
-                            style: TextStyles.textField,
-                            cursorColor: Colors.deepPurpleAccent,
-                            decoration: InputDecoration(
-                              errorText: _passwordErrorText,
-                              errorBorder: customOutlineInputBorder(),
-                              enabledBorder: customOutlineInputBorder(),
-                              focusedBorder: customOutlineInputBorder(),
-                              focusedErrorBorder: customOutlineInputBorder(),
-                              labelText: 'Password',
-                              labelStyle: TextStyles.textFieldLabel,
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            height: 70,
+                            child: TextField(
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                              maxLength: 64,
+                              onChanged: (_) => setState(() {}),
+                              controller: passwordController,
+                              obscureText: true,
+                              style: TextStyles.textField,
+                              cursorColor: Colors.deepPurpleAccent,
+                              decoration: InputDecoration(
+                                errorText: _passwordErrorText,
+                                errorBorder: customOutlineInputBorder(),
+                                enabledBorder: customOutlineInputBorder(),
+                                focusedBorder: customOutlineInputBorder(),
+                                focusedErrorBorder: customOutlineInputBorder(),
+                                labelText: 'Password',
+                                labelStyle: TextStyles.textFieldLabel,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: SizedBox(
-                          height: 70,
-                          child: TextField(
-                            onChanged: (_) => setState(() {}),
-                            controller: password2Controller,
-                            obscureText: true,
-                            style: TextStyles.textField,
-                            cursorColor: Colors.deepPurpleAccent,
-                            decoration: InputDecoration(
-                              errorText: _password2ErrorText,
-                              errorBorder: customOutlineInputBorder(),
-                              enabledBorder: customOutlineInputBorder(),
-                              focusedBorder: customOutlineInputBorder(),
-                              focusedErrorBorder: customOutlineInputBorder(),
-                              labelText: 'Password Check',
-                              labelStyle: TextStyles.textFieldLabel,
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            height: 70,
+                            child: TextField(
+                              onChanged: (_) => setState(() {}),
+                              controller: password2Controller,
+                              obscureText: true,
+                              style: TextStyles.textField,
+                              cursorColor: Colors.deepPurpleAccent,
+                              decoration: InputDecoration(
+                                errorText: _password2ErrorText,
+                                errorBorder: customOutlineInputBorder(),
+                                enabledBorder: customOutlineInputBorder(),
+                                focusedBorder: customOutlineInputBorder(),
+                                focusedErrorBorder: customOutlineInputBorder(),
+                                labelText: 'Password Check',
+                                labelStyle: TextStyles.textFieldLabel,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            minimumSize: const Size.fromHeight(50),
-                          ),
-                          onPressed: () async {
-                            setState(() => buttonCheck = true);
-                            if ((usernameController.value.text.isNotEmpty &&
-                                    emailController.value.text.isNotEmpty) &&
-                                (passwordController.value.text.isNotEmpty &&
-                                    (password2Controller.value.text
-                                            .toString() ==
-                                        passwordController.value.text
-                                            .toString())) &&
-                                passwordController.value.text.length > 7) {
-                              setState(() => isLoading = true);
-                              _submit();
-                            }
-                          },
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyles.buttonPurple,
+                        Container(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            onPressed: () async {
+                              setState(() => buttonCheck = true);
+                              if ((usernameController.value.text.isNotEmpty &&
+                                      emailController.value.text.isNotEmpty) &&
+                                  (passwordController.value.text.isNotEmpty &&
+                                      (password2Controller.value.text
+                                              .toString() ==
+                                          passwordController.value.text
+                                              .toString())) &&
+                                  passwordController.value.text.length > 7) {
+                                setState(() => isLoading = true);
+                                _submit();
+                              }
+                            },
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyles.buttonPurple,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

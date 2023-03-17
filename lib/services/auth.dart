@@ -20,16 +20,16 @@ class AuthService {
 
   Future reloadUser() async {
     if (_user != null) {
-      try{
-          await _user?.reload();
-          print("//// reload user successful");
-        } on FirebaseAuthException catch (error) {
-          if (error.code != 'network-request-failed') {
-            Globals.localUser = null;
-          }
-          print("//// error code: ${error.code}");
-          print("//// reload error: ${error.toString()}");
+      try {
+        await _user?.reload();
+        print("//// reload user successful");
+      } on FirebaseAuthException catch (error) {
+        if (error.code != 'network-request-failed') {
+          Globals.localUser = null;
         }
+        print("//// error code: ${error.code}");
+        print("//// reload error: ${error.toString()}");
+      }
     }
     return null;
   }
@@ -87,35 +87,49 @@ class AuthService {
 
   //Google Sign In
   Future<User?> googleSignIn() async {
-    final GoogleSignInAccount? googleSignInAccount =
-        await _googleSignIn.signIn().catchError((error) {
-          print("//// googleSignIn error: ${error.toString()}");
-        });
+    if (kIsWeb) {
 
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-
+      var provider = GoogleAuthProvider();
+      provider.setCustomParameters({"prompt": "select_account"});
       try {
-        final UserCredential userCredential =
-            await _auth.signInWithCredential(credential);
-        _user = userCredential.user;
-        if (userCredential.additionalUserInfo!.isNewUser) {
-          return _user;
-        } else {
-          return _user;
-        }
-      } catch (e) {
-        print("//// Error googleSignIn: ${e.toString()}");
+        await _auth.signInWithRedirect(provider);
+        return _auth.currentUser;
+      } catch (error) {
+        print("//// google error: ${error.toString()}");
         return null;
       }
     } else {
-      return null;
+
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn().catchError((error) {
+        print("//// googleSignIn error: ${error.toString()}");
+      });
+
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        try {
+          final UserCredential userCredential =
+              await _auth.signInWithCredential(credential);
+          _user = userCredential.user;
+          if (userCredential.additionalUserInfo!.isNewUser) {
+            return _user;
+          } else {
+            return _user;
+          }
+        } catch (e) {
+          print("//// Error googleSignIn: ${e.toString()}");
+          return null;
+        }
+      } else {
+        return null;
+      }
     }
   }
 

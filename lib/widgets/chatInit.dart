@@ -98,7 +98,16 @@ class _ChatInitState extends State<ChatInit> {
                   Navigator.popAndPushNamed(context, '/init');
                 });
                 
-                return const Loading();
+                return WillPopScope(
+                  onWillPop: () async {
+                    if(Globals.chatID != null) {
+                      await PresenceService.goOffline(Globals.chatID!);
+                    }
+                    Navigator.pop(context);
+                    return Future.value(true);
+                  },
+                  child: const Loading()
+                  );
               }
             },
         ));

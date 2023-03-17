@@ -1,11 +1,11 @@
 {
-    "name": "hottake",
-    "short_name": "hottake",
+    "name": "Hottake",
+    "short_name": "Hottake",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A chat app that lets you debate topics with anonymous people.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

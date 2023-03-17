@@ -1,13 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/models/data.dart';
-import 'package:hottake/services/presence.dart';
 import '../models/styles.dart';
 import '../services/connectivity.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -29,7 +28,6 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    
     super.dispose();
   }
 
@@ -46,7 +44,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
     if (Globals.localUser == null) {
       print("//// uid is null");
       Future.delayed(Duration.zero, () {
@@ -60,61 +57,70 @@ class _HomeState extends State<Home> {
         Navigator.popAndPushNamed(context, '/init');
       });
     }
-  
 
     return WillPopScope(
         onWillPop: _onWillPop,
-        child: FutureBuilder<List<Widget>>(
-            future: _loaded.catchError((error) {
-              Future.delayed(Duration.zero, () {
-                Navigator.popAndPushNamed(context, '/error');
-              });
-            }),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) 
-            {
-              List<Widget> children = <Widget>[];
-              if (listTopics.hasData) {
-                children = listTopics.data!;
-                return Scaffold(
-                    appBar: AppBar(
-                      // Here we take the value from the MyHomePage object that was created by
-                      // the App.build method, and use it to set our appbar title.
-                      centerTitle: true,
-                      title: Text('Hottake', style: TextStyles.title),
-                      //leading:
-                      actions: [
-                        IconButton(
+        child: FutureBuilder<List<Widget>>(future: _loaded.catchError((error) {
+          Future.delayed(Duration.zero, () {
+            Navigator.popAndPushNamed(context, '/error');
+          });
+        }), builder:
+            (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
+          List<Widget> children = <Widget>[];
+          if (listTopics.hasData) {
+            children = listTopics.data!;
+            return Scaffold(
+                appBar: AppBar(
+                  // Here we take the value from the MyHomePage object that was created by
+                  // the App.build method, and use it to set our appbar title.
+                  centerTitle: true,
+                  title: Text('Hottake', style: TextStyles.title),
+                  leading: Container(),
+                  actions: [ kIsWeb
+                        ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder(),
+                            backgroundColor: Colors.deepPurple,
+                            side: const BorderSide(width: 0.5,color: Colors.white)
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/settings');
+                            }, 
+                          child: Text("Profile",style: TextStyles.buttonPurple)) 
+                        : IconButton(
                           icon: const Icon(Icons.settings),
                           tooltip: 'Navigation menu',
                           onPressed: () {
                             Navigator.pushNamed(context, '/settings');
                           },
                         ),
-                      ],
-                    ),
-                    body: SingleChildScrollView(
-                      child: Center(
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(5, 16, 5, 16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: children,
-                            )),
-                      ),
-                    ));
-              } else {
-                return const Loading();
-              }
-            }));
+                  ],
+                ),
+                body: SingleChildScrollView(
+                  child: Center(
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 16, 5, 16),
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 800),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: children,
+                          ),
+                        )),
+                  ),
+                ));
+          } else {
+            return const Loading();
+          }
+        }));
   }
 
   Widget myLabel = Padding(
     padding: const EdgeInsets.all(8.0),
     child: Center(
-      child: Text('Pick a topic',
-          textAlign: TextAlign.center,
-          style: TextStyles.title,
+      child: Text(
+        'Pick a topic',
+        textAlign: TextAlign.center,
+        style: TextStyles.title,
       ),
     ),
   );
@@ -122,9 +128,10 @@ class _HomeState extends State<Home> {
   Widget makeTile(Topic t) {
     Image image;
     if (t.image != null) {
-      image = Image.memory(t.image!,width: 110,height: 110,fit: BoxFit.fill);
+      image = Image.memory(t.image!, width: 110, height: 110, fit: BoxFit.fill);
     } else {
-      image = Image.asset("assets/images/error_image.png", width: 110, height: 110,fit: BoxFit.fill);
+      image = Image.asset("assets/images/error_image.png",
+          width: 110, height: 110, fit: BoxFit.fill);
     }
     return SizedBox(
       height: 110,
@@ -135,30 +142,13 @@ class _HomeState extends State<Home> {
             onTap: () {
               Globals.topic = t;
               Future.delayed(Duration.zero, () {
-                Navigator.popAndPushNamed(context, '/stance');
+                Navigator.pushNamed(context, '/stance');
               });
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 image,
-                // CachedNetworkImage(
-                //   fadeInDuration: const Duration(milliseconds: 0),
-                //   width: 110,
-                //   height: 110,
-                //   fit: BoxFit.fill,
-                //   imageUrl: t.image != null ? t.image! : loadingImg,
-                //   placeholder: (context, url) => Container(
-                //     color: Colors.grey[850],
-                //     child: const Center(
-                //       child: SpinKitDoubleBounce(
-                //         color: Colors.deepPurpleAccent,
-                //         size: 20,
-                //       ),
-                //     ),
-                //   ),
-                //   errorWidget: (context, url, error) => const Icon(Icons.error),
-                // ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -169,7 +159,8 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(width: 10),
-                            Center(child: Text(t.title, style: TextStyles.title)),
+                            Center(
+                                child: Text(t.title, style: TextStyles.title)),
                           ],
                         ),
                       ),
@@ -183,30 +174,35 @@ class _HomeState extends State<Home> {
   }
 
   Future<bool> _onWillPop() {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Confirm Exit"),
-            content: const Text("Are you sure you want to exit?"),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("YES"),
-                onPressed: () {
-                  SystemNavigator.pop();
-                },
-              ),
-              TextButton(
-                child: const Text("NO"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
-        ConnectivityService.dispose();
+    if (kIsWeb) {
+      ConnectivityService.dispose();
+    } else {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Confirm Exit"),
+              content: const Text("Are you sure you want to exit?"),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text("YES"),
+                  onPressed: () {
+                    SystemNavigator.pop();
+                    ConnectivityService.dispose();
+                    exit(0);
+                  },
+                ),
+                TextButton(
+                  child: const Text("NO"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
+    }
     return Future.value(true);
   }
 }

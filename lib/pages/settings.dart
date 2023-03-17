@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
@@ -86,117 +87,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
               // the App.build method, and use it to set our appbar title.
               centerTitle: true,
               title: Text("Settings", style: TextStyles.title),
+              leading: kIsWeb
+                    ? Container()
+                    : IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        tooltip: 'Go back',
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      )
             ),
             resizeToAvoidBottomInset: false,
             body: Center(
               child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 10,
-                      ),
-                      //Username
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            //Row 1
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                flex: 5,
-                                child: TextField(
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  maxLength: 16,
-                                  enabled: usernameEditable,
-                                  controller: _controllerUsername,
-                                  style: TextStyles.textField,
-                                  cursorColor: Colors.deepPurpleAccent,
-                                  decoration: const InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.deepPurple),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.deepPurpleAccent),
-                                    ),
-                                    labelText: 'Username',
-                                    labelStyle: TextStyle(
-                                        color: Colors.deepPurpleAccent,
-                                        letterSpacing: 0.5,
-                                        height: 0.1 //Issue with this widget so a custom style is used
-                                        ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: IconButton(
-                                    icon: usernameEditable
-                                        ? const Icon(Icons.check_outlined)
-                                        : const Icon(Icons.create),
-                                    color: Colors.white,
-                                    onPressed: _editUsername,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                  child: Container(
+                    constraints: BoxConstraints(maxWidth: 800),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 10,
                         ),
-                      ),
-                      // Email
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            enabled: false,
-                            controller: _controllerEmail,
-                            style: TextStyles.textField,
-                            cursorColor: Colors.deepPurpleAccent,
-                            decoration: InputDecoration(
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.deepPurple),
-                              ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.deepPurpleAccent),
-                              ),
-                              labelText: 'Email',
-                              labelStyle: TextStyles.textFieldLabel,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            color: Colors.grey[850],
-                            surfaceTintColor: Colors.deepPurpleAccent,
+                        //Username
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Row(
+                              //Row 1
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Text(
-                                  "Reputation: ",
-                                  style: TextStyles.textField,
+                                Expanded(
+                                  flex: 5,
+                                  child: TextField(
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    maxLength: 16,
+                                    enabled: usernameEditable,
+                                    controller: _controllerUsername,
+                                    style: TextStyles.textField,
+                                    cursorColor: Colors.deepPurpleAccent,
+                                    decoration: const InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.deepPurple),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.deepPurpleAccent),
+                                      ),
+                                      labelText: 'Username',
+                                      labelStyle: TextStyle(
+                                          color: Colors.deepPurpleAccent,
+                                          letterSpacing: 0.5,
+                                          height: 0.1 //Issue with this widget so a custom style is used
+                                          ),
+                                    ),
+                                  ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      color: Globals.getReputationColour(
-                                          Globals.localUser!.reputation),
-                                      shape: BoxShape.circle,
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: IconButton(
+                                      icon: usernameEditable
+                                          ? const Icon(Icons.check_outlined)
+                                          : const Icon(Icons.create),
+                                      color: Colors.white,
+                                      onPressed: _editUsername,
                                     ),
                                   ),
                                 ),
@@ -204,40 +162,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                         ),
-                      ),
-                      //log out button
-                      Container(
-                        height: 50,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.deepPurpleAccent,
-                            minimumSize: const Size.fromHeight(50),
-                          ),
-                          onPressed: () async {
-                            setState(() => isLoading = true);
-                            await _auth.signOut();
-                            Future.delayed(Duration.zero, () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      Init(reset: true),
+                        // Email
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(
+                              enabled: false,
+                              controller: _controllerEmail,
+                              style: TextStyles.textField,
+                              cursorColor: Colors.deepPurpleAccent,
+                              decoration: InputDecoration(
+                                enabledBorder: const OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.deepPurple),
                                 ),
-                              );
-                            });
-                          },
-                          child: Text(
-                            'Log out',
-                            style: TextStyles.buttonDark,
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.deepPurpleAccent),
+                                ),
+                                labelText: 'Email',
+                                labelStyle: TextStyles.textFieldLabel,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(flex: 5, child: Container())
-                    ],
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.grey[850],
+                              surfaceTintColor: Colors.deepPurpleAccent,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Reputation: ",
+                                    style: TextStyles.textField,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        color: Globals.getReputationColour(
+                                            Globals.localUser!.reputation),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        //log out button
+                        Container(
+                          height: 50,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.deepPurpleAccent,
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            onPressed: () async {
+                              setState(() => isLoading = true);
+                              await _auth.signOut();
+                              Future.delayed(Duration.zero, () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        Init(reset: true),
+                                  ),
+                                );
+                              });
+                            },
+                            child: Text(
+                              'Log out',
+                              style: TextStyles.buttonDark,
+                            ),
+                          ),
+                        ),
+                        Expanded(flex: 5, child: Container())
+                      ],
+                    ),
                   )),
             ),
           );

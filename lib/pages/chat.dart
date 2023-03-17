@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hottake/models/data.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/searching.dart';
@@ -163,33 +165,39 @@ class _ChatState extends State<ChatScreen> {
                     actions: [
                       phase != Phase.debate ? Container() : endButton(),
                     ],
-                    leading: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      tooltip: 'Leave chat',
-                      onPressed: () {
-                        _onWillPop();
-                      },
-                    ),
+                    leading: kIsWeb ? Container()
+                    : IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        tooltip: 'Leave chat',
+                        onPressed: () {
+                          _onWillPop();
+                        },
+                      )
                   ),
-                  body: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          reverse: true,
-                          child: Column(
-                            children: [
-                              Stack(
-                                children: <Widget>[feedWidget()],
+                  body: Center(
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 800),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              reverse: true,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Stack(
+                                    children: <Widget>[feedWidget()],
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          bottomInteractions(phase),
+                        ],
                       ),
-                      Align(
-                          alignment: Alignment.bottomLeft,
-                          child: bottomInteractions(phase)),
-                    ],
+                    ),
                   )),
             ),
           );
@@ -322,7 +330,7 @@ class _ChatState extends State<ChatScreen> {
                       //Start Searching for new opponent
                       print("//// Next Pressed!");
                       await PresenceService.goOffline(Globals.chatID!);
-                      Navigator.popAndPushNamed(context, '/stance/chat');
+                      Navigator.popAndPushNamed(context, '/chat');
                     },
                     child: Center(
                       child: Text("Next", style: TextStyles.buttonPurple),
@@ -419,10 +427,13 @@ class _ChatState extends State<ChatScreen> {
                       textInputAction: TextInputAction.newline,
                       maxLines: 3,
                       minLines: 1,
+                      maxLength: 1000,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                       style: const TextStyle(fontSize: 16),
                       cursorColor: Colors.deepPurpleAccent,
                       controller: chatController,
                       decoration: const InputDecoration(
+                          counterText: "",
                           hintText: "Write a message...",
                           hintStyle: TextStyle(color: Colors.black),
                           border: InputBorder.none),
@@ -460,12 +471,20 @@ class _ChatState extends State<ChatScreen> {
   }
 
   Future<bool> _onWillPop() {
+    if (kIsWeb) { 
+      PresenceService.goOffline(Globals.chatID!);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => const Home()),
+        ModalRoute.withName('/home'),
+      );
+    } else {
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Confirm Exit"),
+            title: const Text("Confirm chat exit"),
             content: const Text("Are you sure you want to leave the chat?"),
             actions: <Widget>[
               TextButton(
@@ -489,6 +508,7 @@ class _ChatState extends State<ChatScreen> {
             ],
           );
         });
+    }
     return Future.value(true);
   }
 }

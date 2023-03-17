@@ -58,6 +58,7 @@ class _MyAppState extends State<MyApp> {
           ),
           scaffoldBackgroundColor: Colors.grey[850],
           fontFamily: 'LeagueSpartan',
+          canvasColor: Colors.grey[850],
         ),
         home: Init(),
         routes: {
@@ -65,7 +66,7 @@ class _MyAppState extends State<MyApp> {
           '/signup': (context) => const Signup(),
           '/settings': (context) => const SettingsScreen(),
           '/stance': (context) => const StancePage(),
-          '/stance/chat': (context) => const ChatInit(),
+          '/chat': (context) => const ChatInit(),
           '/loading': (context) => const Loading(),
           '/error' :(context) => const ErrorPage(),
         },

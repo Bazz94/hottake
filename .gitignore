@@ -29,3 +29,5 @@ android/app/google-services.json
 .eslintrc.js
 functions/.eslintrc.json
 web/token.js
+public
+.eslintrc.json

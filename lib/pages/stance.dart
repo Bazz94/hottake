@@ -20,12 +20,24 @@ class _StancePageState extends State<StancePage> {
     super.dispose();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
+
+    if (Globals.topic == null) {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(Globals.topic!.title),
+        title: Text( Globals.topic != null
+          ? Globals.topic!.title
+          : "Topic is null"
+          ),
       ),
       body: Center(
         child: GestureDetector(

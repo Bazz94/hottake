@@ -120,8 +120,12 @@ class _HomeState extends State<Home> {
   );
 
   Widget makeTile(Topic t) {
-    String loadingImg =
-        'https://img.freepik.com/free-vector/white-abstract-background_23-2148806276.jpg?w=2000';
+    Image image;
+    if (t.image != null) {
+      image = Image.memory(t.image!,width: 110,height: 110,fit: BoxFit.fill);
+    } else {
+      image = Image.asset("assets/images/error_image.png", width: 110, height: 110,fit: BoxFit.fill);
+    }
     return SizedBox(
       height: 110,
       child: Card(
@@ -137,23 +141,24 @@ class _HomeState extends State<Home> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                CachedNetworkImage(
-                  fadeInDuration: const Duration(milliseconds: 0),
-                  width: 110,
-                  height: 110,
-                  fit: BoxFit.fill,
-                  imageUrl: t.image != null ? t.image! : loadingImg,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[850],
-                    child: const Center(
-                      child: SpinKitDoubleBounce(
-                        color: Colors.deepPurpleAccent,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
+                image,
+                // CachedNetworkImage(
+                //   fadeInDuration: const Duration(milliseconds: 0),
+                //   width: 110,
+                //   height: 110,
+                //   fit: BoxFit.fill,
+                //   imageUrl: t.image != null ? t.image! : loadingImg,
+                //   placeholder: (context, url) => Container(
+                //     color: Colors.grey[850],
+                //     child: const Center(
+                //       child: SpinKitDoubleBounce(
+                //         color: Colors.deepPurpleAccent,
+                //         size: 20,
+                //       ),
+                //     ),
+                //   ),
+                //   errorWidget: (context, url, error) => const Icon(Icons.error),
+                // ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

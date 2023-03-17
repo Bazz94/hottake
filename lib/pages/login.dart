@@ -60,6 +60,10 @@ class _LoginState extends State<Login> {
         titleStyle = TextStyles.titleError;
         isLoading = false;
       });
+    } else {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
+      });
     }
   }
 
@@ -70,6 +74,10 @@ class _LoginState extends State<Login> {
         headerText = 'Google sign in failed';
         titleStyle = TextStyles.titleError;
         isLoading = false;
+      });
+    } else {
+      Future.delayed(Duration.zero, () {
+        Navigator.popAndPushNamed(context, '/init');
       });
     }
   }

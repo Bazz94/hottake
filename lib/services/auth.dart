@@ -88,7 +88,9 @@ class AuthService {
   //Google Sign In
   Future<User?> googleSignIn() async {
     final GoogleSignInAccount? googleSignInAccount =
-        await _googleSignIn.signIn();
+        await _googleSignIn.signIn().catchError((error) {
+          print("//// googleSignIn error: ${error.toString()}");
+        });
 
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =

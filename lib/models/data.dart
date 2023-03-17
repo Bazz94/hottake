@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class Globals {
@@ -46,7 +48,7 @@ class LocalUser {
 class Topic {
   String title;
   String description;
-  String? image;
+  Uint8List? image;
   Topic({
     required this.title,
     required this.description,

@@ -220,9 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             setState(() => isLoading = true);
                             await _auth.signOut();
                             Future.delayed(Duration.zero, () {
-                              //Navigator.pop(context);
-                              bool reset = true;
-                              Navigator.popAndPushNamed(context, '/init');
+                              Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

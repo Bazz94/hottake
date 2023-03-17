@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:hottake/models/data.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -36,8 +38,8 @@ class DatabaseService {
         .then((snap) => {
               futureList = snap.docs.map((doc) async {
                 final data = doc.data() as Map<String, dynamic>;
-                String? imageURL = '';
-                imageURL = await _downloadURL(data['image']);
+                Uint8List? imageURL;
+                imageURL = await _downloadImages(data['image']);
                 return Topic(
                   title: data['title'],
                   description: data['description'] ?? '',
@@ -56,15 +58,22 @@ class DatabaseService {
     return list;
   }
 
-  Future<String?> _downloadURL(String path) async {
+  Future<Uint8List?> _downloadImages(String path) async {
+
+    final ref = FirebaseStorage.instance.ref().child(path);
     try {
-      final ref = FirebaseStorage.instance.ref();
-      String url = await ref.child(path).getDownloadURL();
-      return url;
-    } catch (e) {
-      print(e.toString());
+      const oneMegabyte = 1024 * 1024;
+      final Uint8List? data = await ref.getData(oneMegabyte);
+      return data;
+    } on FirebaseException catch (e) {
+      print("//// _downloadImages error: ${e.toString()}");
       return null;
     }
+    // String url = await ref.child(path).getDownloadURL()
+    //   .catchError((error) {
+    //     print("//// getDownloadURL error: ${error.toString()}");
+    //   });
+    //return url;
   }
 
   //Get chats collection

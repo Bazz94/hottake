@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import "package:cloud_firestore/cloud_firestore.dart";
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hottake/services/auth.dart';
 
@@ -13,13 +13,13 @@ class DatabaseService {
   static final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  Future<int?> get getReputation async {
+  Future<Map<String, dynamic>?> get getUserData async {
     try {
       DocumentSnapshot doc =
           await _usersCollection.doc(Globals.localUser!.uid).get();
       final data = doc.data();
       final dataMap = data as Map<String, dynamic>;
-      return dataMap['reputation'];
+      return dataMap;
     } catch (error) {
       print("//// getReputation: ${error.toString()}");
       return null;
@@ -208,10 +208,18 @@ class DatabaseService {
     }
   }
 
-  Future updateUserData(String username) async {
+  Future updateUsername(String username) async {
     return await _usersCollection
         .doc(Globals.localUser!.uid)
         .update({'username': username}).catchError((error) {
+      print("//// updateUsername: ${error.toString()}");
+    });
+  }
+
+  Future setUserData(String username, int reputation) async {
+    return await _usersCollection
+        .doc(Globals.localUser!.uid)
+        .set({'username': username,'reputation': reputation}).catchError((error) {
       print("//// updateUserData: ${error.toString()}");
     });
   }

@@ -1,15 +1,15 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:hottake/pages/home.dart';
-import 'package:hottake/pages/searching.dart';
+import 'package:hottake/widgets/searching.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/services/presence.dart';
 import 'package:provider/provider.dart';
-import '../models/styles.dart';
 import '../services/connectivity.dart';
+import '../shared/styles.dart';
+import 'init.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -32,7 +32,7 @@ class _ChatState extends State<ChatScreen> {
   
   
   bool opponentOffline = false;
-  bool submittedReport = false; //flag used to stop user from deleting chat
+  bool submittedReport = false; 
   bool postMessageSentOnce = false;
   DropDownItems? dropDownItem;
   bool chatSearchOnce = false;
@@ -45,8 +45,6 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
-    
     chatController.dispose();
     print("//// dispose chat screen");
     super.dispose();
@@ -54,9 +52,17 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    try {
+
+    print("//// Phase: $phase");
+    print("//// chatID: ${Globals.chatID}");
+    print("//// chatID: ${Globals.opponentUser}");
+    print("//// online: ${ConnectivityService.isOnline}");
+    } catch (e) {
+      print("//// printing error: ${e.toString()}");
+    }
     //Searching
 
-    print("//// flag 2: ${ConnectivityService.isOnline}");
     if (ConnectivityService.isOnline == false) {
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');
@@ -150,8 +156,6 @@ class _ChatState extends State<ChatScreen> {
         });
       }
     }
-
-    print("//// Phase: $phase");
 
     return phase == Phase.searching
         ? const Searching()
@@ -473,10 +477,10 @@ class _ChatState extends State<ChatScreen> {
   Future<bool> _onWillPop() {
     if (kIsWeb) { 
       PresenceService.goOffline(Globals.chatID!);
-      Navigator.pushAndRemoveUntil(
+       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => const Home()),
-        ModalRoute.withName('/home'),
+        MaterialPageRoute(builder: (BuildContext context) => const Init()),
+        ModalRoute.withName('/init'),
       );
     } else {
     showDialog(
@@ -494,8 +498,8 @@ class _ChatState extends State<ChatScreen> {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => const Home()),
-                    ModalRoute.withName('/home'),
+                        builder: (BuildContext context) => const Init()),
+                    ModalRoute.withName('/init'),
                   );
                 },
               ),

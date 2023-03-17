@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hottake/pages/error.dart';
-import 'package:hottake/pages/loading.dart';
 import 'package:hottake/services/auth.dart';
+import 'package:hottake/widgets/loading.dart';
 import 'firebase_options.dart';
-import 'shared/private.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:hottake/services/init.dart';
+import 'package:hottake/pages/init.dart';
 import 'package:hottake/pages/signup.dart';
 import 'package:hottake/pages/settings.dart';
-import 'package:hottake/widgets/chatInit.dart';
+import 'package:hottake/pages/chatInit.dart';
 import 'package:hottake/pages/stance.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
+import 'package:hottake/shared/private.dart';
 //import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> main() async {

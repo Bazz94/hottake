@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:hottake/services/connectivity.dart';
 
 class PresenceService {

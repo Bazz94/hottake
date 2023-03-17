@@ -1,4 +1,4 @@
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:convert';
 

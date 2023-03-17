@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
-import 'package:hottake/pages/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../models/styles.dart';
+import '../shared/styles.dart';
+import '../widgets/loading.dart';
+import 'init.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -80,14 +80,22 @@ class _SignupState extends State<Signup> {
     String email = emailController.text.toString();
     String password = password2Controller.text.toString();
     User? result = await _auth.register(
-        username, email, password); //username has no unique check
+        username, email, password); 
     if (result == null) {
       setState(() {
         signUpError = "Invalid email";
         isLoading = false;
       });
     } else {
-      Navigator.pop(context);
+      Future.delayed(Duration.zero, () {
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Init(reset: true),
+          ),
+        );
+      });
     }
   }
 

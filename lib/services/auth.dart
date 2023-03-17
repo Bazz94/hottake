@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:hottake/services/database.dart';
@@ -8,6 +8,7 @@ class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
   static User? _user = _auth.currentUser;
+  DatabaseService database = DatabaseService();
 
   String? get getUid {
     if (_user != null) {
@@ -64,7 +65,10 @@ class AuthService {
       UserCredential? result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       _user = result.user;
-      await _user!.updateDisplayName(username);
+      if( _user != null) {
+        Globals.localUser = LocalUser(uid: _user!.uid);
+        await database.setUserData(username, 50);
+      }
       return _user;
     } catch (e) {
       print("//// registration error: ${e.toString()}");
@@ -93,7 +97,8 @@ class AuthService {
       provider.setCustomParameters({"prompt": "select_account"});
       try {
         await _auth.signInWithRedirect(provider);
-        return _auth.currentUser;
+        _user = _auth.currentUser;
+        return _user;
       } catch (error) {
         print("//// google error: ${error.toString()}");
         return null;
@@ -118,11 +123,7 @@ class AuthService {
           final UserCredential userCredential =
               await _auth.signInWithCredential(credential);
           _user = userCredential.user;
-          if (userCredential.additionalUserInfo!.isNewUser) {
-            return _user;
-          } else {
-            return _user;
-          }
+          return _user;
         } catch (e) {
           print("//// Error googleSignIn: ${e.toString()}");
           return null;
@@ -145,18 +146,5 @@ class AuthService {
     } catch (e) {
       print(e.toString());
     }
-  }
-
-  Future updateUsername(String displayName) async {
-    Globals.localUser!.username = displayName;
-    DatabaseService database = DatabaseService();
-    try {
-      await database.updateUserData(displayName);
-    } catch (error) {
-      print("//// updateUsername: ${error.toString()}");
-    }
-    return await _user!.updateDisplayName(displayName).catchError((error) {
-      print("//// updateDisplayName: ${error.toString()}");
-    });
   }
 }

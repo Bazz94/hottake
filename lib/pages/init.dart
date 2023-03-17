@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 import 'package:hottake/pages/error.dart';
 import 'package:hottake/services/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/login.dart';
-import '../pages/loading.dart';
-import 'auth.dart';
+import '../widgets/loading.dart';
+import '../services/auth.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Init extends StatefulWidget {
@@ -57,9 +57,7 @@ class _Init extends State<Init> {
   Widget build(BuildContext context) {
     print("reset: ${widget.reset}");
     var user = Provider.of<LocalUser?>(context);
-    String? uid;
     if (user != null) {
-      uid = user.uid;
       if (user != Globals.localUser) {
         setState(() {
           if (widget.reset == true) {

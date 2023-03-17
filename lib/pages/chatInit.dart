@@ -3,13 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:hottake/pages/chat.dart';
 import 'package:hottake/services/presence.dart';
 import 'package:provider/provider.dart';
-
-import '../models/data.dart';
-import '../pages/error.dart';
-import '../pages/loading.dart';
+import '../shared/data.dart';
 import '../services/connectivity.dart';
 import '../services/database.dart';
 import '../services/server.dart';
+import '../widgets/loading.dart';
 
 class ChatInit extends StatefulWidget {
   const ChatInit({Key? key}) : super(key: key);
@@ -61,7 +59,6 @@ class _ChatInitState extends State<ChatInit> {
   @override
   Widget build(BuildContext context) {
 
-    print("//// flag 1: ${ConnectivityService.isOnline}");
     if (ConnectivityService.isOnline == false) {
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');

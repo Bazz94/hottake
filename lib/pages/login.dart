@@ -1,12 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hottake/services/auth.dart';
-import 'package:hottake/pages/loading.dart';
+import 'package:hottake/widgets/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../models/data.dart';
-import '../models/styles.dart';
+import '../shared/data.dart';
+import '../shared/styles.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

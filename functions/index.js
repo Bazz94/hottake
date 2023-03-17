@@ -176,17 +176,19 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
 
 
 exports.createUserData = functions.auth.user().onCreate((user) => {
-  const uid = user.uid;
-  const userRef = admin.firestore().collection("users");
-  userRef.doc(uid).set({
-    'reputation': 50,
-    'username': user.displayName
-  })
-    .then(() => {
-      functions.logger.log('//// ', uid, ' created successful');
-    }).catch(() => {
-      functions.logger.log('//// ', uid, ' created unsuccessful');
-    });
-  return true;
+  if (user.displayName != null) {
+    const uid = user.uid;
+    const userRef = admin.firestore().collection("users");
+    userRef.doc(uid).set({
+      'reputation': 50,
+      'username': user.displayName
+    })
+      .then(() => {
+        functions.logger.log('//// ', uid, ' created successful');
+      }).catch(() => {
+        functions.logger.log('//// ', uid, ' created unsuccessful');
+      });
+    return true;
+  }
 });
 

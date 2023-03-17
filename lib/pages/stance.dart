@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hottake/models/data.dart';
+import 'package:hottake/shared/data.dart';
 
 class StancePage extends StatefulWidget {
   const StancePage({Key? key}) : super(key: key);

@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hottake/pages/loading.dart';
+import 'package:hottake/widgets/loading.dart';
 import 'package:hottake/services/database.dart';
-import 'package:hottake/models/data.dart';
-import '../models/styles.dart';
+import 'package:hottake/shared/data.dart';
 import '../services/connectivity.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+import '../shared/styles.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -51,7 +52,6 @@ class _HomeState extends State<Home> {
       });
     }
 
-    print("//// flag 0: ${ConnectivityService.isOnline}");
     if (ConnectivityService.isOnline == false) {
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');
@@ -67,6 +67,7 @@ class _HomeState extends State<Home> {
         }), builder:
             (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
           List<Widget> children = <Widget>[];
+          print("//// home hasData: ${listTopics.hasData}");
           if (listTopics.hasData) {
             children = listTopics.data!;
             return Scaffold(

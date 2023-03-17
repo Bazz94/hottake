@@ -34,7 +34,6 @@ class _SearchingState extends State<Searching> {
   @override
   Widget build(BuildContext context) {
 
-    print("//// flag 3: ${ConnectivityService.isOnline}");
     if (ConnectivityService.isOnline == false) {
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');

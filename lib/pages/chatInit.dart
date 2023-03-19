@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:hottake/pages/chat.dart';
 import 'package:hottake/services/presence.dart';
 import 'package:provider/provider.dart';
@@ -19,21 +20,22 @@ class ChatInit extends StatefulWidget {
 class _ChatInitState extends State<ChatInit> {
   ServerService server = ServerService();
   late Future<bool> _loaded;
+  ConnectivityService connectivity = ConnectivityService();
+  
 
   @override
   void initState() {
+    connectivity.subscription.onData((result) {
+      print("//// Connection status: ${result.toString()}");
+      if (result != ConnectivityResult.none) {
+        ConnectivityService.isOnline = true;
+      } else {
+        ConnectivityService.isOnline = false;
+      }
+      setState(() {});
+    });
     print("//// init initChat ");
     _loaded = getChat;
-    ConnectivityService.subscription.onData((result) {
-      setState(() {
-        print("////2 Connection status: ${result.toString()}");
-        if (result != ConnectivityResult.none) {
-          ConnectivityService.isOnline = true;
-        } else {
-          ConnectivityService.isOnline = false;
-        }
-      });
-    });
     super.initState();
   }
 
@@ -42,7 +44,7 @@ class _ChatInitState extends State<ChatInit> {
     if (Globals.chatID != null) {
       PresenceService.goOffline(Globals.chatID!);
     }
-    ConnectivityService.dispose;
+    connectivity.dispose;
     print("//// dispose initChat");
     super.dispose();
   }
@@ -86,29 +88,49 @@ class _ChatInitState extends State<ChatInit> {
             AsyncSnapshot<bool> snap,) 
             {
               if (!snap.hasData) {
+              
                 return const Loading();
               }
               if (snap.data!) {
-                return const ChatScreen();
+                return ChatScreen();
               } else {
                 Future.delayed(Duration.zero, () {
                   Navigator.popAndPushNamed(context, '/init');
                 });
-                
-                return WillPopScope(
-                  onWillPop: () async {
-                    if(Globals.chatID != null) {
-                      await PresenceService.goOffline(Globals.chatID!);
-                    }
-                    Future.delayed(Duration.zero, () {
-                      Navigator.popAndPushNamed(context, '/init');
-                    });
-                    return Future.value(true);
-                  },
-                  child: const Loading()
-                  );
+              
+                return AlertDialog(
+                title: const Text('Popup example'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text("Hello"),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ],
+              );
+                // return WillPopScope(
+                //   onWillPop: () async {
+                //     if(Globals.chatID != null) {
+                //       await PresenceService.goOffline(Globals.chatID!);
+                //     }
+                //     Future.delayed(Duration.zero, () {
+                //       Navigator.popAndPushNamed(context, '/init');
+                //     });
+                //     return Future.value(true);
+                //   },
+                //   child: const Loading()
+                // );
               }
             },
-        ));
+        )
+    );
   }
 }

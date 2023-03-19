@@ -11,8 +11,6 @@ class PresenceService {
   static goOnline(String chatID) async {
     if (_isOnline != true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
-      print('//// Go online: $chatID');
-      print('//// uid in presence: $uid');
       try {
         _isOnline = true;
         await _presenceRef.child("$chatID/$uid").set({
@@ -22,7 +20,7 @@ class PresenceService {
           'active': false,
         });
       } catch (error) {
-        print("//// goOnline: ${error.toString()}");
+        print("//// goOnline error: ${error.toString()}");
       }
     }
   }
@@ -30,14 +28,13 @@ class PresenceService {
   static goOffline(String chatID) async {
     if (_isOnline == true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
-      print('//// uid in presence: $uid');
       print("//// Go offline $chatID");
       try {
         await _presenceRef.child("$chatID/$uid").set({'active': false});
         await _presenceRef.child("$chatID/$uid").onDisconnect().cancel();
         _isOnline = false;
       } catch (error) {
-        print("//// goOffline: ${error.toString()}");
+        print("//// goOffline error: ${error.toString()}");
       }
     } else {
       print("//// goOffline called but already offline");
@@ -48,7 +45,7 @@ class PresenceService {
     DatabaseReference childRef = _presenceRef
         .child("${Globals.chatID}/${Globals.opponentUser!.uid}/active");
     return childRef.onValue.map(_snapToBool).handleError((error) {
-      print("//// get opponentStatus ${error.toString()}");
+      print("//// get opponentStatus error: ${error.toString()}");
     });
   }
 

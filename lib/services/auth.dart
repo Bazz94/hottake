@@ -28,8 +28,7 @@ class AuthService {
         if (error.code != 'network-request-failed') {
           Globals.localUser = null;
         }
-        print("//// error code: ${error.code}");
-        print("//// reload error: ${error.toString()}");
+        print("//// reloadUser error: ${error.toString()}");
       }
     }
     return null;
@@ -84,7 +83,7 @@ class AuthService {
       _user = result.user;
       return _user;
     } catch (e) {
-      print(e.toString());
+      print("//// signIn error: ${e.toString()}");
       return null;
     }
   }
@@ -144,7 +143,7 @@ class AuthService {
       Globals.localUser = null;
       _user = null;
     } catch (e) {
-      print(e.toString());
+      print("//// signOut error: ${e.toString()}");
     }
   }
 }

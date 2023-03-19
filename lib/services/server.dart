@@ -18,7 +18,6 @@ class ServerService {
           .call(dataToSend);
 
       Map? data = _jsonToMap(json.encode(result.data));
-      print('//// received from server: $data');
       if (data != null) {
         Globals.chatID = data["chat"];
         return Globals.chatID;

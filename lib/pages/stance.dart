@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hottake/shared/data.dart';
 
@@ -17,7 +16,6 @@ class _StancePageState extends State<StancePage> {
 
   @override
   void dispose() {
-    print("//// dispose stance page");
     super.dispose();
   }
 
@@ -32,11 +30,11 @@ class _StancePageState extends State<StancePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: kIsWeb ? Container() : null,
+        leading: Globals.getIsWeb(context) ? Container() : null,
         title: Text(
             Globals.topic != null ? Globals.topic!.title : "Topic is null"),
       ),
-      body: kIsWeb
+      body: Globals.getIsWeb(context)
           ? getWebUI()
           : Center(
               child: GestureDetector(

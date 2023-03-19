@@ -85,7 +85,7 @@ class _LoginState extends State<Login> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    print("//// dispose login page");
+    print("//// dispose login");
     passwordController.dispose();
     emailController.dispose();
     super.dispose();

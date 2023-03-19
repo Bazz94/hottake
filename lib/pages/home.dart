@@ -5,7 +5,6 @@ import 'package:hottake/widgets/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/shared/data.dart';
 import '../services/connectivity.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../shared/styles.dart';
 
@@ -46,7 +45,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     if (Globals.localUser == null) {
-      print("//// uid is null");
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');
       });
@@ -78,7 +76,7 @@ class _HomeState extends State<Home> {
                   centerTitle: true,
                   title: Text('Hottake', style: TextStyles.title),
                   leading: Container(),
-                  actions: [ kIsWeb
+                  actions: [ Globals.getIsWeb(context)
                         ? ElevatedButton(
                           style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder(),
                             backgroundColor: Colors.deepPurple,
@@ -111,6 +109,7 @@ class _HomeState extends State<Home> {
                   ),
                 ));
           } else {
+            
             return const Loading();
           }
         }));
@@ -176,8 +175,8 @@ class _HomeState extends State<Home> {
   }
 
   Future<bool> _onWillPop() {
-    if (kIsWeb) {
-      ConnectivityService.dispose();
+    if (Globals.getIsWeb(context)) {
+      
     } else {
       showDialog(
           context: context,
@@ -191,7 +190,7 @@ class _HomeState extends State<Home> {
                   child: const Text("YES"),
                   onPressed: () {
                     SystemNavigator.pop();
-                    ConnectivityService.dispose();
+                    
                     exit(0);
                   },
                 ),

@@ -19,32 +19,35 @@ class Init extends StatefulWidget {
 class _Init extends State<Init> {
   AuthService auth = AuthService();
   late Future<Widget> _loaded;
+  ConnectivityService connectivity = ConnectivityService();
    
   @override
   void initState() {
-    _loaded = getData();
-    ConnectivityService.subscription.onData((result) {
-      setState(() {
-        print("////1 Connection status: ${result.toString()}");
-        if (result != ConnectivityResult.none) {
-          ConnectivityService.isOnline = true;
-        } else {
-          ConnectivityService.isOnline = false;
-        }
-      });
+    print("//// init init");
+    connectivity.subscription.onData((result) {
+      print("//// Connection status: ${result.toString()}");
+      if (result != ConnectivityResult.none) {
+        ConnectivityService.isOnline = true;
+      } else {
+        ConnectivityService.isOnline = false;
+      }
+      setState(() {});
     });
+    _loaded = getData();
     super.initState();
   }
 
   @override
   void dispose() {
     print("//// init dispose");
-    ConnectivityService.dispose;
+    connectivity.dispose;
     super.dispose();
   }
 
   Future<Widget> getData() async {
-    await auth.reloadUser();
+    await auth.reloadUser().onError((error, stackTrace) {
+      return Login();
+    });
     print("//// localUser: ${Globals.localUser}");
     if (Globals.localUser != null) {
       return Home();
@@ -55,7 +58,6 @@ class _Init extends State<Init> {
 
   @override
   Widget build(BuildContext context) {
-    print("reset: ${widget.reset}");
     var user = Provider.of<LocalUser?>(context);
     if (user != null) {
       if (user != Globals.localUser) {
@@ -66,8 +68,8 @@ class _Init extends State<Init> {
         });
       }
       Globals.localUser = user;
-      print('//// current uid: ${Globals.localUser!.uid}');
     } 
+
     print('//// online: ${ConnectivityService.isOnline}');
     if (ConnectivityService.isOnline == false) {
       return const ErrorPage();
@@ -79,11 +81,7 @@ class _Init extends State<Init> {
         BuildContext context,
         AsyncSnapshot<Widget> widget,) 
         {
-          print("//// hasData: ${widget.hasData}");
-          print('//// current uid: ${Globals.localUser}');
           if (widget.hasData) {
-            print("//// widget: ${widget.data.toString()}");
-            
             return widget.data!;
           } else {
             return Loading();

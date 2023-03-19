@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../shared/data.dart';
 import '../shared/styles.dart';
 import '../widgets/loading.dart';
 import 'init.dart';
@@ -115,7 +115,7 @@ class _SignupState extends State<Signup> {
               // the App.build method, and use it to set our appbar title.
               centerTitle: true,
               title: const Text("Sign Up"),
-              leading: kIsWeb
+              leading: Globals.getIsWeb(context)
             ? Container()
             : null,
             ),

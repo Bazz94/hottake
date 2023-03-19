@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:hottake/pages/home.dart';
+import 'package:hottake/pages/init.dart';
 import 'package:hottake/services/connectivity.dart';
 
 class Searching extends StatefulWidget {
@@ -14,7 +13,7 @@ class Searching extends StatefulWidget {
 
 class _SearchingState extends State<Searching> {
   late DateTime startTime;
-  String timeCounter = '';
+  String timeCounter = '1';
   int secs = 1;
   int mins = 0;
   late Timer timer;
@@ -64,8 +63,8 @@ class _SearchingState extends State<Searching> {
         timer.cancel();
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (BuildContext context) => const Home()),
-          ModalRoute.withName('/home'),
+          MaterialPageRoute(builder: (BuildContext context) => const Init()),
+          ModalRoute.withName('/init'),
         );
         return false;
       },

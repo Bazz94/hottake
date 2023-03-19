@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../services/connectivity.dart';
 import '../shared/styles.dart';
 import 'init.dart';
+import 'dart:html' as html;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -29,28 +30,35 @@ class _ChatState extends State<ChatScreen> {
   final scrollController = ScrollController();
   DatabaseService database = DatabaseService();
   final focusNode = FocusNode();
-  
+
   bool opponentOffline = false;
-  bool submittedReport = false; 
+  bool submittedReport = false;
   bool postMessageSentOnce = false;
   DropDownItems? dropDownItem;
   bool chatSearchOnce = false;
 
   @override
   void initState() {
-    print("//// chat init");
+    print("//// init chat");
     super.initState();
   }
 
   @override
   void dispose() {
     chatController.dispose();
-    print("//// dispose chat screen");
+    print("//// dispose cha");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      html.window.onBeforeUnload.listen((event) {
+        Future.delayed(Duration.zero, () {
+          Navigator.pop(context);
+        });
+      });
+    }
     //Searching
 
     if (ConnectivityService.isOnline == false) {
@@ -60,7 +68,6 @@ class _ChatState extends State<ChatScreen> {
     }
 
     if (phase == Phase.searching) {
-      print("//// chatID: ${Globals.chatID}");
       if (Globals.chatID != null) {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
         chatFuture.then((chat) {
@@ -154,20 +161,20 @@ class _ChatState extends State<ChatScreen> {
             child: SafeArea(
               child: Scaffold(
                   appBar: AppBar(
-                    centerTitle: true,
-                    title: getTitleWidget(),
-                    actions: [
-                      phase != Phase.debate ? Container() : endButton(),
-                    ],
-                    leading: kIsWeb ? Container()
-                    : IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        tooltip: 'Leave chat',
-                        onPressed: () {
-                          _onWillPop();
-                        },
-                      )
-                  ),
+                      centerTitle: true,
+                      title: getTitleWidget(),
+                      actions: [
+                        phase != Phase.debate ? Container() : endButton(),
+                      ],
+                      leading: Globals.getIsWeb(context)
+                          ? Container()
+                          : IconButton(
+                              icon: const Icon(Icons.arrow_back),
+                              tooltip: 'Leave chat',
+                              onPressed: () {
+                                _onWillPop();
+                              },
+                            )),
                   body: Center(
                     child: Container(
                       constraints: const BoxConstraints(maxWidth: 800),
@@ -322,7 +329,6 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () async {
                       //Start Searching for new opponent
-                      print("//// Next Pressed!");
                       await PresenceService.goOffline(Globals.chatID!);
                       Navigator.popAndPushNamed(context, '/chat');
                     },
@@ -403,10 +409,10 @@ class _ChatState extends State<ChatScreen> {
   void _send() async {
     if (chatController.text.isNotEmpty) {
       database.sendMessage(
-        Globals.chatID, chatController.text, Globals.localUser!);
+          Globals.chatID, chatController.text, Globals.localUser!);
     }
     print('//// sent Message: ${chatController.text}');
-    
+
     if (scrollController.hasClients) {
       scrollController.jumpTo(messages.length - 1);
     }
@@ -433,15 +439,17 @@ class _ChatState extends State<ChatScreen> {
                   Expanded(
                     child: TextField(
                       focusNode: focusNode,
-                      inputFormatters: kIsWeb ? [
-                        FilteringTextInputFormatter.deny(RegExp(r"\n")) 
-                      ] : null,
+                      inputFormatters: Globals.getIsWeb(context)
+                          ? [FilteringTextInputFormatter.deny(RegExp(r"\n"))]
+                          : null,
                       keyboardType: TextInputType.multiline,
-                      textInputAction: kIsWeb ? TextInputAction.send : TextInputAction.newline,
+                      textInputAction: Globals.getIsWeb(context)
+                          ? TextInputAction.send
+                          : TextInputAction.newline,
                       maxLines: 3,
                       minLines: 1,
                       maxLength: 1000,
-                      onSubmitted:(value) {
+                      onSubmitted: (value) {
                         _send();
                       },
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -483,43 +491,44 @@ class _ChatState extends State<ChatScreen> {
   }
 
   Future<bool> _onWillPop() {
-    if (kIsWeb) { 
+    if (Globals.getIsWeb(context)) {
       PresenceService.goOffline(Globals.chatID!);
-       Navigator.pushAndRemoveUntil(
+      Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (BuildContext context) => const Init()),
         ModalRoute.withName('/init'),
       );
     } else {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Confirm chat exit"),
-            content: const Text("Are you sure you want to leave the chat?"),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("YES"),
-                onPressed: () {
-                  PresenceService.goOffline(Globals.chatID!);
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => const Init()),
-                    ModalRoute.withName('/init'),
-                  );
-                },
-              ),
-              TextButton(
-                child: const Text("NO"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        });
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Confirm chat exit"),
+              content: const Text("Are you sure you want to leave the chat?"),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text("YES"),
+                  onPressed: () {
+                    PresenceService.goOffline(Globals.chatID!);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => const Init()),
+                      ModalRoute.withName('/init'),
+                    );
+                  },
+                ),
+                TextButton(
+                  child: const Text("NO"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
     }
     return Future.value(true);
   }

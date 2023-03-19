@@ -1,7 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hottake/pages/chat.dart';
 import 'package:hottake/pages/error.dart';
 import 'package:hottake/services/auth.dart';
+import 'package:hottake/services/connectivity.dart';
 import 'package:hottake/widgets/loading.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +68,7 @@ class _MyAppState extends State<MyApp> {
           '/signup': (context) => const Signup(),
           '/settings': (context) => const SettingsScreen(),
           '/stance': (context) => const StancePage(),
-          '/chat': (context) => const ChatInit(),
+          '/chat':(context) => const ChatInit(),
           '/loading': (context) => const Loading(),
           '/error' :(context) => const ErrorPage(),
         },

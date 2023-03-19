@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
@@ -58,7 +57,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     if (Globals.localUser == null) {
-      print("//// uid is null on settings");
       Future.delayed(Duration.zero, () {
         Navigator.popAndPushNamed(context, '/init');
       });
@@ -99,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // the App.build method, and use it to set our appbar title.
             centerTitle: true,
             title: Text("Settings", style: TextStyles.title),
-            leading: kIsWeb
+            leading: Globals.getIsWeb(context)
                 ? Container()
                 : IconButton(
                     icon: const Icon(Icons.arrow_back),

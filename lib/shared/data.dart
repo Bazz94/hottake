@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Globals {
@@ -27,6 +28,22 @@ class Globals {
     }
 
     return Color.fromARGB(a, r, g, b);
+  }
+
+  static bool getIsWeb(context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool platform;
+    if (!kIsWeb) {
+      platform = false;
+    } {
+      if (screenHeight / screenWidth > 1.6) {
+        platform = false;
+      } else {
+        platform = true;
+      }
+    }
+    return platform;
   }
 }
 

@@ -2,19 +2,22 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityService {
-  static bool isOnline = true;
+  static bool isOnline = false;
+  ConnectivityService() {
+    Connectivity().checkConnectivity().then((ConnectivityResult result) {
+      if (result != ConnectivityResult.none) {
+        isOnline = true;
+      } else {
+        isOnline = false;
+      }
+    });
+  }
 
-  static final subscription = Connectivity().onConnectivityChanged
-  .listen((ConnectivityResult result) {
-    print("//// Connection status: ${result.toString()}");
-    if (result != ConnectivityResult.none) {
-      isOnline = true;
-    } else {
-      isOnline = false;
-    }
-  });
+  final subscription = Connectivity().onConnectivityChanged
+  .listen((ConnectivityResult result) {});
 
-  static dispose() {
+
+  dispose() {
     subscription.cancel();
   }
 }

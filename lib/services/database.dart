@@ -21,7 +21,7 @@ class DatabaseService {
       final dataMap = data as Map<String, dynamic>;
       return dataMap;
     } catch (error) {
-      print("//// getReputation: ${error.toString()}");
+      
       return null;
     }
   }
@@ -86,10 +86,8 @@ class DatabaseService {
           .collection("messages")
           .add(data)
           .catchError((error) {
-        print("//// sendMessage: ${error.toString()}");
+        print("//// sendMessage error: ${error.toString()}");
       });
-    } else {
-      print("//// ChatID is null");
     }
   }
 
@@ -103,7 +101,7 @@ class DatabaseService {
         .snapshots()
         .map(_snapToMessages)
         .handleError((error) {
-      print("//// get messages: ${error.toString()}");
+      print("//// get messages error: ${error.toString()}");
     });
   }
 
@@ -122,13 +120,11 @@ class DatabaseService {
 
   //get Info from chat
   static Stream<Future<Chat?>> get chats {
-    print("//// chat retrieved");
     return _chatsCollection
         .doc(Globals.chatID)
         .snapshots()
         .map(_snapToChat)
         .handleError((error) {
-      print("//// get chats: ${error.toString()}");
     });
   }
 
@@ -168,12 +164,11 @@ class DatabaseService {
     int? reputation;
     if (id != null && id != "null") {
       await _usersCollection.doc(id).get().then((doc) {
-        print("//// opponent: ${doc.data()}");
         final data = doc.data() as Map<String, dynamic>;
         username = data['username'];
         reputation = data['reputation'];
       }).catchError((error) {
-        print("//// _uidToLocalUser: ${error.toString()}");
+        print("//// _uidToLocalUser error: ${error.toString()}");
         return null;
       });
       return LocalUser(uid: id, username: username!, reputation: reputation!);
@@ -186,7 +181,7 @@ class DatabaseService {
     _chatsCollection
         .doc(Globals.chatID)
         .update({"active": false}).catchError((error) {
-      print("//// endChat: ${error.toString()}");
+      print("//// endChat error: ${error.toString()}");
     });
   }
 
@@ -198,7 +193,7 @@ class DatabaseService {
         _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
       }
     } catch (error) {
-      print("//// sendReview: ${error.toString()}");
+      print("//// sendReview error: ${error.toString()}");
     }
   }
 
@@ -206,14 +201,14 @@ class DatabaseService {
     return await _usersCollection
         .doc(Globals.localUser!.uid)
         .update({'username': username}).catchError((error) {
-      print("//// updateUsername: ${error.toString()}");
+      print("//// updateUsername error: ${error.toString()}");
     });
   }
 
   Future setUserData(String username, int reputation) async {
     return await _usersCollection.doc(Globals.localUser!.uid).set(
         {'username': username, 'reputation': reputation}).catchError((error) {
-      print("//// updateUserData: ${error.toString()}");
+      print("//// updateUserData error: ${error.toString()}");
     });
   }
 }

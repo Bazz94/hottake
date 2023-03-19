@@ -13,7 +13,6 @@ import 'package:hottake/pages/chatInit.dart';
 import 'package:hottake/pages/stance.dart';
 import 'package:hottake/shared/data.dart';
 import 'package:hottake/shared/private.dart';
-//import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

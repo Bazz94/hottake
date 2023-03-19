@@ -6,13 +6,13 @@ class PresenceService {
   static bool _isOnline = false;
   static bool? opponentOnline;
   
-
   static final _presenceRef = FirebaseDatabase.instance.ref("presence/");
 
   static goOnline(String chatID) async {
     if (_isOnline != true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
       print('//// Go online: $chatID');
+      print('//// uid in presence: $uid');
       try {
         _isOnline = true;
         await _presenceRef.child("$chatID/$uid").set({
@@ -30,6 +30,7 @@ class PresenceService {
   static goOffline(String chatID) async {
     if (_isOnline == true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
+      print('//// uid in presence: $uid');
       print("//// Go offline $chatID");
       try {
         await _presenceRef.child("$chatID/$uid").set({'active': false});

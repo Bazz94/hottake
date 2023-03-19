@@ -24,7 +24,6 @@ class ServerService {
         return Globals.chatID;
       }
     } on FirebaseFunctionsException catch (error) {
-      String theError = error.toString();
       print("//// requestChat: ${error.toString()}");
     }
     return null;

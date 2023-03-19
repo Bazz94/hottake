@@ -59,7 +59,6 @@ class DatabaseService {
   }
 
   Future<Uint8List?> _downloadImages(String path) async {
-
     final ref = FirebaseStorage.instance.ref().child(path);
     try {
       const oneMegabyte = 1024 * 1024;
@@ -69,11 +68,6 @@ class DatabaseService {
       print("//// _downloadImages error: ${e.toString()}");
       return null;
     }
-    // String url = await ref.child(path).getDownloadURL()
-    //   .catchError((error) {
-    //     print("//// getDownloadURL error: ${error.toString()}");
-    //   });
-    //return url;
   }
 
   //Get chats collection
@@ -217,9 +211,8 @@ class DatabaseService {
   }
 
   Future setUserData(String username, int reputation) async {
-    return await _usersCollection
-        .doc(Globals.localUser!.uid)
-        .set({'username': username,'reputation': reputation}).catchError((error) {
+    return await _usersCollection.doc(Globals.localUser!.uid).set(
+        {'username': username, 'reputation': reputation}).catchError((error) {
       print("//// updateUserData: ${error.toString()}");
     });
   }

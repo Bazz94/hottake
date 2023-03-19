@@ -100,7 +100,9 @@ class _ChatInitState extends State<ChatInit> {
                     if(Globals.chatID != null) {
                       await PresenceService.goOffline(Globals.chatID!);
                     }
-                    Navigator.pop(context);
+                    Future.delayed(Duration.zero, () {
+                      Navigator.popAndPushNamed(context, '/init');
+                    });
                     return Future.value(true);
                   },
                   child: const Loading()

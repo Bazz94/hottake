@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/shared/data.dart';
-import 'package:hottake/pages/home.dart';
 import 'package:hottake/widgets/searching.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/services/presence.dart';
@@ -29,7 +28,7 @@ class _ChatState extends State<ChatScreen> {
   final chatController = TextEditingController();
   final scrollController = ScrollController();
   DatabaseService database = DatabaseService();
-  
+  final focusNode = FocusNode();
   
   bool opponentOffline = false;
   bool submittedReport = false; 
@@ -52,15 +51,6 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    try {
-
-    print("//// Phase: $phase");
-    print("//// chatID: ${Globals.chatID}");
-    print("//// chatID: ${Globals.opponentUser}");
-    print("//// online: ${ConnectivityService.isOnline}");
-    } catch (e) {
-      print("//// printing error: ${e.toString()}");
-    }
     //Searching
 
     if (ConnectivityService.isOnline == false) {
@@ -80,9 +70,9 @@ class _ChatState extends State<ChatScreen> {
             if (chat.yay != null && chat.nay != null) {
               print("//// opponent has been found");
               if (Globals.localUser!.uid == chat.yay!.uid) {
-                opponentUsername = chat.nay?.username!;
+                opponentUsername = chat.nay!.username!;
               } else {
-                opponentUsername = chat.yay?.username!;
+                opponentUsername = chat.yay!.username!;
               }
               if (mounted) {
                 setState(() {
@@ -180,7 +170,7 @@ class _ChatState extends State<ChatScreen> {
                   ),
                   body: Center(
                     child: Container(
-                      constraints: BoxConstraints(maxWidth: 800),
+                      constraints: const BoxConstraints(maxWidth: 800),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -410,6 +400,21 @@ class _ChatState extends State<ChatScreen> {
     );
   }
 
+  void _send() async {
+    if (chatController.text.isNotEmpty) {
+      database.sendMessage(
+        Globals.chatID, chatController.text, Globals.localUser!);
+    }
+    print('//// sent Message: ${chatController.text}');
+    
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(messages.length - 1);
+    }
+    chatController.clear();
+    focusNode.requestFocus();
+    setState(() {});
+  }
+
   Widget bottomTextBar() {
     return Stack(
       children: <Widget>[
@@ -427,11 +432,18 @@ class _ChatState extends State<ChatScreen> {
                   ),
                   Expanded(
                     child: TextField(
+                      focusNode: focusNode,
+                      inputFormatters: kIsWeb ? [
+                        FilteringTextInputFormatter.deny(RegExp(r"\n")) 
+                      ] : null,
                       keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
+                      textInputAction: kIsWeb ? TextInputAction.send : TextInputAction.newline,
                       maxLines: 3,
                       minLines: 1,
                       maxLength: 1000,
+                      onSubmitted:(value) {
+                        _send();
+                      },
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                       style: const TextStyle(fontSize: 16),
                       cursorColor: Colors.deepPurpleAccent,
@@ -450,11 +462,7 @@ class _ChatState extends State<ChatScreen> {
                     height: 43,
                     child: FloatingActionButton(
                       onPressed: () {
-                        database.sendMessage(Globals.chatID,
-                            chatController.text, Globals.localUser!);
-                        chatController.clear();
-                        scrollController.jumpTo(messages.length - 1);
-                        setState(() {});
+                        _send();
                       },
                       backgroundColor: Colors.deepPurple,
                       elevation: 0,

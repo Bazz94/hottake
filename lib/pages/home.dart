@@ -64,7 +64,8 @@ class _HomeState extends State<Home> {
           Future.delayed(Duration.zero, () {
             Navigator.popAndPushNamed(context, '/error');
           });
-        }), builder:
+        }), 
+         builder:
             (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
           List<Widget> children = <Widget>[];
           print("//// home hasData: ${listTopics.hasData}");

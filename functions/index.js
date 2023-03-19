@@ -9,6 +9,12 @@ exports.requestChat = functions
   .runWith({ enforceAppCheck: true })
   .https.onCall(async (data, context) => {
 
+    //kill switch
+    // eslint-disable-next-line no-constant-condition
+    if (false) {
+      return null;
+    }
+
     //Authentication 
     if (context.app == undefined) {
       throw new functions.https.HttpsError(

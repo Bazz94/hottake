@@ -1,3 +1,11 @@
+/* 
+  After receiving a chat id this page is loaded in and the searching widget is displayed.
+  When an opponent has been found then the chat UI loads in and the users can discuss the
+  topic. A user can end the chat and is then asked to review the interaction with the
+  opposing user. A button is displayed so that the user can queue for another chat with 
+  the same topic and stance.
+*/
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +16,8 @@ import 'package:hottake/services/presence.dart';
 import 'package:provider/provider.dart';
 import '../services/connectivity.dart';
 import '../shared/styles.dart';
-import 'init.dart';
-import 'dart:html' as html;
+import '../widgets/init.dart';
+// import 'dart:html' as html;                             //comment out for android build then see line 66
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -39,26 +47,30 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("//// init chat");
+    if (kDebugMode) {
+      print("//// init chat");
+    }
     super.initState();
   }
 
   @override
   void dispose() {
     chatController.dispose();
-    print("//// dispose cha");
+    if (kDebugMode) {
+      print("//// dispose chat");
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      html.window.onBeforeUnload.listen((event) {
-        Future.delayed(Duration.zero, () {
-          Navigator.pop(context);
-        });
-      });
-    }
+    // if (kIsWeb) {                                      // Comment out for android build
+    //   html.window.onBeforeUnload.listen((event) {
+    //     Future.delayed(Duration.zero, () {
+    //       Navigator.pop(context);
+    //     });
+    //   });
+    // }
     //Searching
 
     if (ConnectivityService.isOnline == false) {
@@ -72,10 +84,14 @@ class _ChatState extends State<ChatScreen> {
         final chatFuture = Provider.of<Future<Chat?>>(context, listen: true);
         chatFuture.then((chat) {
           if (chat != null) {
-            print("//// chat data received: ${chat.chatID}");
+            if (kDebugMode) {
+              print("//// chat data received: ${chat.chatID}");
+            }
 
             if (chat.yay != null && chat.nay != null) {
-              print("//// opponent has been found");
+              if (kDebugMode) {
+                print("//// opponent has been found");
+              }
               if (Globals.localUser!.uid == chat.yay!.uid) {
                 opponentUsername = chat.nay!.username!;
               } else {
@@ -111,7 +127,9 @@ class _ChatState extends State<ChatScreen> {
         });
 
         if (opponentActive != null) {
-          print("//// Opponent active: $opponentActive");
+          if (kDebugMode) {
+            print("//// Opponent active: $opponentActive");
+          }
           if (opponentActive == false) {
             if (opponentOffline == false) {
               opponentOffline = true;
@@ -411,7 +429,9 @@ class _ChatState extends State<ChatScreen> {
       database.sendMessage(
           Globals.chatID, chatController.text, Globals.localUser!);
     }
-    print('//// sent Message: ${chatController.text}');
+    if (kDebugMode) {
+      print('//// sent Message: ${chatController.text}');
+    }
 
     if (scrollController.hasClients) {
       scrollController.jumpTo(messages.length - 1);
@@ -492,6 +512,12 @@ class _ChatState extends State<ChatScreen> {
 
   Future<bool> _onWillPop() {
     if (Globals.getIsWeb(context)) {
+      database.endChat();
+       database.sendMessage(
+        Globals.chatID,
+        "${Globals.localUser!.username} has ended the chat",
+        LocalUser(uid: "admin"),
+      );
       PresenceService.goOffline(Globals.chatID!);
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
@@ -511,6 +537,12 @@ class _ChatState extends State<ChatScreen> {
                 TextButton(
                   child: const Text("YES"),
                   onPressed: () {
+                    database.endChat();
+                     database.sendMessage(
+                      Globals.chatID,
+                      "${Globals.localUser!.username} has ended the chat",
+                      LocalUser(uid: "admin"),
+                    );
                     PresenceService.goOffline(Globals.chatID!);
                     Navigator.pushAndRemoveUntil(
                       context,

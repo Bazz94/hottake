@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../shared/data.dart';
 import '../shared/styles.dart';
 import '../widgets/loading.dart';
-import 'init.dart';
+import '../widgets/init.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -124,7 +124,7 @@ class _SignupState extends State<Signup> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    constraints: BoxConstraints(maxWidth: 800),
+                    constraints: const BoxConstraints(maxWidth: 800),
                     child: Column(
                       children: [
                         Padding(
@@ -147,6 +147,7 @@ class _SignupState extends State<Signup> {
                               style: TextStyles.textField,
                               cursorColor: Colors.deepPurpleAccent,
                               decoration: InputDecoration(
+                                counterText: "",
                                 errorText: _usernameErrorText,
                                 errorBorder: customOutlineInputBorder(),
                                 enabledBorder: customOutlineInputBorder(),
@@ -170,6 +171,7 @@ class _SignupState extends State<Signup> {
                               style: TextStyles.textField,
                               cursorColor: Colors.deepPurpleAccent,
                               decoration: InputDecoration(
+                                counterText: "",
                                 errorText: _emailErrorText,
                                 errorBorder: customOutlineInputBorder(),
                                 enabledBorder: customOutlineInputBorder(),
@@ -194,6 +196,7 @@ class _SignupState extends State<Signup> {
                               style: TextStyles.textField,
                               cursorColor: Colors.deepPurpleAccent,
                               decoration: InputDecoration(
+                                counterText: "",
                                 errorText: _passwordErrorText,
                                 errorBorder: customOutlineInputBorder(),
                                 enabledBorder: customOutlineInputBorder(),
@@ -216,6 +219,7 @@ class _SignupState extends State<Signup> {
                               style: TextStyles.textField,
                               cursorColor: Colors.deepPurpleAccent,
                               decoration: InputDecoration(
+                                counterText: "",
                                 errorText: _password2ErrorText,
                                 errorBorder: customOutlineInputBorder(),
                                 enabledBorder: customOutlineInputBorder(),

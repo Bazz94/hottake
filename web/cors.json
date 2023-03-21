@@ -1,7 +1,6 @@
 [
     {
         "origin": [
-            "http://localhost:5000/",
             "https://hottake-project.web.app/",
             "https://hottake-project.firebaseapp.com/"
         ],

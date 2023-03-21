@@ -1,14 +1,20 @@
+/*
+  Loads after a topic and stance has been picked. A http request is sent to create a chat room
+  and return the chat id. The loading widget is displayed while waiting for a chat id. After 
+  the chat id is received the Chat Screen is loaded.        
+*/
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hottake/pages/chat.dart';
 import 'package:hottake/services/presence.dart';
+import 'package:hottake/widgets/error.dart';
 import 'package:provider/provider.dart';
 import '../shared/data.dart';
 import '../services/connectivity.dart';
 import '../services/database.dart';
 import '../services/server.dart';
-import '../widgets/loading.dart';
+import 'loading.dart';
 
 class ChatInit extends StatefulWidget {
   const ChatInit({Key? key}) : super(key: key);
@@ -26,7 +32,9 @@ class _ChatInitState extends State<ChatInit> {
   @override
   void initState() {
     connectivity.subscription.onData((result) {
-      print("//// Connection status: ${result.toString()}");
+      if (kDebugMode) {
+        print("//// Connection status: ${result.toString()}");
+      }
       if (result != ConnectivityResult.none) {
         ConnectivityService.isOnline = true;
       } else {
@@ -34,7 +42,6 @@ class _ChatInitState extends State<ChatInit> {
       }
       setState(() {});
     });
-    print("//// init initChat ");
     _loaded = getChat;
     super.initState();
   }
@@ -45,7 +52,6 @@ class _ChatInitState extends State<ChatInit> {
       PresenceService.goOffline(Globals.chatID!);
     }
     connectivity.dispose;
-    print("//// dispose initChat");
     super.dispose();
   }
 
@@ -88,46 +94,13 @@ class _ChatInitState extends State<ChatInit> {
             AsyncSnapshot<bool> snap,) 
             {
               if (!snap.hasData) {
-              
                 return const Loading();
               }
-              if (snap.data!) {
-                return ChatScreen();
-              } else {
-                Future.delayed(Duration.zero, () {
-                  Navigator.popAndPushNamed(context, '/init');
-                });
               
-                return AlertDialog(
-                title: const Text('Popup example'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("Hello"),
-                  ],
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Close'),
-                  ),
-                ],
-              );
-                // return WillPopScope(
-                //   onWillPop: () async {
-                //     if(Globals.chatID != null) {
-                //       await PresenceService.goOffline(Globals.chatID!);
-                //     }
-                //     Future.delayed(Duration.zero, () {
-                //       Navigator.popAndPushNamed(context, '/init');
-                //     });
-                //     return Future.value(true);
-                //   },
-                //   child: const Loading()
-                // );
+              if (snap.data!) { 
+                return const ChatScreen();
+              } else {
+                return const ErrorPage();
               }
             },
         )

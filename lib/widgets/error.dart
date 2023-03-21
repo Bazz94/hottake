@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hottake/services/connectivity.dart';
 
+
 class ErrorPage extends StatelessWidget {
   const ErrorPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-
     
     return SafeArea(
         child: Scaffold(
@@ -24,7 +23,8 @@ class ErrorPage extends StatelessWidget {
                   ), //Spacing
                   Flexible(
                     flex: 1,
-                    child: Text( ConnectivityService.isOnline == false
+                    child: Text( 
+                      ConnectivityService.isOnline == false
                       ? "Lost connection..."
                       : "An error has occurred",
                       style: const TextStyle(
@@ -52,14 +52,14 @@ class ErrorPage extends StatelessWidget {
                       height: 50,
                     ),
                   ), //Spacing
-                  ConnectivityService.isOnline == false ? Spacer()
+                  ConnectivityService.isOnline == false ? const Spacer()
                     : OutlinedButton(
                       onPressed: () {
                         Future.delayed(Duration.zero, () {
                             Navigator.popAndPushNamed(context, '/init');
                           });
                       }, 
-                      child: Text("Ok")
+                      child: const Text("Return home", style: TextStyle(color: Colors.white,fontSize: 16))
                       ),  
                   const Flexible(
                     flex: 3,

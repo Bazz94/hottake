@@ -1,3 +1,7 @@
+/*
+  The user can sign up, login or use their google account to login.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hottake/services/auth.dart';
@@ -16,7 +20,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final AuthService _auth = AuthService();
   bool isLoading = false;
-  final TextStyle myStyle = const TextStyle(fontSize: 20, letterSpacing: 0.5);
   String headerText = 'Welcome';
   TextStyle titleStyle = TextStyles.title;
   bool buttonCheck = false;
@@ -26,7 +29,6 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    print("//// login page init");
     super.initState();
   }
 
@@ -85,7 +87,6 @@ class _LoginState extends State<Login> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    print("//// dispose login");
     passwordController.dispose();
     emailController.dispose();
     super.dispose();
@@ -121,7 +122,7 @@ class _LoginState extends State<Login> {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Container(
-                      constraints: BoxConstraints(maxWidth: 800),
+                      constraints: const BoxConstraints(maxWidth: 800),
                       child: Column(
                         children: [
                           Container(
@@ -144,6 +145,7 @@ class _LoginState extends State<Login> {
                                 style: TextStyles.textField,
                                 cursorColor: Colors.deepPurpleAccent,
                                 decoration: InputDecoration(
+                                  counterText: "",
                                   errorText: _emailErrorText,
                                   errorBorder: customOutlineInputBorder(),
                                   enabledBorder: customOutlineInputBorder(),
@@ -166,6 +168,7 @@ class _LoginState extends State<Login> {
                                 style: TextStyles.textField,
                                 cursorColor: Colors.deepPurpleAccent,
                                 decoration: InputDecoration(
+                                  counterText: "",
                                   errorText: _passwordErrorText,
                                   errorBorder: customOutlineInputBorder(),
                                   enabledBorder: customOutlineInputBorder(),

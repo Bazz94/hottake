@@ -1,7 +1,12 @@
+/* 
+  This class is responsible for managing data to and from Firebase Authentication Services.
+  This includes logging in and out of the app.  
+*/
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hottake/shared/data.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:hottake/services/database.dart';
 
 class AuthService {
@@ -23,12 +28,16 @@ class AuthService {
     if (_user != null) {
       try {
         await _user?.reload();
-        print("//// reload user successful");
+        if (kDebugMode) {
+          print("//// reload user successful");
+        }
       } on FirebaseAuthException catch (error) {
         if (error.code != 'network-request-failed') {
           Globals.localUser = null;
         }
-        print("//// reloadUser error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// reloadUser error: ${error.toString()}");
+        }
       }
     }
     return null;
@@ -54,7 +63,9 @@ class AuthService {
         .authStateChanges()
         .map((User? user) => _getLocalUserFromFirebaseUser(user))
         .handleError((error) {
-      print("//// get userOnChange: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// get userOnChange: ${error.toString()}");
+      }
     });
   }
 
@@ -70,7 +81,9 @@ class AuthService {
       }
       return _user;
     } catch (e) {
-      print("//// registration error: ${e.toString()}");
+      if (kDebugMode) {
+        print("//// registration error: ${e.toString()}");
+      }
       return null;
     }
   }
@@ -83,7 +96,9 @@ class AuthService {
       _user = result.user;
       return _user;
     } catch (e) {
-      print("//// signIn error: ${e.toString()}");
+      if (kDebugMode) {
+        print("//// signIn error: ${e.toString()}");
+      }
       return null;
     }
   }
@@ -99,14 +114,18 @@ class AuthService {
         _user = _auth.currentUser;
         return _user;
       } catch (error) {
-        print("//// google error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// google error: ${error.toString()}");
+        }
         return null;
       }
     } else {
 
       final GoogleSignInAccount? googleSignInAccount =
           await _googleSignIn.signIn().catchError((error) {
-        print("//// googleSignIn error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// googleSignIn error: ${error.toString()}");
+        }
       });
 
       if (googleSignInAccount != null) {
@@ -124,7 +143,9 @@ class AuthService {
           _user = userCredential.user;
           return _user;
         } catch (e) {
-          print("//// Error googleSignIn: ${e.toString()}");
+          if (kDebugMode) {
+            print("//// Error googleSignIn: ${e.toString()}");
+          }
           return null;
         }
       } else {
@@ -143,7 +164,9 @@ class AuthService {
       Globals.localUser = null;
       _user = null;
     } catch (e) {
-      print("//// signOut error: ${e.toString()}");
+      if (kDebugMode) {
+        print("//// signOut error: ${e.toString()}");
+      }
     }
   }
 }

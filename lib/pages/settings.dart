@@ -1,8 +1,13 @@
+/* 
+  This page shows the username, email and reputation of the user.
+  It also allows the user to change their username.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hottake/services/auth.dart';
 import 'package:hottake/widgets/loading.dart';
-import 'package:hottake/pages/init.dart';
+import 'package:hottake/widgets/init.dart';
 import '../shared/data.dart';
 import '../services/connectivity.dart';
 import '../services/database.dart';
@@ -39,7 +44,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   void dispose() {
-    print("//// dispose settings page");
     super.dispose();
   }
 
@@ -80,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       AsyncSnapshot<Map<String, dynamic>?> snap,
     ) {
       if (!snap.hasData) {
-        return Loading();
+        return const Loading();
       }
       final map = snap.data;
       _reputation = map!['reputation'];
@@ -111,7 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
-                constraints: BoxConstraints(maxWidth: 800),
+                constraints: const BoxConstraints(maxWidth: 800),
                 child: Column(
                   children: [
                     Container(

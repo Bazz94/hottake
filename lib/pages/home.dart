@@ -1,3 +1,9 @@
+/* 
+  This page loads all topics from a Firebase Firestore collection as buttons.
+  When a topics button is pressed then the app navigates to the stance page 
+  and saves the topic as a global value.
+*/
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5,7 +11,6 @@ import 'package:hottake/widgets/loading.dart';
 import 'package:hottake/services/database.dart';
 import 'package:hottake/shared/data.dart';
 import '../services/connectivity.dart';
-
 import '../shared/styles.dart';
 
 class Home extends StatefulWidget {
@@ -19,7 +24,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    print("//// Home init");
+
     Globals.stance = null;
     Globals.topic = null;
     _loaded = _load();
@@ -66,7 +71,6 @@ class _HomeState extends State<Home> {
          builder:
             (BuildContext context, AsyncSnapshot<List<Widget>> listTopics) {
           List<Widget> children = <Widget>[];
-          print("//// home hasData: ${listTopics.hasData}");
           if (listTopics.hasData) {
             children = listTopics.data!;
             return Scaffold(
@@ -80,12 +84,11 @@ class _HomeState extends State<Home> {
                         ? ElevatedButton(
                           style: ElevatedButton.styleFrom(shape: const ContinuousRectangleBorder(),
                             backgroundColor: Colors.deepPurple,
-                            side: const BorderSide(width: 0.5,color: Colors.white)
                             ),
                             onPressed: () {
                               Navigator.pushNamed(context, '/settings');
                             }, 
-                          child: Text("Profile",style: TextStyles.buttonPurple)) 
+                          child: const Text("Profile", style: TextStyle(color: Colors.white, fontSize: 18,letterSpacing: 0.5))) 
                         : IconButton(
                           icon: const Icon(Icons.settings),
                           tooltip: 'Navigation menu',

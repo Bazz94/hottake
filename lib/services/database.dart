@@ -1,6 +1,9 @@
-import 'dart:typed_data';
+/* 
+  This class is responsible for managing data between the Firestore and the ui widgets.
+*/
 
 import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:flutter/foundation.dart';
 import 'package:hottake/shared/data.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hottake/services/auth.dart';
@@ -9,7 +12,7 @@ class DatabaseService {
   late String? uid = AuthService().getUid;
   DatabaseService({this.uid});
 
-  //Get user collection
+  //users collection
   static final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
@@ -26,7 +29,7 @@ class DatabaseService {
     }
   }
 
-  //Get topics collection
+  //topics collection
   static final CollectionReference _topicsCollection =
       FirebaseFirestore.instance.collection('topics');
 
@@ -48,7 +51,9 @@ class DatabaseService {
               }).toList(),
             })
         .catchError((error) {
-      print("//// get topics: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// get topics: ${error.toString()}");
+      }
     });
     for (var futureTopic in futureList!) {
       await futureTopic.then((topic) => {
@@ -65,12 +70,14 @@ class DatabaseService {
       final Uint8List? data = await ref.getData(oneMegabyte);
       return data;
     } on FirebaseException catch (e) {
-      print("//// _downloadImages error: ${e.toString()}");
+      if (kDebugMode) {
+        print("//// _downloadImages error: ${e.toString()}");
+      }
       return null;
     }
   }
 
-  //Get chats collection
+  //chats collection
   static final CollectionReference _chatsCollection =
       FirebaseFirestore.instance.collection('chats');
 
@@ -86,12 +93,14 @@ class DatabaseService {
           .collection("messages")
           .add(data)
           .catchError((error) {
-        print("//// sendMessage error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// sendMessage error: ${error.toString()}");
+        }
       });
     }
   }
 
-  //stream for reading chat
+  //stream for reading chat messages
   Stream<List<ChatMessage>?> get messages {
     return _chatsCollection
         .doc(Globals.chatID)
@@ -101,7 +110,9 @@ class DatabaseService {
         .snapshots()
         .map(_snapToMessages)
         .handleError((error) {
-      print("//// get messages error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// get messages error: ${error.toString()}");
+      }
     });
   }
 
@@ -168,7 +179,9 @@ class DatabaseService {
         username = data['username'];
         reputation = data['reputation'];
       }).catchError((error) {
-        print("//// _uidToLocalUser error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// _uidToLocalUser error: ${error.toString()}");
+        }
         return null;
       });
       return LocalUser(uid: id, username: username!, reputation: reputation!);
@@ -181,7 +194,9 @@ class DatabaseService {
     _chatsCollection
         .doc(Globals.chatID)
         .update({"active": false}).catchError((error) {
-      print("//// endChat error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// endChat error: ${error.toString()}");
+      }
     });
   }
 
@@ -193,7 +208,9 @@ class DatabaseService {
         _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
       }
     } catch (error) {
-      print("//// sendReview error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// sendReview error: ${error.toString()}");
+      }
     }
   }
 
@@ -201,14 +218,18 @@ class DatabaseService {
     return await _usersCollection
         .doc(Globals.localUser!.uid)
         .update({'username': username}).catchError((error) {
-      print("//// updateUsername error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// updateUsername error: ${error.toString()}");
+      }
     });
   }
 
   Future setUserData(String username, int reputation) async {
     return await _usersCollection.doc(Globals.localUser!.uid).set(
         {'username': username, 'reputation': reputation}).catchError((error) {
-      print("//// updateUserData error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// updateUserData error: ${error.toString()}");
+      }
     });
   }
 }

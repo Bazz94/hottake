@@ -1,4 +1,15 @@
+/* 
+  This class creates a chat doc in the Firebase Realtime Database. The chat doc has the
+  user that are connected to the chat room as children and user has a value called 
+  active. When a user joins a chat then the chat id doc is create and the users active 
+  value is set to true. When a user leaves the chat then the active value is set to false.
+  This data is kept on the Realtime Database since firestore does not have an onDisconnect
+  function. onDisconnect will set active to false in the case that the user closes their
+  app or disconnects from the internet.  
+*/
+
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hottake/shared/data.dart';
 import 'package:hottake/services/connectivity.dart';
 
@@ -20,7 +31,9 @@ class PresenceService {
           'active': false,
         });
       } catch (error) {
-        print("//// goOnline error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// goOnline error: ${error.toString()}");
+        }
       }
     }
   }
@@ -28,16 +41,22 @@ class PresenceService {
   static goOffline(String chatID) async {
     if (_isOnline == true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
-      print("//// Go offline $chatID");
+      if (kDebugMode) {
+        print("//// Go offline $chatID");
+      }
       try {
         await _presenceRef.child("$chatID/$uid").set({'active': false});
         await _presenceRef.child("$chatID/$uid").onDisconnect().cancel();
         _isOnline = false;
       } catch (error) {
-        print("//// goOffline error: ${error.toString()}");
+        if (kDebugMode) {
+          print("//// goOffline error: ${error.toString()}");
+        }
       }
     } else {
-      print("//// goOffline called but already offline");
+      if (kDebugMode) {
+        print("//// goOffline called but already offline");
+      }
     }
   }
 
@@ -45,7 +64,9 @@ class PresenceService {
     DatabaseReference childRef = _presenceRef
         .child("${Globals.chatID}/${Globals.opponentUser!.uid}/active");
     return childRef.onValue.map(_snapToBool).handleError((error) {
-      print("//// get opponentStatus error: ${error.toString()}");
+      if (kDebugMode) {
+        print("//// get opponentStatus error: ${error.toString()}");
+      }
     });
   }
 

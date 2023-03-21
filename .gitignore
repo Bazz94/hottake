@@ -33,3 +33,4 @@ public
 .eslintrc.json
 public/
 test/
+lib\firebase_options.dart

@@ -3,24 +3,26 @@ const admin = require('firebase-admin');
 
 admin.initializeApp();
 
-
-// looks for opponent, found -> join chat, else => create chat
+/* 
+  This function looks for a chat to join, if there is a chat room already open 
+  or if one needs to be made. In either case a chat id will be return.
+*/
 exports.requestChat = functions
   .runWith({ enforceAppCheck: true })
   .https.onCall(async (data, context) => {
 
-    //kill switch
+    //kill switch 
     // eslint-disable-next-line no-constant-condition
     if (false) {
       return null;
     }
 
-    //Authentication 
-    if (context.app == undefined) {
-      throw new functions.https.HttpsError(
-        'failed-precondition',
-        'The function must be called from an App Check verified app.');
-    }
+    //App Check Authentication 
+    // if (context.app == undefined) {
+    //   throw new functions.https.HttpsError(
+    //     'failed-precondition',
+    //     'The function must be called from an App Check verified app.');
+    // }
 
     // init
     const uid = context.auth.uid;
@@ -91,7 +93,10 @@ exports.requestChat = functions
   });
 
 
-
+/*
+  This function is responsible for deleting a chat room when all the users have left it.
+  This includes chat data in the Firestore and Realtime database.
+*/
 exports.deleteChat = functions.runWith({ timeoutSeconds: 540, memory: '2GB' }).database.ref('/presence/{chatID}/{uid}/active').onUpdate(async (change, context) => {
   //function fires when a users active value has changed
   if (change.after.val() == false) {//user has gone offline
@@ -168,7 +173,10 @@ async function updateReputation(uid, review) {
   }
 }
 
-
+/* 
+  This fires when a user has been deleted from the authentication list.
+  It will delete the user data in the Firestore.
+*/
 exports.deleteUserData = functions.auth.user().onDelete((user) => {
   const  uid = user.uid;
   const userRef = admin.firestore().collection("users").doc(uid);
@@ -180,7 +188,11 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
   return true;
 });
 
-
+/* 
+  This fires when a user has been created. It creates the user data in 
+  the Firestore but only if the user was created by logging in through
+  google login.
+*/
 exports.createUserData = functions.auth.user().onCreate((user) => {
   if (user.displayName != null) {
     const uid = user.uid;

@@ -1,3 +1,8 @@
+/* 
+  The user chooses for or against the selected topic, then chatInit is navigated to 
+  and an Http request is made to create a chat room and get the chat id.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:hottake/shared/data.dart';
 
@@ -137,7 +142,7 @@ class _StancePageState extends State<StancePage> {
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Container(
-          constraints: BoxConstraints(maxWidth: 800),
+          constraints: const BoxConstraints(maxWidth: 800),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

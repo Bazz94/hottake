@@ -1,12 +1,18 @@
+/*
+  Loads first when the app runs, if there is a user logged in then the Home Page UI is displayed. 
+  If there is no user logged in then the Login Page is loaded. While the user data is being loaded
+  then the Loading Widget is displayed.        
+*/
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hottake/shared/data.dart';
-import 'package:hottake/pages/error.dart';
+import 'package:hottake/widgets/error.dart';
 import 'package:hottake/services/connectivity.dart';
 import 'package:provider/provider.dart';
 import 'package:hottake/pages/home.dart';
 import 'package:hottake/pages/login.dart';
-import '../widgets/loading.dart';
-import '../services/auth.dart';
+import 'package:hottake/widgets/loading.dart';
+import 'package:hottake/services/auth.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class Init extends StatefulWidget {
@@ -20,12 +26,13 @@ class _Init extends State<Init> {
   AuthService auth = AuthService();
   late Future<Widget> _loaded;
   ConnectivityService connectivity = ConnectivityService();
-   
+
   @override
   void initState() {
-    print("//// init init");
     connectivity.subscription.onData((result) {
-      print("//// Connection status: ${result.toString()}");
+      if (kDebugMode) {
+        print("//// Connection status: ${result.toString()}");
+      }
       if (result != ConnectivityResult.none) {
         ConnectivityService.isOnline = true;
       } else {
@@ -39,20 +46,21 @@ class _Init extends State<Init> {
 
   @override
   void dispose() {
-    print("//// init dispose");
     connectivity.dispose;
     super.dispose();
   }
 
   Future<Widget> getData() async {
     await auth.reloadUser().onError((error, stackTrace) {
-      return Login();
+      return const Login();
     });
-    print("//// localUser: ${Globals.localUser}");
+    if (kDebugMode) {
+      print("//// localUser: ${Globals.localUser}");
+    }
     if (Globals.localUser != null) {
-      return Home();
+      return const Home();
     } else {
-      return Login();
+      return const Login();
     }
   }
 
@@ -68,26 +76,26 @@ class _Init extends State<Init> {
         });
       }
       Globals.localUser = user;
-    } 
-
-    print('//// online: ${ConnectivityService.isOnline}');
-    if (ConnectivityService.isOnline == false) {
-      return const ErrorPage();
     }
 
     return FutureBuilder<Widget>(
       future: _loaded,
       builder: (
         BuildContext context,
-        AsyncSnapshot<Widget> widget,) 
-        {
-          if (widget.hasData) {
-            return widget.data!;
-          } else {
-            return Loading();
-          }
+        AsyncSnapshot<Widget> widget,
+      ) {
+        if (kDebugMode) {
+          print('//// online: ${ConnectivityService.isOnline}');
+        }
+        if (ConnectivityService.isOnline == false) {
+          return const ErrorPage();
+        }
+        if (widget.hasData) {
+          return widget.data!;
+        } else {
+          return const Loading();
+        }
       },
     );
   }
 }
-

@@ -35,7 +35,7 @@
   8. Messages, chat room, and user data are stored in the Firestore while the chat goes on and is deleted when the chat ends.
   9. Users can change their usernames and see their reputation on the settings page.
   10. User can create an accout or use thier google account to make an accout.
-
+  11. You can talk to a chat bot if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo when you are the only user.
 
 ### How to run
 1. Install Flutter <br> https://docs.flutter.dev/get-started/install

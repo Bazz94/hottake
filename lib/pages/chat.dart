@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import '../services/connectivity.dart';
 import '../shared/styles.dart';
 import '../widgets/init.dart';
-// import 'dart:html' as html;                             //comment out for android build then see line 66
+//import 'dart:html' as html;                             //comment out for android build then see line 66
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -347,7 +347,7 @@ class _ChatState extends State<ChatScreen> {
                   child: InkWell(
                     onTap: () async {
                       //Start Searching for new opponent
-                      await PresenceService.goOffline(Globals.chatID!);
+                      await PresenceService.goOffline(Globals.chatID!,Globals.topic!.title);
                       Navigator.popAndPushNamed(context, '/chat');
                     },
                     child: Center(
@@ -518,7 +518,7 @@ class _ChatState extends State<ChatScreen> {
         "${Globals.localUser!.username} has ended the chat",
         LocalUser(uid: "admin"),
       );
-      PresenceService.goOffline(Globals.chatID!);
+      PresenceService.goOffline(Globals.chatID!, Globals.topic!.title);
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
         context,
@@ -543,7 +543,7 @@ class _ChatState extends State<ChatScreen> {
                       "${Globals.localUser!.username} has ended the chat",
                       LocalUser(uid: "admin"),
                     );
-                    PresenceService.goOffline(Globals.chatID!);
+                    PresenceService.goOffline(Globals.chatID!, Globals.topic!.title);
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

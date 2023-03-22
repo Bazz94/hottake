@@ -49,7 +49,7 @@ class _ChatInitState extends State<ChatInit> {
   @override
   void dispose() {
     if (Globals.chatID != null) {
-      PresenceService.goOffline(Globals.chatID!);
+      PresenceService.goOffline(Globals.chatID!, Globals.topic!.title);
     }
     connectivity.dispose;
     super.dispose();
@@ -60,7 +60,7 @@ class _ChatInitState extends State<ChatInit> {
     if (chatID == null) {
       return false;
     } 
-    PresenceService.goOnline(chatID);
+    PresenceService.goOnline(chatID, Globals.topic!.title);
     return true;
   }
 

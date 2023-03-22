@@ -34,3 +34,4 @@ public
 public/
 test/
 lib/firebase_options.dart
+functions/private.js

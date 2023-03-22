@@ -89,6 +89,8 @@ class DatabaseService {
     };
     if (chatID != null) {
       _chatsCollection
+          .doc(Globals.topic!.title)
+          .collection("chats")
           .doc(chatID)
           .collection("messages")
           .add(data)
@@ -103,6 +105,8 @@ class DatabaseService {
   //stream for reading chat messages
   Stream<List<ChatMessage>?> get messages {
     return _chatsCollection
+        .doc(Globals.topic!.title)
+        .collection("chats")
         .doc(Globals.chatID)
         .collection("messages")
         .orderBy("time")
@@ -132,6 +136,8 @@ class DatabaseService {
   //get Info from chat
   static Stream<Future<Chat?>> get chats {
     return _chatsCollection
+        .doc(Globals.topic!.title)
+        .collection("chats")
         .doc(Globals.chatID)
         .snapshots()
         .map(_snapToChat)
@@ -192,6 +198,8 @@ class DatabaseService {
 
   void endChat() {
     _chatsCollection
+        .doc(Globals.topic!.title)
+        .collection("chats")
         .doc(Globals.chatID)
         .update({"active": false}).catchError((error) {
       if (kDebugMode) {
@@ -203,9 +211,17 @@ class DatabaseService {
   void sendReview(String? review) {
     try {
       if (Globals.stance == "nay") {
-        _chatsCollection.doc(Globals.chatID).update({"nayReview": review});
+        _chatsCollection
+            .doc(Globals.topic!.title)
+            .collection("chats")
+            .doc(Globals.chatID)
+            .update({"nayReview": review});
       } else {
-        _chatsCollection.doc(Globals.chatID).update({"yayReview": review});
+        _chatsCollection
+            .doc(Globals.topic!.title)
+            .collection("chats")
+            .doc(Globals.chatID)
+            .update({"yayReview": review});
       }
     } catch (error) {
       if (kDebugMode) {

@@ -19,15 +19,18 @@ class PresenceService {
   
   static final _presenceRef = FirebaseDatabase.instance.ref("presence/");
 
-  static goOnline(String chatID) async {
+  static goOnline(String chatID, String topic) async {
     if (_isOnline != true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
-      try {
+      if (kDebugMode) {
+        print("//// Go online $chatID $topic");
+      }
+      try {  // '/chats/'
         _isOnline = true;
-        await _presenceRef.child("$chatID/$uid").set({
+        await _presenceRef.child("$topic/chats/$chatID/$uid").set({
           'active': true,
         });
-        await _presenceRef.child("$chatID/$uid").onDisconnect().set({
+        await _presenceRef.child("$topic/chats/$chatID/$uid").onDisconnect().set({
           'active': false,
         });
       } catch (error) {
@@ -38,15 +41,15 @@ class PresenceService {
     }
   }
 
-  static goOffline(String chatID) async {
+  static goOffline(String chatID, String topic) async {
     if (_isOnline == true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
       if (kDebugMode) {
-        print("//// Go offline $chatID");
+        print("//// Go offline $chatID $topic");
       }
       try {
-        await _presenceRef.child("$chatID/$uid").set({'active': false});
-        await _presenceRef.child("$chatID/$uid").onDisconnect().cancel();
+        await _presenceRef.child("$topic/chats/$chatID/$uid").set({'active': false});
+        await _presenceRef.child("$topic/chats/$chatID/$uid").onDisconnect().cancel();
         _isOnline = false;
       } catch (error) {
         if (kDebugMode) {
@@ -62,7 +65,7 @@ class PresenceService {
 
   Stream<bool?> get opponentStatus {
     DatabaseReference childRef = _presenceRef
-        .child("${Globals.chatID}/${Globals.opponentUser!.uid}/active");
+        .child("${Globals.topic!.title}/chats/${Globals.chatID}/${Globals.opponentUser!.uid}/active");
     return childRef.onValue.map(_snapToBool).handleError((error) {
       if (kDebugMode) {
         print("//// get opponentStatus error: ${error.toString()}");

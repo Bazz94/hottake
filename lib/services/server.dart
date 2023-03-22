@@ -26,6 +26,7 @@ class ServerService {
       Map? data = _jsonToMap(json.encode(result.data));
       if (data != null) {
         Globals.chatID = data["chat"];
+        print("//// requestChat: ${Globals.chatID}");
         return Globals.chatID;
       }
     } on FirebaseFunctionsException catch (error) {

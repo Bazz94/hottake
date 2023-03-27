@@ -71,5 +71,5 @@ Firebase
 </p>
 notes: 
 
-  * for chats collection the path is actualy /chats/$topics/chats/... ,since it not necessary to search chats across topics, they are divided by topic. Firebase uses a collection -> doc -> collection -> doc stucture.
-  * Realtime database uses JSON format.
+  * The chats collection the path is actualy /chats/$topics/chats ,since it not necessary to search chats across topics, they are divided by topic. Firebase uses a collection -> doc -> collection -> doc stucture.
+  * presences path is actualy /chats/$topics/presence following the chats collection structure. Realtime database uses JSON format.

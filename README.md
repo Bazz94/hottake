@@ -63,3 +63,13 @@ This app is a personal project I worked on to learn more about how Flutter work,
 * Ability to save chats
 * Saving users as freinds and joining chats with friends.
 
+### Database Structure
+Firebase 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/88403974/227812636-95b98811-811c-4f40-a080-5caae3a694d3.png" width="350" />
+  <img src="https://user-images.githubusercontent.com/88403974/227813109-428b711f-b09c-4eb5-bbc9-3bac2f0d4467.png" width="250" />
+</p>
+notes: 
+
+  * for chats collection the path is actualy /chats/$topics/chats/... ,since it not necessary to search chats across topics, they are divided by topic. Firebase uses a collection -> doc -> collection -> doc stucture.
+  * Realtime database uses JSON format.

@@ -298,30 +298,36 @@ exports.chatGPT = functions.firestore
           messages.push(message);
         }
       });
-      if (messages.length < 7) {
+      if (messages.length < 13) {
         functions.logger.log("//// send request: ");
         // eslint-disable-next-line no-unused-vars
         const completion = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
-          max_tokens: 30,
+          max_tokens: 40,
           messages: messages,
         }).then((value) => {
           const response = value.data.choices[0].message.content;
-          console.log("//// response: ",response);
+          console.log("//// response: ", response);
           messagesRef.add({
             content: response,
             owner: "chatGPT",
             time: new Date()
           });
-          console.log("//// total tokens used: " ,value.data.usage.total_tokens.toString());
+          console.log("//// total tokens used: ", value.data.usage.total_tokens.toString());
         })
-        .catch((reason) => {
-          console.log("//// error: ",reason);
-          messagesRef.add({
-            content: "Chat GPT is unavailable",
-            owner: "chatGPT",
-            time: new Date()
+          .catch((reason) => {
+            console.log("//// error: ", reason);
+            messagesRef.add({
+              content: "Chat GPT is unavailable",
+              owner: "chatGPT",
+              time: new Date()
+            });
           });
+      } else {
+        messagesRef.add({
+          content: "The maximum messages allowed has been reached",
+          owner: "admin",
+          time: new Date()
         });
       }
     }

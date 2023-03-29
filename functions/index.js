@@ -298,12 +298,12 @@ exports.chatGPT = functions.firestore
           messages.push(message);
         }
       });
-      if (messages.length < 13) {
+      if (messages.length < 12) {
         functions.logger.log("//// send request: ");
         // eslint-disable-next-line no-unused-vars
         const completion = await openai.createChatCompletion({
           model: "gpt-3.5-turbo",
-          max_tokens: 40,
+          max_tokens: 50,
           messages: messages,
         }).then((value) => {
           const response = value.data.choices[0].message.content;
@@ -328,6 +328,11 @@ exports.chatGPT = functions.firestore
           content: "The maximum messages allowed has been reached",
           owner: "admin",
           time: new Date()
+        });
+        const chatRef = admin.firestore().collection("chats")
+          .doc("AI is Dangerous").collection("chats");
+        await chatRef.doc(chatID).update({
+          'active': false,
         });
       }
     }

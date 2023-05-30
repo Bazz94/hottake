@@ -52,17 +52,6 @@
 
 This app is a personal project I worked on to learn more about how Flutter work, mainly on how one codebase can be used to make apps on many platforms. I will also use this project on my developer portfolio.
 
-### Limitations
-* Flutter web loses state when refreshing the browesr window, this means that you disconnect from a chat if you refresh the window. Shared Prefrences need to be added to save data when the page is refreshed.
-* You can not change your password or email. 
-* App Check needs to be disabled (in the Firebase console) if you want to use the Android version installed from an apk since App Check tokens are only valid if the app was installed from the play store.
-    
- ### What could be added
-* A user reporting system
-* Reputaion based match making 
-* Ability to save chats
-* Saving users as freinds and joining chats with friends.
-
 ### Database Structure
 Firebase 
 <p float="left">

@@ -2,7 +2,7 @@
 ### Description
   A chat app that lets you debate topics with anonymous people. Choose a topic and a stance then debate someone who holds the opposite view.
   Once the debate is over give your opponent a rating. Ratings are shown next to your name when you debate. There is an Android version and
-  a Web version. For demo purposes you can talk to a chat bot if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo when you are the only user.
+  a Web version. For demo purposes you can talk to a chat bot if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo when you are the only current user.
 
 ### Images
 

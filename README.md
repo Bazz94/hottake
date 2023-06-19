@@ -1,8 +1,10 @@
 # hottake
 ### Description
-  A chat app that lets you debate topics with anonymous people. Choose a topic and a stance then debate someone who holds the opposite view.
-  Once the debate is over give your opponent a rating. Ratings are shown next to your name when you debate. There is an Android version and
-  a Web version. For demo purposes you can talk to a chat bot if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo when you are the only current user.
+ A chat application that allows you to engage in debates with anonymous individuals. You can select a topic and take a
+ stance, and then debate with someone who holds the opposing view. After the debate concludes, you have the opportunity to
+ rate your opponent. These ratings will be displayed next to your name whenever you participate in a debate.
+ The application is available for both Android and Web platforms. For demo purposes, you can talk to ChatGPT
+ if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo the app when you are the only current user.
 
 ### Images
 

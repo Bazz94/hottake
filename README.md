@@ -1,8 +1,10 @@
 # hottake
 ### Description
-  A chat app that lets you debate topics with anonymous people. Choose a topic and a stance then debate someone who holds the opposite view.
-  Once the debate is over give your opponent a rating. Ratings are shown next to your name when you debate. There is an Android version and
-  a Web version.
+ A chat application that allows you to engage in debates with anonymous individuals. You can select a topic and take a
+ stance, and then debate with someone who holds the opposing view. After the debate concludes, you have the opportunity to
+ rate your opponent. These ratings will be displayed next to your name whenever you participate in a debate.
+ The application is available for both Android and Web platforms. For demo purposes, you can talk to ChatGPT
+ if you go to the topic 'AI is Dangerous' and pick 'For'. This helps demo the app when you are the only current user.
 
 ### Images
 
@@ -51,17 +53,6 @@
 ### Why
 
 This app is a personal project I worked on to learn more about how Flutter work, mainly on how one codebase can be used to make apps on many platforms. I will also use this project on my developer portfolio.
-
-### Limitations
-* Flutter web loses state when refreshing the browesr window, this means that you disconnect from a chat if you refresh the window. Shared Prefrences need to be added to save data when the page is refreshed.
-* You can not change your password or email. 
-* App Check needs to be disabled (in the Firebase console) if you want to use the Android version installed from an apk since App Check tokens are only valid if the app was installed from the play store.
-    
- ### What could be added
-* A user reporting system
-* Reputaion based match making 
-* Ability to save chats
-* Saving users as freinds and joining chats with friends.
 
 ### Database Structure
 Firebase 

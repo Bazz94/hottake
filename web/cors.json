@@ -1,8 +1,7 @@
 [
     {
         "origin": [
-            "https://hottake-project.web.app/",
-            "https://hottake-project.firebaseapp.com/"
+            "https://localhost/"
         ],
         "method": [
             "GET"

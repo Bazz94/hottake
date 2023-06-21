@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 import '../services/connectivity.dart';
 import '../shared/styles.dart';
 import '../widgets/init.dart';
-//import 'dart:html' as html;                             //comment out for android build then see line 66
+import 'dart:html' as html;                             //comment out for android build then see line 66
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -64,13 +64,13 @@ class _ChatState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (kIsWeb) {                                      // Comment out for android build
-    //   html.window.onBeforeUnload.listen((event) {
-    //     Future.delayed(Duration.zero, () {
-    //       Navigator.pop(context);
-    //     });
-    //   });
-    // }
+    if (kIsWeb) {                                      // Comment out for android build
+      html.window.onBeforeUnload.listen((event) {
+        Future.delayed(Duration.zero, () {
+          Navigator.pop(context);
+        });
+      });
+    }
     //Searching
 
     if (ConnectivityService.isOnline == false) {
@@ -184,9 +184,7 @@ class _ChatState extends State<ChatScreen> {
                       actions: [
                         phase != Phase.debate ? Container() : endButton(),
                       ],
-                      leading: Globals.getIsWeb(context)
-                          ? Container()
-                          : IconButton(
+                      leading: IconButton(
                               icon: const Icon(Icons.arrow_back),
                               tooltip: 'Leave chat',
                               onPressed: () {

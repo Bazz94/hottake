@@ -47,7 +47,7 @@ dependencies:
   firebase_database: ^10.0.7
   cached_network_image: ^3.2.3
   connectivity_plus: ^3.0.3
-
+  flutter_native_splash: ^2.2.19
 
 dev_dependencies:
   flutter_test:
@@ -94,3 +94,9 @@ flutter:
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  color: "#303030"
+
+  android_12:
+    color: "#303030"

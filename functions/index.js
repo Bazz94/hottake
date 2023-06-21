@@ -41,7 +41,7 @@ exports.requestChat = functions
     let chatID = "null";
     let found = false;
 
-    if (topic == 'AI is Dangerous' && stance == 'yay') {
+    if (topic == 'AI is Dangerous*' && stance == 'yay') {
       found = true;
 
       if (stance == "yay") {
@@ -270,7 +270,7 @@ exports.createUserData = functions.auth.user().onCreate(async (user) => {
   It only works on the topic 'AI is Dangerous' and 'for' as the stance.
 */
 exports.chatGPT = functions.firestore
-  .document('chats/AI is Dangerous/chats/{chatID}/messages/{messageID}')
+  .document('chats/AI is Dangerous*/chats/{chatID}/messages/{messageID}')
   // eslint-disable-next-line no-unused-vars
   .onCreate(async (snap, context) => {
     const owner = snap.data().owner;
@@ -282,7 +282,7 @@ exports.chatGPT = functions.firestore
         "content": "You are debating and are against the topic AI is dangerous, only respond in 1 sentence"
       });
       const messagesRef = admin.firestore().collection("chats")
-        .doc("AI is Dangerous").collection("chats").doc(chatID).collection("messages");
+        .doc("AI is Dangerous*").collection("chats").doc(chatID).collection("messages");
       const messagesCollection = await messagesRef.orderBy("time").get();
 
       messagesCollection.docs.forEach((value) => {
@@ -330,7 +330,7 @@ exports.chatGPT = functions.firestore
           time: new Date()
         });
         const chatRef = admin.firestore().collection("chats")
-          .doc("AI is Dangerous").collection("chats");
+          .doc("AI is Dangerous*").collection("chats");
         await chatRef.doc(chatID).update({
           'active': false,
         });

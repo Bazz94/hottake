@@ -26,9 +26,6 @@
   <meta name="apple-mobile-web-app-title" content="hottake">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- google_sign_in_web -->
-  <!--  <meta name="google-signin-client_id" content = googleAuthID>  -->
-
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
   <script type="text/javascript" src="token.js"></script>
@@ -50,7 +47,7 @@
     meta.setAttribute('content', content_);
     document.getElementsByTagName('head')[0].appendChild(meta);
 
-    //self.FIREBASE_APPCHECK_DEBUG_TOKEN = token;     //comment out for release build
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = token;     //comment out for release build
 
     var serviceWorkerVersion = null;
     var scriptLoaded = false;

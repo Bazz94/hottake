@@ -31,6 +31,7 @@ class _ChatInitState extends State<ChatInit> {
 
   @override
   void initState() {
+    Globals.cancelChat = false;
     connectivity.subscription.onData((result) {
       if (kDebugMode) {
         print("//// Connection status: ${result.toString()}");
@@ -50,6 +51,9 @@ class _ChatInitState extends State<ChatInit> {
   void dispose() {
     if (Globals.chatID != null) {
       PresenceService.goOffline(Globals.chatID!, Globals.topic!.title);
+      if (kDebugMode) {
+        print("//// goOffline");
+      }
     }
     connectivity.dispose;
     super.dispose();
@@ -60,9 +64,18 @@ class _ChatInitState extends State<ChatInit> {
     if (chatID == null) {
       return false;
     } 
-    PresenceService.goOnline(chatID, Globals.topic!.title);
+    await PresenceService.goOnline(chatID, Globals.topic!.title);
+    if(Globals.cancelChat) {
+      PresenceService.goOffline(chatID, Globals.topic!.title);
+    }
     return true;
   }
+
+  Future<bool> _onWillPop() {
+      Globals.cancelChat = true;
+    return Future.value(true);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,37 +86,41 @@ class _ChatInitState extends State<ChatInit> {
       });
     }
 
-    return MultiProvider(providers: [
-      StreamProvider<Future<Chat?>>(
-        create: (context) => DatabaseService.chats,
-        initialData: Future.value(null),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: MultiProvider(providers: [
+        StreamProvider<Future<Chat?>>(
+          create: (context) => DatabaseService.chats,
+          initialData: Future.value(null),
+        ),
+        StreamProvider<List<ChatMessage>?>(
+          create: (context) => DatabaseService().messages,
+          initialData: null,
+        ),
+        StreamProvider<bool?>(
+          create: (context) =>
+              PresenceService().opponentStatus,
+          initialData: null,
+        ),
+      ], child: FutureBuilder<bool>(
+            future: _loaded,
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<bool> snap,) 
+              {
+                if (!snap.hasData) {
+                  return const Loading();
+                }
+                
+                if (snap.data!) { 
+                  return const ChatScreen();
+                } else {
+                  return const ErrorPage();
+                }
+              },
+          )
       ),
-      StreamProvider<List<ChatMessage>?>(
-        create: (context) => DatabaseService().messages,
-        initialData: null,
-      ),
-      StreamProvider<bool?>(
-        create: (context) =>
-            PresenceService().opponentStatus,
-        initialData: null,
-      ),
-    ], child: FutureBuilder<bool>(
-          future: _loaded,
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<bool> snap,) 
-            {
-              if (!snap.hasData) {
-                return const Loading();
-              }
-              
-              if (snap.data!) { 
-                return const ChatScreen();
-              } else {
-                return const ErrorPage();
-              }
-            },
-        )
     );
   }
 }
+

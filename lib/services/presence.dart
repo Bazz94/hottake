@@ -23,9 +23,9 @@ class PresenceService {
     if (_isOnline != true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
       if (kDebugMode) {
-        print("//// Go online $chatID $topic");
+        print("//// Go online $chatID");
       }
-      try {  // '/chats/'
+      try {
         _isOnline = true;
         await _presenceRef.child("$topic/chats/$chatID/$uid").set({
           'active': true,
@@ -45,7 +45,7 @@ class PresenceService {
     if (_isOnline == true && ConnectivityService.isOnline) {
       String uid = Globals.localUser!.uid;
       if (kDebugMode) {
-        print("//// Go offline $chatID $topic");
+        print("//// Go offline $chatID");
       }
       try {
         await _presenceRef.child("$topic/chats/$chatID/$uid").set({'active': false});
@@ -55,10 +55,6 @@ class PresenceService {
         if (kDebugMode) {
           print("//// goOffline error: ${error.toString()}");
         }
-      }
-    } else {
-      if (kDebugMode) {
-        print("//// goOffline called but already offline");
       }
     }
   }

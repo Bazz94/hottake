@@ -7,6 +7,7 @@ class Globals {
   static Topic? topic;
   static String? stance;
   static String? chatID;
+  static bool cancelChat = false;
 
   static Color getReputationColour(int? rep) {
     //goes from 0 (red) to 100 (green)

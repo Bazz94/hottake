@@ -88,8 +88,7 @@ class _StancePageState extends State<StancePage> {
                         Expanded(
                           flex: 8,
                           child: Center(
-                              child: Text( Globals.topic!.title == "AI is Dangerous*"?
-                            'For*' : 'For',
+                              child: Text( 'For',
                             style: TextStyle(
                                 color: Colors.blue[300],
                                 letterSpacing: 0.5,
@@ -155,8 +154,7 @@ class _StancePageState extends State<StancePage> {
                       Globals.stance = 'yay';
                       Navigator.popAndPushNamed(context, '/chat');
                      },
-                    child: Text( Globals.topic!.title == "AI is Dangerous*"?
-                                  'For*' : 'For',
+                    child: Text( 'For',
                   style: TextStyle(
                       color: Colors.white,
                       letterSpacing: 0.5,
